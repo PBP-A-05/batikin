@@ -21,7 +21,7 @@ Melalui Batikin, kami berusaha menciptakan platform yang inklusif dan ramah bagi
 Batikin adalah aplikasi yang membantu para pecinta batik dan budaya Jawa menemukan berbagai produk budaya seperti baju batik, kain, blangkon, keris, dan perlengkapan lainnya di Kota Yogyakarta. Aplikasi ini memungkinkan pengguna untuk:
 
 - Mencari produk budaya sesuai keinginan.
-- Menemukan workshop membatik lengkap dengan ulasan dan review dari peserta sebelumnya.
+- Menemukan workshop (kampung batik) membatik lengkap dengan ulasan dan review dari peserta sebelumnya.
 - Mengeksplorasi berbagai motif dan gaya batik serta produk budaya Jawa lainnya.
 - Menemukan tempat-tempat wisata budaya seperti kampung batik dan lokasi penjualan produk budaya.
 
@@ -37,7 +37,7 @@ Melalui Batikin, pengguna dapat lebih mendalami seni batik dan budaya Jawa serta
 
 ### **Katalog Produk**
 
-Fitur **Katalog Produk** memungkinkan pengguna untuk menjelajahi beragam produk budaya yang tersedia di Batikin. Pengguna dapat melihat daftar lengkap produk. Setiap produk disertai dengan detail berikut:
+- **Deskripsi**: Fitur **Katalog Produk** memungkinkan pengguna untuk menjelajahi beragam produk budaya yang tersedia di Batikin. Pengguna dapat melihat daftar lengkap produk. Setiap produk disertai dengan detail berikut:
 
 - **Harga:** Pengguna dapat dengan mudah melihat harga produk yang diminati.
 - **Deskripsi:** Informasi mendalam mengenai produk, termasuk asal-usul, bahan, dan karakteristik budaya.
@@ -50,7 +50,6 @@ Dengan fitur ini, pengguna dapat dengan mudah menemukan dan membandingkan produk
 - **Deskripsi:** Memungkinkan pengguna untuk mencari nama batik atau jenis produk budaya.
 - **Fitur Utama:**
   - Pencarian berdasarkan nama produk.
-  - Saran otomatis saat mengetik.
 
 ### 🎚️ **Filter By**
 
@@ -87,7 +86,6 @@ Dengan fitur ini, pengguna dapat dengan mudah menemukan dan membandingkan produk
 - **Fitur Utama:**
   - Tombol "Like" pada setiap produk.
   - Menampilkan jumlah likes pada produk.
-
 
 ## Sumber Dataset
 Kami akan mengumpulkan dataset melalui internet, dengan melihat toko-toko online seperti Tokopedia, Shopee, Google Maps, dan sumber-sumber lainnya yang berisi informasi mengenai produk batik dan budaya di Yogyakarta.
