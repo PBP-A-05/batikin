@@ -57,6 +57,7 @@ Dengan fitur ini, pengguna dapat dengan mudah menemukan dan membandingkan produk
 - **Kategori Filter:**
   - **Jenis Produk:** Memilih jenis produk seperti pakaian laki-laki, pakaian perempuan, blangkon, keris, dll.
   - **Rentang Harga:** Menentukan batas atas dan bawah harga produk.
+  - **Review Score** Menentukan batas atas dan bawah Review Score
 - **Fitur Utama:**
   - Dropdown atau checkbox untuk memilih filter.
   - Kombinasi filter untuk hasil yang lebih spesifik.
@@ -75,11 +76,7 @@ Dengan fitur ini, pengguna dapat dengan mudah menemukan dan membandingkan produk
 - **Fitur Utama:**
   - Menambahkan produk ke wishlist.
   - Melihat dan mengelola wishlist pengguna.
-- **Implementasi:**
-  - Tombol "Tambah ke Wishlist" pada setiap produk.
-  - Halaman khusus untuk melihat wishlist pengguna.
-  - Penyimpanan data wishlist yang terhubung dengan akun pengguna.
-
+    
 ### 👍 **Like Product**
 
 - **Deskripsi:** Pengguna yang sudah login dapat menyukai produk yang mereka sukai.
@@ -94,8 +91,7 @@ Kami akan mengumpulkan dataset melalui internet, dengan melihat toko-toko online
 
 ### 👤 **Guest**
 - Dapat melihat daftar produk budaya yang tersedia.
-- Informasi seperti lokasi toko, link Google Maps, dan link produk di e-commerce tidak dapat diakses.
-- Tidak dapat melihat keterangan lebih lanjut mengenai lokasi toko dan review toko.
+- Tidak dapat melihat keterangan lebih lanjut mengenai lokasi toko, link e-commerce toko dan review toko.
 - Tidak dapat memberikan komentar atau review.
 
 ### 🔑 **Logged in/User**
