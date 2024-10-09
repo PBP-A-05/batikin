@@ -1,4 +1,4 @@
-# [Batikin]() <!-- Ganti dengan URL deployment aplikasi Anda -->
+# [Batikin](http://daanish-inayat-batikin.pbp.cs.ui.ac.id/)
 
 # Explore Batik & Javanese Culture with Batikin! 👘🕌
 
@@ -85,7 +85,7 @@ Dikerjakan oleh Nisrina Kamilya Nisyya
 
 ## Sumber Dataset
 Kami akan mengumpulkan dataset melalui internet, dengan melihat toko-toko online seperti Tokopedia, Shopee, Google Maps, dan sumber-sumber lainnya yang berisi informasi mengenai produk batik dan budaya di Yogyakarta.
-Berikut merupakan tautan dataset kami: 
+Berikut merupakan tautan dataset kami: [Sumber Dataset](https://drive.google.com/drive/folders/1Bwdh-qr5Lc7h7o2jcfKQSe2Ov4_nSo0c?usp=sharing)
 
 
 ## Role Pengguna
@@ -109,4 +109,4 @@ Berikut merupakan tautan dataset kami:
 
 ## Tautan Deployment
 
-[Tautan Deployment Aplikasi Batikin](#) <!-- Ganti dengan URL deployment aplikasi Anda -->
+[Tautan Deployment Aplikasi Batikin](http://daanish-inayat-batikin.pbp.cs.ui.ac.id/) 
