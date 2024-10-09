@@ -37,16 +37,6 @@ Melalui Batikin, pengguna dapat lebih mendalami seni batik dan budaya Jawa serta
 
 ## Daftar Modul
 
-### **Katalog Produk**
-Dikerjakan oleh Mirfak Naufal Pratama Putra
-- **Deskripsi**: Fitur **Katalog Produk** memungkinkan pengguna untuk menjelajahi beragam produk budaya yang tersedia di Batikin. Pengguna dapat melihat daftar lengkap produk. Setiap produk disertai dengan detail berikut:
-
-- **Harga:** Pengguna dapat dengan mudah melihat harga produk yang diminati.
-- **Deskripsi:** Informasi mendalam mengenai produk, termasuk asal-usul, bahan, dan karakteristik budaya.
-- **Gambar Produk:** Tampilan visual produk untuk membantu pengguna mengenal dan memilih produk yang sesuai.
-
-Dengan fitur ini, pengguna dapat dengan mudah menemukan dan membandingkan produk-produk budaya sebelum menambahkannya ke wishlist atau membelinya.
-
 ### 👨🏻‍💻 **User Profile**
 Dikerjakan oleh Daanish Inayat Rahman
 - **Deskripsi:** Halaman yang menampilkan informasi pengguna dalam aplikasi.
@@ -63,7 +53,7 @@ Dikerjakan oleh Adelya Amanda
   - Menambahkan produk ke keranjang belanja.
     
 ### 💬 **Comment & Review Score**
-Dikerjakan oleh Daanish Inayat Rahman
+Dikerjakan oleh Mirfak Naufal Pratama Putra
 - **Deskripsi:** Pengguna yang sudah login dapat memberikan komentar dan skor review pada produk.
 - **Fitur Utama:**
   - Menulis komentar tentang produk.
