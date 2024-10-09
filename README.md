@@ -37,15 +37,15 @@ Melalui Batikin, pengguna dapat lebih mendalami seni batik dan budaya Jawa serta
 
 ## Daftar Modul
 
-### 👨🏻‍💻 **User Profile**
+### 👨🏻‍💻 **User Profile** + Authentication
 Dikerjakan oleh Daanish Inayat Rahman
-- **Deskripsi:** Halaman yang menampilkan informasi pengguna dalam aplikasi.
+- **Deskripsi:** Halaman yang menampilkan informasi pengguna dalam aplikasi dan fitur authentication (login, register)
 - **Fitur Utama:** 
   - Melihat profil pengguna.
   - Mengedit profil pengguna.
   - Menambah, mengubah, menghapus alamat pengiriman
 
-### 🛒 **Shopping **
+### 🛒 **Shopping**
 Dikerjakan oleh Adelya Amanda
 - **Deskripsi:** Fitur belanja yang memungkinkan pengguna untuk membeli produk budaya Jawa langsung dari aplikasi.
 - **Fitur Utama:**
