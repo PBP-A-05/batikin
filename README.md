@@ -85,6 +85,7 @@ Dikerjakan oleh Nisrina Kamilya Nisyya
 
 ## Sumber Dataset
 Kami akan mengumpulkan dataset melalui internet, dengan melihat toko-toko online seperti Tokopedia, Shopee, Google Maps, dan sumber-sumber lainnya yang berisi informasi mengenai produk batik dan budaya di Yogyakarta.
+Berikut merupakan tautan dataset kami: 
 
 
 ## Role Pengguna
