@@ -57,7 +57,7 @@ Dikerjakan oleh Mirfak Naufal Pratama Putra
 - **Deskripsi:** Pengguna yang sudah login dapat memberikan komentar dan skor review pada produk.
 - **Fitur Utama:**
   - Menulis komentar tentang produk.
-  - Memberikan skor penilaian (1-10).
+  - Memberikan skor penilaian (1-5).
 
 ### ❤️ **Wishlist**
 Dikerjakan oleh Nawaetuna
