@@ -18,7 +18,7 @@ Melalui Batikin, kami berusaha menciptakan platform yang inklusif dan ramah bagi
 
 ## Deskripsi Aplikasi
 
-Batikin adalah aplikasi yang membantu para pecinta batik dan budaya Jawa menemukan berbagai produk budaya seperti baju batik, kain, blangkon, keris, dan perlengkapan lainnya di Kota Yogyakarta. Aplikasi ini memungkinkan pengguna untuk:
+Batikin adalah aplikasi yang membantu para pecinta batik dan budaya Jawa menemukan dan membeli berbagai produk budaya seperti baju batik, kain, blangkon, keris, dan perlengkapan lainnya di Kota Yogyakarta. Aplikasi ini memungkinkan pengguna untuk:
 
 - Mencari produk budaya sesuai keinginan.
 - Menemukan workshop (kampung batik) membatik lengkap dengan ulasan dan review dari peserta sebelumnya.
@@ -32,6 +32,8 @@ Melalui Batikin, pengguna dapat lebih mendalami seni batik dan budaya Jawa serta
 - **Penemuan Produk Budaya:** Membantu pengguna menemukan produk batik, serta produk budaya Jawa lainnya di daerah Yogyakarta.
 - **Eksplorasi Motif dan Budaya:** Memudahkan pengguna untuk mengeksplorasi beragam motif, gaya batik, dan produk budaya Jawa, seperti blangkon dan keris.
 - **Fitur Berbasis Lokasi:** Pengguna dapat menemukan kampung batik untuk memperdalam pengalaman budaya mereka di Yogyakarta.
+- **Pembelian Produk Budaya:** Pengguna dapat dengan mudah membeli produk budaya Jawa seperti batik, blangkon, dan keris langsung melalui aplikasi.
+- **Pemesanan Workshop Batik:** Fitur pemesanan workshop membatik memungkinkan pengguna untuk memesan tempat di kampung batik, mendalami seni batik, dan mendapatkan ulasan dari peserta sebelumnya.
 
 ## Daftar Modul
 
@@ -45,22 +47,20 @@ Melalui Batikin, pengguna dapat lebih mendalami seni batik dan budaya Jawa serta
 
 Dengan fitur ini, pengguna dapat dengan mudah menemukan dan membandingkan produk-produk budaya sebelum menambahkannya ke wishlist atau membelinya.
 
-### 🔍 **Search Bar**
+### 👨🏻‍💻 **User Profile**
 
-- **Deskripsi:** Memungkinkan pengguna untuk mencari nama batik atau jenis produk budaya.
+- **Deskripsi:** Halaman yang menampilkan informasi pengguna dalam aplikasi.
+- **Fitur Utama:** 
+  - Melihat profil pengguna.
+  - Mengedit profil pengguna.
+
+### 🛒 **Shopping **
+
+- **Deskripsi:** Fitur belanja yang memungkinkan pengguna untuk membeli produk budaya Jawa langsung dari aplikasi.
 - **Fitur Utama:**
-  - Pencarian berdasarkan nama produk.
-
-### 🎚️ **Filter By**
-
-- **Deskripsi:** Memungkinkan pengguna untuk menyaring produk berdasarkan berbagai kriteria.
-- **Kategori Filter:**
-  - **Jenis Produk:** Memilih jenis produk seperti pakaian laki-laki, pakaian perempuan, blangkon, keris, dll.
-  - **Rentang Harga:** Menentukan batas atas dan bawah harga produk.
-  - **Review Score** Menentukan batas atas dan bawah Review Score
-- **Fitur Utama:**
-  - Dropdown atau checkbox untuk memilih filter.
-  - Kombinasi filter untuk hasil yang lebih spesifik.
+  - Menjelajahi berbagai produk budaya seperti batik, blangkon, dan keris.
+  - Menambahkan produk ke keranjang belanja.
+  - 
 
 ### 💬 **Comment & Review Score**
 
@@ -77,12 +77,12 @@ Dengan fitur ini, pengguna dapat dengan mudah menemukan dan membandingkan produk
   - Menambahkan produk ke wishlist.
   - Melihat dan mengelola wishlist pengguna.
     
-### 👍 **Like Product**
+### 🧥 **Booking Workshop Batik**
 
-- **Deskripsi:** Pengguna yang sudah login dapat menyukai produk yang mereka sukai.
+- **Deskripsi:** Fitur untuk memesan workshop membatik di kampung batik Yogyakarta.
 - **Fitur Utama:**
-  - Tombol "Like" pada setiap produk.
-  - Menampilkan jumlah likes pada produk.
+  - Memilih workshop batik berdasarkan lokasi dan ulasan.
+  - Melihat jadwal workshop yang sudah dipesan.
 
 ## Sumber Dataset
 Kami akan mengumpulkan dataset melalui internet, dengan melihat toko-toko online seperti Tokopedia, Shopee, Google Maps, dan sumber-sumber lainnya yang berisi informasi mengenai produk batik dan budaya di Yogyakarta.
@@ -93,6 +93,9 @@ Kami akan mengumpulkan dataset melalui internet, dengan melihat toko-toko online
 - Dapat melihat daftar produk budaya yang tersedia.
 - Tidak dapat melihat keterangan lebih lanjut mengenai lokasi toko, link e-commerce toko dan review toko.
 - Tidak dapat memberikan komentar atau review.
+- Tidak dapat memasukan produk ke wishlist.
+- Tidak dapat membeli produk.
+- Tidak dapat booking workshop batik.
 
 ### 🔑 **Logged in/User**
 - Memiliki semua hak akses Guest.
@@ -101,6 +104,8 @@ Kami akan mengumpulkan dataset melalui internet, dengan melihat toko-toko online
 - Bisa memberikan komentar dan review score pada produk.
 - Akses ke fitur personalisasi seperti Wishlist.
 - Dapat berinteraksi lebih aktif dengan konten melalui komentar dan likes.
+- Dapat membeli produk.
+- Dapat membuat bookingan workshop batik.
 
 ## Tautan Deployment
 
