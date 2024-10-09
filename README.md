@@ -38,7 +38,7 @@ Melalui Batikin, pengguna dapat lebih mendalami seni batik dan budaya Jawa serta
 ## Daftar Modul
 
 ### **Katalog Produk**
-
+Dikerjakan oleh Mirfak Naufal Pratama Putra
 - **Deskripsi**: Fitur **Katalog Produk** memungkinkan pengguna untuk menjelajahi beragam produk budaya yang tersedia di Batikin. Pengguna dapat melihat daftar lengkap produk. Setiap produk disertai dengan detail berikut:
 
 - **Harga:** Pengguna dapat dengan mudah melihat harga produk yang diminati.
@@ -48,37 +48,36 @@ Melalui Batikin, pengguna dapat lebih mendalami seni batik dan budaya Jawa serta
 Dengan fitur ini, pengguna dapat dengan mudah menemukan dan membandingkan produk-produk budaya sebelum menambahkannya ke wishlist atau membelinya.
 
 ### 👨🏻‍💻 **User Profile**
-
+Dikerjakan oleh Daanish Inayat Rahman
 - **Deskripsi:** Halaman yang menampilkan informasi pengguna dalam aplikasi.
 - **Fitur Utama:** 
   - Melihat profil pengguna.
   - Mengedit profil pengguna.
+  - Menambah, mengubah, menghapus alamat pengiriman
 
 ### 🛒 **Shopping **
-
+Dikerjakan oleh Adelya Amanda
 - **Deskripsi:** Fitur belanja yang memungkinkan pengguna untuk membeli produk budaya Jawa langsung dari aplikasi.
 - **Fitur Utama:**
   - Menjelajahi berbagai produk budaya seperti batik, blangkon, dan keris.
   - Menambahkan produk ke keranjang belanja.
-  - 
-
+    
 ### 💬 **Comment & Review Score**
-
+Dikerjakan oleh Daanish Inayat Rahman
 - **Deskripsi:** Pengguna yang sudah login dapat memberikan komentar dan skor review pada produk.
 - **Fitur Utama:**
   - Menulis komentar tentang produk.
   - Memberikan skor penilaian (1-10).
 
-
 ### ❤️ **Wishlist**
-
+Dikerjakan oleh Nawaetuna
 - **Deskripsi:** Pengguna yang sudah login dapat menyimpan produk favorit ke dalam wishlist.
 - **Fitur Utama:**
   - Menambahkan produk ke wishlist.
-  - Melihat dan mengelola wishlist pengguna.
+  - Melihat, mengelola, mengubah wishlist pengguna.
     
 ### 🧥 **Booking Workshop Batik**
-
+Dikerjakan oleh Nisrina Kamilya Nisyya
 - **Deskripsi:** Fitur untuk memesan workshop membatik di kampung batik Yogyakarta.
 - **Fitur Utama:**
   - Memilih workshop batik berdasarkan lokasi dan ulasan.
@@ -87,11 +86,11 @@ Dengan fitur ini, pengguna dapat dengan mudah menemukan dan membandingkan produk
 ## Sumber Dataset
 Kami akan mengumpulkan dataset melalui internet, dengan melihat toko-toko online seperti Tokopedia, Shopee, Google Maps, dan sumber-sumber lainnya yang berisi informasi mengenai produk batik dan budaya di Yogyakarta.
 
+
 ## Role Pengguna
 
 ### 👤 **Guest**
 - Dapat melihat daftar produk budaya yang tersedia.
-- Tidak dapat melihat keterangan lebih lanjut mengenai lokasi toko, link e-commerce toko dan review toko.
 - Tidak dapat memberikan komentar atau review.
 - Tidak dapat memasukan produk ke wishlist.
 - Tidak dapat membeli produk.
@@ -99,7 +98,7 @@ Kami akan mengumpulkan dataset melalui internet, dengan melihat toko-toko online
 
 ### 🔑 **Logged in/User**
 - Memiliki semua hak akses Guest.
-- Dapat melihat detail produk seperti lokasi toko yang terhubung dengan Google Maps, dan link produk di platform e-commerce Tokopedia.
+- Dapat melihat detail informasi booking workshop kampung batik
 - Dapat menambahkan produk ke Wishlist dan menyukai produk.
 - Bisa memberikan komentar dan review score pada produk.
 - Akses ke fitur personalisasi seperti Wishlist.
