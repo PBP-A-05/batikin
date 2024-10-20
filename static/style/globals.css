@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@font-face {
+    font-family: 'JavaneseText';
+    font-style: normal;
+    font-weight: normal;
+    src: url('/static/fonts/Javanese-text.ttf') format('truetype');
+}
+
+.font-javanese {
+    font-family: 'JavaneseText', sans-serif;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+/* Design System */
+.text-gradient-coklat {
+    background: linear-gradient(90deg, #754B0B 0%, #DB8C15 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+.text-coklat-1 {
+    color: #754B0B;
+}
+
+.text-coklat-1-rgba {
+    color: rgba(117, 75, 11, 0.25);
+}
+
+.text-coklat-2 {
+    color: #4C3108;
+}
+
+.text-coklat-3 {
+    color: #714503;
+}
+
+.bg-coklat-1 {
+    background-color: #754B0B;
+}
+
+
+
+.bg-coklat-2 {
+    background-color: #4C3108;
+}
+
+.bg-coklat-3 {
+    background-color: #714503;
+}
+
+
+
+.bg-gradient-coklat {
+    background: linear-gradient(90deg, #754B0B 0%, #DB8C15 100%);
+}
+
+.border-coklat-rgba {
+    border: 1px solid rgba(117, 75, 11, 0.25);
+}
