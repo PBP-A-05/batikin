@@ -14,6 +14,8 @@
 body {
     font-family: 'Poppins', sans-serif;
 }
+
+
 /* Design System */
 .text-gradient-coklat {
     background: linear-gradient(90deg, #754B0B 0%, #DB8C15 100%);
@@ -43,8 +45,6 @@ body {
     background-color: #754B0B;
 }
 
-
-
 .bg-coklat-2 {
     background-color: #4C3108;
 }
@@ -52,8 +52,6 @@ body {
 .bg-coklat-3 {
     background-color: #714503;
 }
-
-
 
 .bg-gradient-coklat {
     background: linear-gradient(90deg, #754B0B 0%, #DB8C15 100%);
