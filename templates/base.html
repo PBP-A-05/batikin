@@ -17,7 +17,7 @@
         }
     </script>
 </head>
-<body class="w-full h-full">
+<body class="bg-[#f6f6f6] w-full h-full">
     <!-- Navbar -->
     <header class="w-screen bg-white shadow-sm ">
         <div class="container flex justify-between items-center py-4 mx-auto w-max-[1536px] max-md:px-8">
@@ -36,10 +36,10 @@
     
 
             <nav class="hidden md:flex space-x-12">
-                <a href="#" class="text-coklat-1 ">Pria</a>
-                <a href="#" class="text-coklat-1 ">Wanita</a>
-                <a href="#" class="text-coklat-1 ">Aksesoris</a>
-                <a href="#" class="text-coklat-1 ">Workshop</a>
+                <a href="{% url 'product_list' %}?category=pakaian_pria" class="text-coklat-1">Pria</a>
+                <a href="{% url 'product_list' %}?category=pakaian_wanita" class="text-coklat-1">Wanita</a>
+                <a href="{% url 'product_list' %}?category=aksesoris" class="text-coklat-1">Aksesoris</a>
+                <a href="{% url 'product_list' %}?category=aksesoris" class="text-coklat-1">Workshop</a>
             </nav>
 
 
@@ -76,10 +76,10 @@
 
         <nav id="mobile-menu" class="hidden md:hidden bg-white shadow-lg">
             <div class="px-6 py-4 space-y-4">
-                <a href="#" class="block text-coklat-1 ">Home</a>
-                <a href="#" class="block text-coklat-1 ">Pria</a>
-                <a href="#" class="block text-coklat-1 ">Wanita</a>
-                <a href="#" class="block text-coklat-1 ">Workshop</a>
+                <a href="{% url 'product_list' %}?category=pakaian_pria" class="text-coklat-1">Pria</a>
+                <a href="{% url 'product_list' %}?category=pakaian_wanita" class="text-coklat-1">Wanita</a>
+                <a href="{% url 'product_list' %}?category=aksesoris" class="text-coklat-1">Aksesoris</a>
+                <a href="{% url 'product_list' %}?category=aksesoris" class="text-coklat-1">Workshop</a>
             </div>
         </nav>
     </header>
