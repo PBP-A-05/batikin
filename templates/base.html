@@ -7,24 +7,30 @@
     <title>{% block title %}Your Site{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{% static 'style/globals.css' %}">
-
+    <link rel="stylesheet" href="{% static 'style/base.css' %}">
     <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .account-menu-active {
+            animation: fadeIn 0.2s ease-out;
+        }
     </style>
     <script>
-        function toggleMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        }
     </script>
 </head>
 <body class="w-full h-full">
     <!-- Navbar -->
-    <header class="w-screen bg-white shadow-sm ">
-        <div class="container flex justify-between items-center py-4 mx-auto w-max-[1536px] max-md:px-8">
-            <div class="flex items-center space-x-2 md:hidden">
+    <header class="w-screen bg-white" style="box-shadow: 0px 8px 8px rgba(117, 75, 11, 0.5);">
+        <div class="container-custom flex gap-12 justify-between items-center mx-auto py-4 w-max-[1536px] max-md:px-8">
+
+            <a class="flex items-center space-x-2 md:hidden" href="/">
                 <img src="{% static 'assets/logo.png' %}" alt="Batikin Logo" class="h-16 w-16">
-                <span class="text-xl font-javanese leading-6 mt-2 text-coklat-1">Batikin</span>
-            </div>
+                <span class="text-2xl font-javanese leading-6 mt-2 text-coklat-1">Batikin</span>
+            </a>
+
             <div class="md:hidden">
                 <button onclick="toggleMenu()" class="text-coklat-1 focus:outline-none">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -33,8 +39,6 @@
                 </button>
             </div>
 
-    
-
             <nav class="hidden md:flex space-x-12">
                 <a href="#" class="text-coklat-1 ">Pria</a>
                 <a href="#" class="text-coklat-1 ">Wanita</a>
@@ -42,59 +46,89 @@
                 <a href="#" class="text-coklat-1 ">Workshop</a>
             </nav>
 
-
-            <div class="flex items-center space-x-2 max-md:hidden">
+            <a class="flex items-center space-x-2 max-md:hidden" href="/">
                 <img src="{% static 'assets/logo.png' %}" alt="Batikin Logo" class="h-16 w-16">
                 <span class="text-2xl font-javanese leading-6 mt-2 text-coklat-1">Batikin</span>
-            </div>
+            </a>
+       
+                
             
-
             <!-- Seach icon, wishlist icon, and cart icon hidden on mobile -->
             <div class="hidden md:flex items-center space-x-4">
                 <div class="relative">
-                    <input type="text" placeholder="Cari produk" class="border rounded-lg py-2 px-4 w-64 focus:outline-none focus:ring-2 border-coklat-rgba placeholder-[#754b0b66]">
                     <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h8m-4-4v8"></path>
+                        <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.2252 18.9799C13.28 18.9799 15.2507 18.1636 16.7037 16.7106C18.1566 15.2577 18.9729 13.287 18.9729 11.2322C18.9729 9.17737 18.1566 7.20672 16.7037 5.75374C15.2507 4.30077 13.28 3.4845 11.2252 3.4845C9.17041 3.4845 7.19976 4.30077 5.74679 5.75374C4.29381 7.20672 3.47754 9.17737 3.47754 11.2322C3.47754 13.287 4.29381 15.2577 5.74679 16.7106C7.19976 18.1636 9.17041 18.9799 11.2252 18.9799Z" stroke="#754B0B" stroke-width="1.44" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M20.5224 21.5155L16.5781 17.5712" stroke="#754B0B" stroke-width="1.44" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </button>
+                    <input type="text" placeholder="Cari produk" class="border rounded-lg py-2 px-4 w-64 focus:outline-none focus:ring-2 border-coklat-rgba placeholder-[#754b0b66]">
                 </div>
 
-                <a href="#" class="text-coklat-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                </a>
+                <!-- Account -->
+                <div class="relative"> <!-- Add this wrapper div -->
+                    <button onclick="toggleAccountMenu()" class="text-coklat-1 focus:outline-none mt-2">
+                        <svg width="24" height="25" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M7.11604 4.58299C7.88092 3.81812 8.91831 3.38842 10 3.38842C11.0817 3.38842 12.1191 3.81812 12.884 4.58299C13.6488 5.34787 14.0785 6.38525 14.0785 7.46695C14.0785 8.54864 13.6488 9.58603 12.884 10.3509C12.1191 11.1158 11.0817 11.5455 10 11.5455C8.91831 11.5455 7.88092 11.1158 7.11604 10.3509C6.35117 9.58603 5.92147 8.54864 5.92147 7.46695C5.92147 6.38525 6.35117 5.34787 7.11604 4.58299ZM10 4.76864C9.28436 4.76864 8.59804 5.05292 8.09201 5.55895C7.58597 6.06498 7.30169 6.75131 7.30169 7.46695C7.30169 8.18258 7.58597 8.86891 8.09201 9.37494C8.59804 9.88097 9.28436 10.1653 10 10.1653C10.7156 10.1653 11.402 9.88097 11.908 9.37494C12.414 8.86891 12.6983 8.18258 12.6983 7.46695C12.6983 6.75131 12.414 6.06498 11.908 5.55895C11.402 5.05292 10.7156 4.76864 10 4.76864Z" fill="#754B0B"/>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M10 13.5804C8.95587 13.5804 7.9293 13.849 7.01897 14.3603C6.10864 14.8717 5.34516 15.6087 4.80193 16.5003C4.60364 16.8258 4.17902 16.9289 3.85353 16.7307C3.52804 16.5324 3.42493 16.1077 3.62323 15.7823C4.28964 14.6884 5.22624 13.7843 6.343 13.157C7.45975 12.5297 8.71911 12.2002 10 12.2002C11.2809 12.2002 12.5402 12.5297 13.657 13.157C14.7738 13.7843 15.7104 14.6884 16.3768 15.7823C16.5751 16.1077 16.472 16.5324 16.1465 16.7307C15.821 16.9289 15.3964 16.8258 15.1981 16.5003C14.6548 15.6087 13.8914 14.8717 12.981 14.3603C12.0707 13.849 11.0441 13.5804 10 13.5804Z" fill="#754B0B"/>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M3.28249 2.78249C5.06408 1.00089 7.48044 0 10 0C12.5196 0 14.9359 1.00089 16.7175 2.78249C18.4991 4.56408 19.5 6.98044 19.5 9.5C19.5 12.0196 18.4991 14.4359 16.7175 16.2175C14.9359 17.9991 12.5196 19 10 19C7.48044 19 5.06408 17.9991 3.28249 16.2175C1.50089 14.4359 0.5 12.0196 0.5 9.5C0.5 6.98044 1.50089 4.56408 3.28249 2.78249ZM10 1.38022C7.8465 1.38022 5.7812 2.23569 4.25845 3.75845C2.73569 5.2812 1.88022 7.3465 1.88022 9.5C1.88022 11.6535 2.73569 13.7188 4.25845 15.2416C5.7812 16.7643 7.8465 17.6198 10 17.6198C12.1535 17.6198 14.2188 16.7643 15.7416 15.2416C17.2643 13.7188 18.1198 11.6535 18.1198 9.5C18.1198 7.3465 17.2643 5.2812 15.7416 3.75845C14.2188 2.23569 12.1535 1.38022 10 1.38022Z" fill="#754B0B"/>
+                        </svg>
+                    </button>
+                    
+                    {% if user.is_authenticated %}
+                    <div id="account-menu" 
+                         class="absolute right-0 top-full mt-6 bg-white shadow-lg rounded-md px-6 py-4 w-72 z-50 
+                                transform opacity-0 scale-95 -translate-y-2 pointer-events-none
+                                transition-all duration-200 ease-out" style="border: 0.2px solid rgba(117, 75, 11, 0.25);">
+                        <p class="text-coklat-1 font-medium border-b border-coklat-1/20 pb-2 mb-2">Halo {{ user.username }}!</p>
+                        <a href="/account" class="block text-coklat-1 hover:bg-coklat-1/10 py-2 px-2 rounded-md transition-colors duration-200">Account</a>
+                        <a href="/orders" class="block text-coklat-1 hover:bg-coklat-1/10 py-2 px-2 rounded-md transition-colors duration-200">Pemesanan</a>
+                        <a href="/workshops" class="block text-coklat-1 hover:bg-coklat-1/10 py-2 px-2 rounded-md transition-colors duration-200">Booking Workshop</a>
+                    </div>
+                    {% else %}
+                    <div id="account-menu" 
+                         class="absolute right-0 top-full mt-6 bg-white shadow-lg rounded-md px-6 py-4 w-48 z-50 
+                                transform opacity-0 scale-95 -translate-y-2 pointer-events-none
+                                transition-all duration-200 ease-out" style="border: 0.2px solid rgba(117, 75, 11, 0.25);">
+                        <a href="/login" class="block text-coklat-1 hover:bg-coklat-1/10 py-2 px-2 rounded-md transition-colors duration-200">Login</a>
+                        <a href="/register" class="block text-coklat-1 hover:bg-coklat-1/10 py-2 px-2 rounded-md transition-colors duration-200">Register</a>
+                    </div>
+                    {% endif %}
+                </div>
 
-                <a href="#" class="text-coklat-">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 " fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 12.879a3 3 0 010-4.242l5.757-5.757a3 3 0 014.243 0l5.757 5.757a3 3 0 010 4.242l-5.757 5.757a3 3 0 01-4.243 0l-5.757-5.757z"></path>
+                <!-- Wishlist -->
+                <button class="text-coklat-1 focus:outline-none">
+                    <svg width="26" height="27" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12.0048 19.5L4.791 13.0513C0.870448 9.18258 6.63333 1.75337 12.0048 7.76384C17.3763 1.75337 23.1141 9.20729 19.22 13.0513L12.0048 19.5Z" stroke="#754B0B" stroke-width="1.42857" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
-                </a>
+                </button>
+
             </div>
         </div>
-
         <nav id="mobile-menu" class="hidden md:hidden bg-white shadow-lg">
             <div class="px-6 py-4 space-y-4">
                 <a href="#" class="block text-coklat-1 ">Home</a>
                 <a href="#" class="block text-coklat-1 ">Pria</a>
                 <a href="#" class="block text-coklat-1 ">Wanita</a>
                 <a href="#" class="block text-coklat-1 ">Workshop</a>
+                <a href="/account" class="block text-coklat-1">Account</a>
+                <a href="#" class="block text-coklat-1">Wishlist</a> 
             </div>
         </nav>
     </header>
 
     <!-- Main content area -->
-    <main class="min-h-screen w-screen">
-        <section class="container mx-auto w-max-[1536px] max-md:px-8">
-            {% block content %}
+    {% block content %}
 
-            {% endblock %}
-        </section>  
-    </main>
-    <footer class="bg-coklat-2 py-6 h-32 text-center text-gray-600">
+    {% endblock %}
+
+
+    
+    
+    <footer class="bg-coklat-2 py-6 h-32 text-center text-coklat-1">
         © 2024 Batikin. All rights reserved.
     </footer>
- 
+    {% load static %}
+    <script src="{% static 'script/account_script.js' %}"></script>
 </body>
 </html>
