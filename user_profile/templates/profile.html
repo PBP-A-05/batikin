@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Batikin | Landing Page {% endblock %}
+
+{% block content %}
+    <main class="h-full w-screen bg-[#F6F6F6]">
+        <section class="mx-auto w-max-[1536px] max-md:px-8 flex justify-center items-center min-h-screen">
+            <div class="w-[50vw] h-[30vh] bg-white" style="border: 0.2px solid rgba(117, 75, 11, 0.25); border-radius: 23px;">
+                <h2 class="text-2xl font-bold text-coklat-1 mb-6 text-center">Welcome, {{ request.user.first_name|default:request.user.username }}!</h2>
+
+            </div>
+        </section>  
+    </main>
+{% endblock %}
+

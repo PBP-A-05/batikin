@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Batikin | Login {% endblock %}
+
+{% block content %}
+    <main class="h-full w-screen bg-[#F6F6F6]">
+        <section class="mx-auto w-max-[1536px] max-md:px-8 flex justify-center items-center min-h-screen">
+            <div class="w-[24rem] p-8 bg-white" style="border: 0.2px solid rgba(117, 75, 11, 0.25); border-radius: 23px;">
+                <h2 class="text-2xl font-bold text-coklat-1 mb-6 text-center">Login</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="space-y-4">
+                        <div class="space-y-1">
+                            <label for="{{ form.username.id_for_label }}" class="text-coklat-1">Username</label>
+                            {{ form.username }}
+                        </div>
+                        <div class="space-y-1">
+                            <label for="{{ form.password.id_for_label }}" class="text-coklat-1">Password</label>
+                            {{ form.password }}
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full mt-6 bg-gradient-coklat text-white py-2 rounded-lg hover:opacity-90">
+                        Login
+                    </button>
+                    {% if messages %}
+                    <div class="mb-6">
+                        {% for message in messages %}
+                            {% if message.tags == "success" %}
+                            <div class="bg-[#F3EEE7] border border-coklat-1 text-coklat-1 px-4 py-3 rounded relative"
+                                role="alert">
+                                <span class="block sm:inline">{{ message }}</span>
+                            </div>
+                            {% elif message.tags == "error" %}
+                            <div class="bg-[#FFEAE9] border border-[#754B0B] text-[#754B0B] px-4 py-3 rounded relative"
+                                role="alert">
+                                <span class="block sm:inline">{{ message }}</span>
+                            </div>
+                            {% else %}
+                            <div class="bg-[#EDF2F7] border border-coklat-1 text-coklat-1 px-4 py-3 rounded relative"
+                                role="alert">
+                                <span class="block sm:inline">{{ message }}</span>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </form>
+                <p class="mt-4 text-center text-sm">
+                    Don't have an account? 
+                    <a href="{% url 'register' %}" class="text-coklat-1 hover:underline">Register here</a>
+                </p>
+            </div>
+        </section>  
+    </main>
+{% endblock %}

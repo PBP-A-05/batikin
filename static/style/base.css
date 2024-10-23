@@ -1,0 +1,28 @@
+.container-custom {
+    width: 100%;
+}
+@media (min-width: 640px) {
+    .container-custom {
+        max-width: 640px;
+    }
+}
+@media (min-width: 768px) {
+    .container-custom {
+        max-width: 768px;
+    }
+}
+@media (min-width: 1024px) {
+    .container-custom {
+        max-width: 1024px;
+    }
+}
+@media (min-width: 1300) {
+    .container-custom {
+        max-width: 1280px;
+    }
+}
+@media (min-width: 1536px) {
+    .container-custom {
+        max-width: 1536px;
+    }
+}
