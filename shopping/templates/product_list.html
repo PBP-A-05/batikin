@@ -14,24 +14,21 @@
     <p class="text-coklat-1 font-semibold mb-4 sm:mb-1">Temukan keindahan batik asli Yogyakarta yang kaya makna di sini.</p>
     
     <div class="flex flex-wrap justify-end space-x-2 sm:space-x-4 mb-6 sm:mb-8">
-        <button class="category-btn px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-full text-coklat-1 border-2 border-coklat-rgba bg-[#f6f6f6] hover:text-gradient-coklat hover:shadow-lg transition-all duration-300 focus:outline-none mb-2 sm:mb-0" data-category="Pakaian Pria">
+        <button onclick="filterProducts('pakaian_pria')" class="category-btn px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-full text-coklat-1 border-2 border-coklat-rgba bg-[#f6f6f6] hover:text-gradient-coklat hover:shadow-lg transition-all duration-300 focus:outline-none mb-2 sm:mb-0" data-category="Pakaian Pria">
           Pakaian Pria
         </button>
-        <button class="category-btn px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-full text-coklat-1 border-2 border-coklat-rgba bg-[#f6f6f6] hover:text-gradient-coklat hover:shadow-lg transition-all duration-300 focus:outline-none mb-2 sm:mb-0" data-category="Pakaian Wanita">
+        <button onClick="filterProducts('pakaian_wanita')" class="category-btn px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-full text-coklat-1 border-2 border-coklat-rgba bg-[#f6f6f6] hover:text-gradient-coklat hover:shadow-lg transition-all duration-300 focus:outline-none mb-2 sm:mb-0" data-category="Pakaian Wanita">
           Pakaian Wanita
         </button>
-        <button class="category-btn px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-full text-coklat-1 border-2 border-coklat-rgba bg-[#f6f6f6] hover:text-gradient-coklat hover:shadow-lg transition-all duration-300 focus:outline-none mb-2 sm:mb-0" data-category="Aksesoris">
+        <button onclick="filterProducts('aksesoris')" class="category-btn px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-full text-coklat-1 border-2 border-coklat-rgba bg-[#f6f6f6] hover:text-gradient-coklat hover:shadow-lg transition-all duration-300 focus:outline-none mb-2 sm:mb-0" data-category="Aksesoris">
           Aksesoris
         </button>
     </div>
     
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {% include "product_card.html" %}
-      {% include "product_card.html" %}
-      {% include "product_card.html" %}
-      {% include "product_card.html" %}
-      {% include "product_card.html" %}
-      {% include "product_card.html" %}
+    <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for product in products %}
+        {% include "product_card.html" with product=product %}
+      {% endfor %}
     </div>
   </div>
 </div>
@@ -50,5 +47,53 @@
         });
       });
     });
+
+    function updateProductsGrid(data) {
+    const productsGrid = document.getElementById('productsGrid');
+    productsGrid.innerHTML = '';
+    data.forEach(product => {
+      console.log(product); 
+      const productHtml = `
+        <a href="${product.pk}" class="product-card block bg-white border border-coklat-1-rgba rounded-md overflow-hidden hover:shadow-md transition-all duration-300">
+            <div class="relative aspect-square overflow-hidden m-4">
+                <img src="${product.fields.image_urls[0]}" alt="${product.fields.product_name}" class="object-cover w-full h-full">
+            </div>
+            <div class="p-4 space-y-2">
+                <span class="inline-block px-2 py-1 text-xs border border-coklat-1-rgba rounded-full text-black">${product.fields.get_category_display}</span>
+                <h3 class="text-base font-semibold text-coklat-1">${product.fields.product_name}</h3>
+                <div class="flex justify-between items-center">
+                    <span class="text-lg font-bold text-coklat-2">${product.fields.price}</span>
+                    <button class="like-button focus:outline-none" onclick="event.preventDefault(); likeProduct(this);">
+                        <!-- Outline heart -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-outline" viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        <!-- Filled heart -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-filled" viewBox="0 0 24 24" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L12 8.343l3.172-3.171a4 4 0 115.656 5.656L12 19.657l-8.828-8.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </a>
+      `;
+      productsGrid.innerHTML += productHtml;
+    });
+  }
+
+
+  function filterProducts(category) {
+    fetch(`/shopping/api/products/?category=${category}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => updateProductsGrid(data))
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+  }
   </script>
 {% endblock %}

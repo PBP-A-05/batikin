@@ -28,21 +28,25 @@
             <!-- Foto Produk -->
             <div class="w-3/5 flex gap-4">
                 <div class="w-1/5 flex flex-col justify-between">
-                    {% for i in '12345'|make_list %}
-                    <div class="aspect-[4/3] bg-coklat-{{ forloop.counter }} rounded-md cursor-pointer thumbnail" onclick="changeMainImage(this, {{ forloop.counter }})"></div>
+                    {% for image_url in product.image_urls|slice:":5" %}
+                    <div class="relative aspect-[4/3] rounded-md cursor-pointer thumbnail" onclick="changeMainImage(this, {{ forloop.counter }})">
+                        <img src="{{ image_url }}" alt="{{ product.product_name }}" class="object-cover w-full h-full rounded-md">
+                    </div>
                     {% endfor %}
                 </div>
                 <div class="w-4/5">
-                    <div id="mainImage" class="aspect-[4/3] bg-coklat-1 rounded-md w-full h-full"></div>
+                    <div id="mainImage" class="relative aspect-[4/3] rounded-md w-full h-full">
+                        <img src="{{ product.image_urls.0 }}" alt="{{ product.product_name }}" class="object-cover w-full h-full rounded-md">
+                    </div>
                 </div>
             </div>
             
             <!-- Detail Produk -->
             <div class="w-2/5 flex flex-col justify-between">
                 <div class="space-y-4">
-                    <span class="inline-block px-2 py-1 text-sm border border-coklat-1-rgba rounded-full text-black">Pakaian Wanita</span>
-                    <h2 class="text-2xl font-bold text-coklat-3">Batik ENOM - Outer Batik - Batik Wanita Modern Saujana Series - Rivera</h2>
-                    <p class="text-2xl font-bold text-coklat-2">Rp341.050</p>
+                    <span class="inline-block px-2 py-1 text-sm border border-coklat-1-rgba rounded-full text-black">{{ product.get_category_display }}</span>
+                    <h2 class="text-2xl font-bold text-coklat-3">{{ product.product_name }}</h2>
+                    <p class="text-2xl font-bold text-coklat-2">{{ product.price }}</p>
                     <div class="flex items-center">
                         {% for i in '1234'|make_list %}
                         <svg class="w-5 h-5 text-coklat-3 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -51,13 +55,16 @@
                     </div>
                     <div class="flex flex-col items-start text-coklat-1 opacity-50">
                         <div class="flex items-center mb-2">
-                            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            <span>Kabupaten Jogja</span>
+                            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span>{{ product.store_address }}</span>
                         </div>
-                        <div class="flex items-center">
+                        <a href="{{ product.store_url }}" target="_blank" class="flex items-center hover:text-coklat-2 transition duration-300">
                             <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
                             <span>Kunjungi Toko</span>
-                        </div>
+                        </a>
                     </div>
                 </div>
                 <div class="space-y-4 mt-auto">
@@ -90,24 +97,7 @@
             </div>
             <div id="productDescription" class="mt-4 text-coklat-2 overflow-hidden transition-all duration-300 max-h-0">
                 <div class="description-content">
-                    <p>Batik ENOM - Outer Batik - Batik Wanita Modern Saujana Series - Rivera</p>
-                    <p class="mt-2">Saujana adalah karya batik yang mengekspresikan keindahan alam dan kehidupan melalui perpaduan warna-warni yang memikat. Membawa ornamen simbolis yaitu motif batik kawung khas Enom, yang mencerminkan keindahan alam dan kekayaan budaya yang terhampar luas seperti pemandangan. Dengan Saujana, batik ini bukan hanya menjadi selembar kain, tetapi sebuah kanvas yang menghidupkan keindahan dunia dalam goresan lilin dan percikan warna, di mana tradisi dan inovasi berpadu dalam harmoni yang sempurna, mengajak kita untuk merasakan keindahan sejati yang terhampar sejauh mata memandang.</p>
-                    <p class="mt-2">Bahan: Katun<br>Proses: Batik Cap<br>Motif: Kawung</p>
-                    <p class="mt-2">Detail: outer tanpa lengan, badan depan cutting asimetris, ada detail manik manik di badan depan</p>
-                    <p class="mt-2">Size Chart: All Size | Lingkar Badan 110 cm | Panjang Baju 80 cm | Panjang Lengan - cm</p>
-                    <p class="mt-2">Care Label:</p>
-                    <ul class="list-disc list-inside">
-                        <li>Mencuci dengan tangan untuk menjaga motif batik.</li>
-                        <li>Jangan menggunakan pemutih pakaian.</li>
-                        <li>Jemur secara terbalik.</li>
-                    </ul>
-                    <p class="mt-2">Term and Condition:</p>
-                    <ul class="list-disc list-inside">
-                        <li>Perhatikan bahwa produk yang ditampilkan mungkin memiliki perbedaan motif dan warna. Mohon untuk konfirmasi ke admin untuk memastikan kesesuaian produk. Tanpa konfirmasi, akan kami kirimkan sesuai stok yang tersedia.</li>
-                        <li>Toleransi ukuran 1-2cm tergantung pada cuttingan.</li>
-                        <li>Komplain atas pembelian produk, Teman Enom diharapkan melakukan video unboxing tanpa putus.</li>
-                    </ul>
-                    <p class="mt-2">#batikenom #enom #batikanakmuda #batikpremium #batikexclusive #batikmodern</p>
+                    {{ product.additional_info|linebreaks }}
                 </div>
             </div>
         </div>
@@ -118,7 +108,7 @@
     function changeMainImage(thumbnail, index) {
         document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('ring-2', 'ring-coklat-1'));
         thumbnail.classList.add('ring-2', 'ring-coklat-1');
-        document.getElementById('mainImage').className = `aspect-[4/3] bg-coklat-${index} rounded-md w-full h-full transition-all duration-300`;
+        document.getElementById('mainImage').className = `relative aspect-[4/3] rounded-md w-full h-full transition-all duration-300`;
     }
 
     function incrementQuantity() {

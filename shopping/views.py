@@ -1,18 +1,26 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Product
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core import serializers
+import json
+from django.shortcuts import render
+from pathlib import Path
 
 def product_list(request):
-    category = request.GET.get('category', 'all')
-    if category == 'all':
-        products = Product.objects.all()
-    else:
-        products = Product.objects.filter(category=category)
-    return render(request, 'shopping/templates/product_list.html', {'products': products, 'selected_category': category})
+    products = Product.objects.all()
+    product_categories = Product.CATEGORY_CHOICES
+    return render(request, 'shopping/templates/product_list.html', {
+        'products': products,
+        'product_categories': product_categories
+    })
 
-# def product_detail(request, product_id):
-#     product = get_object_or_404(Product, id=product_id)
-#     return render(request, 'shopping/templates/product_detail.html', {'product': product})
+def product_detail(request, pk):  # Renamed parameter from 'product_id' to 'pk'
+    product = get_object_or_404(Product, id=pk)  # Updated to use 'pk'
+    return render(request, 'shopping/templates/product_detail.html', {'product': product})
 
-def product_detail(request):
-    # sementara
-    return render(request, 'shopping/templates/product_detail.html')
+def filter_products(request):
+    category = request.GET.get('category')
+    products = Product.objects.filter(category=category) if category else Product.objects.all()
+    data = serializers.serialize('json', products)
+    return HttpResponse(data, content_type='application/json')
+

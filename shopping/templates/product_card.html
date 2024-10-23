@@ -40,13 +40,15 @@
     }
 </style>
 
-<a href="{% url 'product_detail' %}" class="product-card block bg-white border border-coklat-1-rgba rounded-md overflow-hidden hover:shadow-md transition-all duration-300">
-    <div class="aspect-square bg-[#754B0B] m-4"></div>
+<a href="{% url 'product_detail' pk=product.id %}" class="product-card block bg-white border border-coklat-1-rgba rounded-md overflow-hidden hover:shadow-md transition-all duration-300">
+    <div class="relative aspect-square overflow-hidden m-4">
+        <img src="{{ product.image_urls.0 }}" alt="{{ product.product_name }}" class="object-cover w-full h-full">
+    </div>
     <div class="p-4 space-y-2">
-        <span class="inline-block px-2 py-1 text-xs border border-coklat-1-rgba rounded-full text-black">Pakaian Pria</span>
-        <h3 class="text-base font-semibold text-coklat-1">Kemeja batik lengan pendek - Racanapati - mensbatik slimfit - L</h3>
+        <span class="inline-block px-2 py-1 text-xs border border-coklat-1-rgba rounded-full text-black">{{ product.get_category_display }}</span>
+        <h3 class="text-base font-semibold text-coklat-1">{{ product.product_name }}</h3>
         <div class="flex justify-between items-center">
-            <span class="text-lg font-bold text-coklat-2">Rp449.000</span>
+            <span class="text-lg font-bold text-coklat-2">{{ product.price }}</span>
             <button class="like-button focus:outline-none" onclick="event.preventDefault(); likeProduct(this);">
                 <!-- Outline heart -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-outline" viewBox="0 0 24 24" stroke="currentColor" fill="none">
