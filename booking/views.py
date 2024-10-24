@@ -6,9 +6,19 @@ def workshop_detail(request, pk):
     return render(request, 'workshop_detail.html', {'workshop': workshop})
 
 def workshop_list(request):
-    workshops = Workshop.objects.all()  # Ambil semua workshop
+    workshops = [
+        {
+            'id': 1,
+            'name': 'Kampung Batik Jogja Giriloyo',
+            'address': 'Jl. Giriloyo, Karang Kulon, Wukirsari, Kecamatan Imogiri, Kabupaten Bantul',
+            'time': '09.00-16.00',
+            'image_url': 'https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/jogjapos/2024/05/20221122_083254.jpg',
+            'website': 'https://example.com',
+            'map_url': 'https://maps.google.com',
+        },
+    ]
     return render(request, 'booking/workshop_list.html', {'workshops': workshops})
 
 def workshop_product_list(request):
-    # Jika ada produk workshop, tambahkan logika di sini
-    return render(request, 'workshop/workshop_list.html', {})
+    workshops = Workshop.objects.all()  # Misalnya ambil data yang sama dulu
+    return render(request, 'workshop/workshop_list.html', {'workshops': workshops})
