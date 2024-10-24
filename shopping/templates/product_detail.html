@@ -20,6 +20,39 @@
         width: 50px;
         text-align: center;
     }
+    .like-button:hover svg {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 2px rgba(117, 75, 11, 0.5));
+    }
+    .like-button:active svg {
+        transform: scale(0.9);
+    }
+    .like-button svg {
+        transition: all 0.3s ease;
+    }
+    .like-button.liked svg {
+        fill: #754B0B;
+        animation: heartBounce 0.3s ease-in-out;
+    }
+    @keyframes heartBounce {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+    }
+    .thumbnail {
+        opacity: 0.6;
+        transition: opacity 0.3s ease;
+    }
+    .thumbnail:hover, .thumbnail.active {
+        opacity: 1;
+    }
+    #productDescription {
+        max-height: 0;
+        transition: max-height 0.3s ease-out;
+    }
+    #productDescription.open {
+        max-height: 1000px; /* Atur nilai ini sesuai dengan panjang maksimum deskripsi Anda */
+        transition: max-height 0.5s ease-in;
+    }
 </style>
 
 <div class="container mx-auto px-4 py-8 max-w-7xl">
@@ -27,16 +60,16 @@
         <div class="flex flex-row gap-4">
             <!-- Foto Produk -->
             <div class="w-3/5 flex gap-4">
-                <div class="w-1/5 flex flex-col justify-between">
+                <div class="w-1/5 flex flex-col justify-between space-y-2">
                     {% for image_url in product.image_urls|slice:":5" %}
-                    <div class="relative aspect-[4/3] rounded-md cursor-pointer thumbnail" onclick="changeMainImage(this, {{ forloop.counter }})">
+                    <div class="relative aspect-[4/3] rounded-md cursor-pointer thumbnail {% if forloop.first %}active{% endif %}" onclick="changeMainImage('{{ image_url }}', this)">
                         <img src="{{ image_url }}" alt="{{ product.product_name }}" class="object-cover w-full h-full rounded-md">
                     </div>
                     {% endfor %}
                 </div>
                 <div class="w-4/5">
                     <div id="mainImage" class="relative aspect-[4/3] rounded-md w-full h-full">
-                        <img src="{{ product.image_urls.0 }}" alt="{{ product.product_name }}" class="object-cover w-full h-full rounded-md">
+                        <img src="{{ product.image_urls.0 }}" alt="{{ product.product_name }}" class="object-cover w-full h-full rounded-md transition-opacity duration-300">
                     </div>
                 </div>
             </div>
@@ -45,7 +78,7 @@
             <div class="w-2/5 flex flex-col justify-between">
                 <div class="space-y-4">
                     <span class="inline-block px-2 py-1 text-sm border border-coklat-1-rgba rounded-full text-black">{{ product.get_category_display }}</span>
-                    <h2 class="text-2xl font-bold text-coklat-3">{{ product.product_name }}</h2>
+                    <h2 class="text-3xl font-bold text-coklat-3">{{ product.product_name }}</h2>
                     <p class="text-2xl font-bold text-coklat-2">{{ product.price }}</p>
                     <div class="flex items-center">
                         {% for i in '1234'|make_list %}
@@ -67,7 +100,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="space-y-4 mt-auto">
+                <div class="space-y-4 mt-8">
                     <div class="flex items-center space-x-4">
                         <div class="quantity-input flex items-center border border-coklat-1-rgba rounded-md">
                             <button class="text-coklat-1 disabled:opacity-50" onclick="decrementQuantity()" id="decrementBtn">-</button>
@@ -78,11 +111,8 @@
                     <div class="flex space-x-4">
                         <button class="flex-grow py-3 px-4 bg-gradient-coklat text-white rounded-md hover:opacity-90 transition duration-300">Tambahkan ke keranjang</button>
                         <button class="p-2 border border-coklat-1-rgba rounded-md hover:bg-coklat-1-rgba transition duration-300 like-button focus:outline-none" onclick="likeProduct(this)">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-outline" viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1" viewBox="0 0 24 24" stroke="currentColor" fill="none">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                            </svg>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-filled hidden" viewBox="0 0 24 24" fill="currentColor">
-                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L12 8.343l3.172-3.171a4 4 0 115.656 5.656L12 19.657l-8.828-8.829a4 4 0 010-5.656z" clip-rule="evenodd" />
                             </svg>
                         </button>
                     </div>
@@ -93,9 +123,9 @@
         <div class="mt-8 border-t border-coklat-1-rgba pt-6">
             <div class="flex justify-between items-center cursor-pointer" onclick="toggleDescription()">
                 <h3 class="text-xl font-bold text-coklat-2">Deskripsi Produk</h3>
-                <svg id="toggleIcon" class="w-6 h-6 text-coklat-2 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                <svg id="toggleIcon" class="w-6 h-6 text-coklat-2 transform transition-transform duration-300 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             </div>
-            <div id="productDescription" class="mt-4 text-coklat-2 overflow-hidden transition-all duration-300 max-h-0">
+            <div id="productDescription" class="mt-4 text-coklat-2 overflow-hidden transition-all duration-300">
                 <div class="description-content">
                     {{ product.additional_info|linebreaks }}
                 </div>
@@ -105,10 +135,16 @@
 </div>
 
 <script>
-    function changeMainImage(thumbnail, index) {
-        document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('ring-2', 'ring-coklat-1'));
-        thumbnail.classList.add('ring-2', 'ring-coklat-1');
-        document.getElementById('mainImage').className = `relative aspect-[4/3] rounded-md w-full h-full transition-all duration-300`;
+    function changeMainImage(imageUrl, thumbnail) {
+        const mainImage = document.getElementById('mainImage').querySelector('img');
+        mainImage.style.opacity = '0';
+        setTimeout(() => {
+            mainImage.src = imageUrl;
+            mainImage.style.opacity = '1';
+        }, 300);
+
+        document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
+        thumbnail.classList.add('active');
     }
 
     function incrementQuantity() {
@@ -129,8 +165,12 @@
 
     function likeProduct(button) {
         button.classList.toggle('liked');
-        button.querySelector('.heart-outline').classList.toggle('hidden');
-        button.querySelector('.heart-filled').classList.toggle('hidden');
+        const svg = button.querySelector('svg');
+        if (button.classList.contains('liked')) {
+            svg.style.fill = '#754B0B';
+        } else {
+            svg.style.fill = 'none';
+        }
     }
 
     function toggleDescription() {
@@ -138,13 +178,26 @@
         const icon = document.getElementById('toggleIcon');
         const content = description.querySelector('.description-content');
 
-        if (description.style.maxHeight) {
+        if (description.classList.contains('open')) {
             description.style.maxHeight = null;
             icon.classList.remove('rotate-180');
+            description.classList.remove('open');
         } else {
             description.style.maxHeight = content.scrollHeight + "px";
             icon.classList.add('rotate-180');
+            description.classList.add('open');
         }
     }
+
+    // Buka deskripsi secara default
+    window.addEventListener('load', function() {
+        const description = document.getElementById('productDescription');
+        const content = description.querySelector('.description-content');
+        const icon = document.getElementById('toggleIcon');
+        
+        description.style.maxHeight = content.scrollHeight + "px";
+        description.classList.add('open');
+        icon.classList.add('rotate-180');
+    });
 </script>
 {% endblock %}
