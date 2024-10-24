@@ -46,13 +46,13 @@
         <p class="text-coklat-1 font-semibold mb-4 sm:mb-1">Temukan keindahan batik asli Yogyakarta yang kaya makna di sini.</p>
         
         <div class="flex flex-wrap justify-end space-x-2 sm:space-x-4 mb-6 sm:mb-8">
-            <button onclick="filterProducts('pakaian_pria')" class="category-btn px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-full text-coklat-1 border-2 border-coklat-rgba bg-[#f6f6f6] hover:text-gradient-coklat hover:shadow-lg transition-all duration-300 focus:outline-none mb-2 sm:mb-0" data-category="Pakaian Pria">
+            <button onclick="filterProducts('pakaian_pria')" class="category-btn px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-full text-coklat-1 border-2 border-coklat-rgba bg-[#f6f6f6] hover:text-gradient-coklat hover:shadow-lg transition-all duration-300 focus:outline-none mb-2 sm:mb-0 {% if current_category == 'pakaian_pria' %}text-gradient-coklat border-gradient-coklat shadow-lg{% endif %}" data-category="Pakaian Pria">
                 Pakaian Pria
             </button>
-            <button onClick="filterProducts('pakaian_wanita')" class="category-btn px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-full text-coklat-1 border-2 border-coklat-rgba bg-[#f6f6f6] hover:text-gradient-coklat hover:shadow-lg transition-all duration-300 focus:outline-none mb-2 sm:mb-0" data-category="Pakaian Wanita">
+            <button onClick="filterProducts('pakaian_wanita')" class="category-btn px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-full text-coklat-1 border-2 border-coklat-rgba bg-[#f6f6f6] hover:text-gradient-coklat hover:shadow-lg transition-all duration-300 focus:outline-none mb-2 sm:mb-0 {% if current_category == 'pakaian_wanita' %}text-gradient-coklat border-gradient-coklat shadow-lg{% endif %}" data-category="Pakaian Wanita">
                 Pakaian Wanita
             </button>
-            <button onclick="filterProducts('aksesoris')" class="category-btn px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-full text-coklat-1 border-2 border-coklat-rgba bg-[#f6f6f6] hover:text-gradient-coklat hover:shadow-lg transition-all duration-300 focus:outline-none mb-2 sm:mb-0" data-category="Aksesoris">
+            <button onclick="filterProducts('aksesoris')" class="category-btn px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-full text-coklat-1 border-2 border-coklat-rgba bg-[#f6f6f6] hover:text-gradient-coklat hover:shadow-lg transition-all duration-300 focus:outline-none mb-2 sm:mb-0 {% if current_category == 'aksesoris' %}text-gradient-coklat border-gradient-coklat shadow-lg{% endif %}" data-category="Aksesoris">
                 Aksesoris
             </button>
         </div>
@@ -118,6 +118,8 @@ function getCategoryDisplay(category) {
 }
 
 function filterProducts(category) {
+    history.pushState(null, '', `{% url 'product_list' %}?category=${category}`);
+
     fetch(`/shopping/api/products/?category=${category}`)
         .then(response => {
             if (!response.ok) {
@@ -125,10 +127,26 @@ function filterProducts(category) {
             }
             return response.json();
         })
-        .then(data => updateProductsGrid(data))
+        .then(data => {
+            updateProductsGrid(data);
+            updateActiveButton(category);
+        })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
         });
+}
+
+function updateActiveButton(category) {
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.classList.remove('text-gradient-coklat', 'border-gradient-coklat', 'shadow-lg');
+        btn.classList.add('text-coklat-1', 'border-coklat-rgba');
+    });
+
+    const activeButton = document.querySelector(`.category-btn[data-category="${category}"]`);
+    if (activeButton) {
+        activeButton.classList.remove('text-coklat-1', 'border-coklat-rgba');
+        activeButton.classList.add('text-gradient-coklat', 'border-gradient-coklat', 'shadow-lg');
+    }
 }
 
 function likeProduct(button) {

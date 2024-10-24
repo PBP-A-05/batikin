@@ -7,11 +7,16 @@ from django.shortcuts import render
 from pathlib import Path
 
 def product_list(request):
-    products = Product.objects.all()
+    category = request.GET.get('category', 'all')
+    if category == 'all':
+        products = Product.objects.all()
+    else:
+        products = Product.objects.filter(category=category)
     product_categories = Product.CATEGORY_CHOICES
     return render(request, 'shopping/templates/product_list.html', {
         'products': products,
-        'product_categories': product_categories
+        'product_categories': product_categories,
+        'current_category': category
     })
 
 def product_detail(request, pk):  # Renamed parameter from 'product_id' to 'pk'
