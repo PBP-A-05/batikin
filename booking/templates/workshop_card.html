@@ -1,0 +1,61 @@
+<style>
+    .workshop-card {
+        transition: all 0.3s ease;
+    }
+    .workshop-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .workshop-card:active {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .like-button:hover svg {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 2px rgba(117, 75, 11, 0.5));
+    }
+    .like-button:active svg {
+        transform: scale(0.9);
+    }
+    .like-button svg {
+        transition: all 0.3s ease;
+    }
+    .like-button.liked svg {
+        fill: #754B0B;
+        animation: heartBounce 0.3s ease-in-out;
+    }
+    @keyframes heartBounce {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+    }
+</style>
+
+<div class="min-h-screen py-20">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <div class="flex items-center justify-between mb-2 sm:mb-1">
+            <h1 class="text-2xl sm:text-3xl font-bold text-coklat-2">Workshop Batik</h1>
+            <div class="flex-grow border-b border-coklat-1-rgba ml-4"></div>
+        </div>
+        
+        <p class="text-coklat-1 font-semibold mb-4 sm:mb-8">Jelajahi desa-desa batik Yogyakarta dan pelajari seni batik langsung dari sumbernya.</p>
+        
+        <div id="workshopsGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {% for workshop in workshops %}
+                {% include "workshop_card.html" with workshop=workshop %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+function likeWorkshop(button) {
+    button.classList.toggle('liked');
+    const svg = button.querySelector('svg');
+    if (button.classList.contains('liked')) {
+        svg.style.fill = '#754B0B';
+    } else {
+        svg.style.fill = 'none';
+    }
+}
+</script>
+{% endblock %}
