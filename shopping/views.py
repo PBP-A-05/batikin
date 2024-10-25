@@ -24,3 +24,22 @@ def filter_products(request):
     data = serializers.serialize('json', products)
     return HttpResponse(data, content_type='application/json')
 
+from django.http import JsonResponse
+from .models import Product
+from django.views.decorators.http import require_POST
+from wishlist.models import Wishlist
+
+@require_POST
+def like_product(request):
+    data = json.loads(request.body)
+    product_id = data.get('product_id')
+    product = Product.objects.get(id=product_id)
+    user = request.user
+
+    product.like(user)
+
+    wishlist_count = Wishlist.objects.filter(user=user).count()
+
+    return JsonResponse({'success': True, 'wishlist_count': wishlist_count})
+
+

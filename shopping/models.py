@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django.contrib.auth.models import User
 
 class Product(models.Model):
     CATEGORY_CHOICES = [
@@ -21,3 +22,4 @@ class Product(models.Model):
 
     def __str__(self):
         return self.product_name
+    
