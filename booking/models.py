@@ -7,9 +7,10 @@ class Workshop(models.Model):
     title = models.CharField(max_length=100)
     location = models.CharField(max_length=200)
     description = models.TextField()
+    open_time = models.CharField(max_length=50, default='')
     schedule = models.CharField(max_length=50)
     rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.0)
-    image = models.ImageField(upload_to='workshops/', null=True, blank=True)
+    image_urls = models.TextField(default='')
 
     def __str__(self):
         return self.title
