@@ -241,6 +241,8 @@ function addToCart() {
     .then(response => response.json())
     .then(data => {
         alert(data.message);
+        document.getElementById('quantity').value = '1';
+        document.getElementById('decrementBtn').disabled = true;
     })
     .catch(error => {
         console.error('Error:', error);
