@@ -23,5 +23,6 @@ urlpatterns = [
     path('account/', include('user_profile.urls')),  # Include user_profile URLs
     path('login/', login_view, name='login'),
     path('register/', register_view, name='register'),
-    path('shopping/', include('shopping.urls')),  
+    path('shopping/', include('shopping.urls')),
+    path('review/', include('comment_review.urls')),
 ]
