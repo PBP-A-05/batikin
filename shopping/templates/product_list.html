@@ -46,13 +46,13 @@
         <p class="text-coklat-1 font-semibold mb-4 sm:mb-1">Temukan keindahan batik asli Yogyakarta yang kaya makna di sini.</p>
         
         <div class="flex flex-wrap justify-end space-x-2 sm:space-x-4 mb-6 sm:mb-8">
-            <button onclick="filterProducts('pakaian_pria')" class="category-btn px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-full text-coklat-1 border-2 border-coklat-rgba bg-[#f6f6f6] hover:text-gradient-coklat hover:shadow-lg transition-all duration-300 focus:outline-none mb-2 sm:mb-0 {% if current_category == 'pakaian_pria' %}text-gradient-coklat border-gradient-coklat shadow-lg{% endif %}" data-category="Pakaian Pria">
+            <button onclick="filterProducts('pakaian_pria')" class="category-btn px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-full text-coklat-1 border-2 border-coklat-rgba bg-[#f6f6f6] hover:text-gradient-coklat hover:shadow-lg transition-all duration-300 focus:outline-none mb-2 sm:mb-0 {% if current_category == 'pakaian_pria' %}text-gradient-coklat border-gradient-coklat shadow-lg{% endif %}" data-category="pakaian_pria">
                 Pakaian Pria
             </button>
-            <button onClick="filterProducts('pakaian_wanita')" class="category-btn px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-full text-coklat-1 border-2 border-coklat-rgba bg-[#f6f6f6] hover:text-gradient-coklat hover:shadow-lg transition-all duration-300 focus:outline-none mb-2 sm:mb-0 {% if current_category == 'pakaian_wanita' %}text-gradient-coklat border-gradient-coklat shadow-lg{% endif %}" data-category="Pakaian Wanita">
+            <button onclick="filterProducts('pakaian_wanita')" class="category-btn px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-full text-coklat-1 border-2 border-coklat-rgba bg-[#f6f6f6] hover:text-gradient-coklat hover:shadow-lg transition-all duration-300 focus:outline-none mb-2 sm:mb-0 {% if current_category == 'pakaian_wanita' %}text-gradient-coklat border-gradient-coklat shadow-lg{% endif %}" data-category="pakaian_wanita">
                 Pakaian Wanita
             </button>
-            <button onclick="filterProducts('aksesoris')" class="category-btn px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-full text-coklat-1 border-2 border-coklat-rgba bg-[#f6f6f6] hover:text-gradient-coklat hover:shadow-lg transition-all duration-300 focus:outline-none mb-2 sm:mb-0 {% if current_category == 'aksesoris' %}text-gradient-coklat border-gradient-coklat shadow-lg{% endif %}" data-category="Aksesoris">
+            <button onclick="filterProducts('aksesoris')" class="category-btn px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-full text-coklat-1 border-2 border-coklat-rgba bg-[#f6f6f6] hover:text-gradient-coklat hover:shadow-lg transition-all duration-300 focus:outline-none mb-2 sm:mb-0 {% if current_category == 'aksesoris' %}text-gradient-coklat border-gradient-coklat shadow-lg{% endif %}" data-category="aksesoris">
                 Aksesoris
             </button>
         </div>
@@ -65,98 +65,117 @@
     </div>
 </div>
 
+
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const buttons = document.querySelectorAll('.category-btn');
-    buttons.forEach(button => {
-        button.addEventListener('click', function() {
-            buttons.forEach(btn => {
-                btn.classList.remove('text-gradient-coklat', 'border-gradient-coklat', 'shadow-lg');
-                btn.classList.add('text-coklat-1', 'border-coklat-rgba');
-            });
-            this.classList.remove('text-coklat-1', 'border-coklat-rgba');
-            this.classList.add('text-gradient-coklat', 'border-gradient-coklat', 'shadow-lg');
-        });
-    });
+    attachProductCardListeners();
 });
 
-function updateProductsGrid(data) {
-    const productsGrid = document.getElementById('productsGrid');
-    productsGrid.innerHTML = '';
-    data.forEach(product => {
-        const productHtml = `
-        <a href="/shopping/${product.pk}/" class="product-card block bg-white border border-coklat-1-rgba rounded-md overflow-hidden hover:shadow-md transition-all duration-300">
-            <div class="relative aspect-square overflow-hidden m-4">
-                <img src="${product.fields.image_urls[0]}" alt="${product.fields.product_name}" class="object-cover w-full h-full">
-            </div>
-            <div class="p-4 space-y-2">
-                <span class="inline-block px-2 py-1 text-xs border border-coklat-1-rgba rounded-full text-black">${getCategoryDisplay(product.fields.category)}</span>
-                <h3 class="text-base font-semibold text-coklat-1">${product.fields.product_name}</h3>
-                <div class="flex justify-between items-center">
-                    <span class="text-lg font-bold text-coklat-2">${product.fields.price}</span>
-                    <button class="like-button focus:outline-none" onclick="event.preventDefault(); likeProduct(this);">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1" viewBox="0 0 24 24" stroke="currentColor" fill="none">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </a>
-        `;
-        productsGrid.innerHTML += productHtml;
-    });
-}
-
-function getCategoryDisplay(category) {
-    const categoryMap = {
-        'pakaian_pria': 'Pakaian Pria',
-        'pakaian_wanita': 'Pakaian Wanita',
-        'aksesoris': 'Aksesoris',
-        'workshop': 'Workshop'
-    };
-    return categoryMap[category] || category;
-}
-
 function filterProducts(category) {
-    history.pushState(null, '', `{% url 'product_list' %}?category=${category}`);
-
-    fetch(`/shopping/api/products/?category=${category}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
+    fetch(`/shopping/products/?category=${category}`)
+        .then(response => response.json())
         .then(data => {
             updateProductsGrid(data);
             updateActiveButton(category);
         })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
+        .catch(error => console.error('Error:', error));
+}
+
+function updateProductsGrid(products) {
+    const productsGrid = document.getElementById('productsGrid');
+    productsGrid.innerHTML = '';
+    products.forEach(product => {
+        const isInWishlist = localStorage.getItem(`wishlist_${product.id}`) === 'true';
+        const productCard = document.createElement('div');
+        productCard.innerHTML = `
+            <div class="product-card block bg-white border border-coklat-1-rgba rounded-md overflow-hidden hover:shadow-md transition-all duration-300" data-product-id="${product.id}">
+                <div class="relative aspect-square overflow-hidden m-4">
+                    <img src="${product.image_urls[0]}" alt="${product.product_name}" class="object-cover w-full h-full">
+                </div>
+                <div class="p-4 space-y-2">
+                    <span class="inline-block px-2 py-1 text-xs border border-coklat-1-rgba rounded-full text-black">${product.category_display}</span>
+                    <h3 class="text-base font-semibold text-coklat-1">${product.product_name}</h3>
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg font-bold text-coklat-2">${product.price}</span>
+                        <button class="like-button focus:outline-none ${isInWishlist ? 'liked' : ''}" onclick="event.stopPropagation(); addToWishlist('${product.id}', this);">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1" viewBox="0 0 24 24" stroke="currentColor" fill="${isInWishlist ? '#754B0B' : 'none'}">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        productsGrid.appendChild(productCard);
+    });
+
+    attachProductCardListeners();
+}
+
+function attachProductCardListeners() {
+    document.querySelectorAll('.product-card').forEach(card => {
+        card.addEventListener('click', function(event) {
+            if (!event.target.closest('.like-button')) {
+                event.preventDefault();
+                const productId = this.dataset.productId;
+                fetch(`/shopping/${productId}/check/`)
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.href = `/shopping/${productId}/`;
+                        } else if (response.status === 403) {
+                            showPopupMessage('Masuk ke Batikin untuk melihat detail produk!');
+                            setTimeout(() => {
+                                window.location.href = '{% url "login" %}';
+                            }, 2000);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
         });
+    });
 }
 
 function updateActiveButton(category) {
     document.querySelectorAll('.category-btn').forEach(btn => {
-        btn.classList.remove('text-gradient-coklat', 'border-gradient-coklat', 'shadow-lg');
-        btn.classList.add('text-coklat-1', 'border-coklat-rgba');
+        if (btn.dataset.category.toLowerCase() === category.toLowerCase()) {
+            btn.classList.add('text-gradient-coklat', 'border-gradient-coklat', 'shadow-lg');
+            btn.classList.remove('text-coklat-1', 'border-coklat-rgba');
+        } else {
+            btn.classList.remove('text-gradient-coklat', 'border-gradient-coklat', 'shadow-lg');
+            btn.classList.add('text-coklat-1', 'border-coklat-rgba');
+        }
     });
-
-    const activeButton = document.querySelector(`.category-btn[data-category="${category}"]`);
-    if (activeButton) {
-        activeButton.classList.remove('text-coklat-1', 'border-coklat-rgba');
-        activeButton.classList.add('text-gradient-coklat', 'border-gradient-coklat', 'shadow-lg');
-    }
 }
 
-function likeProduct(button) {
-    button.classList.toggle('liked');
-    const svg = button.querySelector('svg');
-    if (button.classList.contains('liked')) {
-        svg.style.fill = '#754B0B';
-    } else {
-        svg.style.fill = 'none';
-    }
+function addToWishlist(productId, button) {
+    fetch(`/shopping/wishlist/add/${productId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        if (data.status === 'added') {
+            button.querySelector('svg').style.fill = '#754B0B';
+            button.classList.add('liked');
+        } else if (data.status === 'removed') {
+            button.querySelector('svg').style.fill = 'none';
+            button.classList.remove('liked');
+        }
+        localStorage.setItem(`wishlist_${productId}`, data.status === 'added' ? 'true' : 'false');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Masuk ke Batikin untuk menambahkan produk ke wishlist!');
+        window.location.href = '{% url "login" %}';
+    });
 }
+
+
 </script>
 {% endblock %}

@@ -109,9 +109,9 @@
                         </div>
                     </div>
                     <div class="flex space-x-4">
-                        <button class="flex-grow py-3 px-4 bg-gradient-coklat text-white rounded-md hover:opacity-90 transition duration-300">Tambahkan ke keranjang</button>
-                        <button class="p-2 border border-coklat-1-rgba rounded-md hover:bg-coklat-1-rgba transition duration-300 like-button focus:outline-none" onclick="likeProduct(this)">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1" viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                        <button onclick="addToCart()" class="flex-grow py-3 px-4 bg-gradient-coklat text-white rounded-md hover:opacity-90 transition duration-300">Tambahkan ke keranjang</button>
+                        <button id="likeButton" class="p-2 border border-coklat-1-rgba rounded-md hover:bg-coklat-1-rgba transition duration-300 like-button focus:outline-none" onclick="toggleWishlist()">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1" viewBox="0 0 24 24" stroke="currentColor" fill="{% if is_in_wishlist %}#754B0B{% else %}none{% endif %}">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                             </svg>
                         </button>
@@ -135,6 +135,7 @@
 </div>
 
 <script>
+    
     function changeMainImage(imageUrl, thumbnail) {
         const mainImage = document.getElementById('mainImage').querySelector('img');
         mainImage.style.opacity = '0';
@@ -163,16 +164,6 @@
         }
     }
 
-    function likeProduct(button) {
-        button.classList.toggle('liked');
-        const svg = button.querySelector('svg');
-        if (button.classList.contains('liked')) {
-            svg.style.fill = '#754B0B';
-        } else {
-            svg.style.fill = 'none';
-        }
-    }
-
     function toggleDescription() {
         const description = document.getElementById('productDescription');
         const icon = document.getElementById('toggleIcon');
@@ -187,6 +178,62 @@
             icon.classList.add('rotate-180');
             description.classList.add('open');
         }
+    }
+
+    function toggleWishlist() {
+        fetch(`/shopping/wishlist/add/{{ product.id }}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            const likeButton = document.getElementById('likeButton');
+            const svg = likeButton.querySelector('svg');
+            if (data.status === 'added') {
+                svg.style.fill = '#754B0B';
+                likeButton.classList.add('liked');
+            } else {
+                svg.style.fill = 'none';
+                likeButton.classList.remove('liked');
+            }
+            // Update localStorage to sync with product list
+            localStorage.setItem('wishlist_{{ product.id }}', data.status === 'added' ? 'true' : 'false');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat menambahkan ke wishlist.');
+        });
+    }
+
+    function addToCart() {
+        const quantity = document.getElementById('quantity').value;
+        fetch(`/shopping/cart/add/{{ product.id }}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ quantity: quantity })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat menambahkan ke keranjang.');
+        });
+    }
+
+    // Inisialisasi status wishlist
+    const likeButton = document.getElementById('likeButton');
+    const svg = likeButton.querySelector('svg');
+    if ({{ is_in_wishlist|yesno:"true,false" }}) {
+        svg.style.fill = '#754B0B';
+        likeButton.classList.add('liked');
     }
 
     window.addEventListener('load', function() {
