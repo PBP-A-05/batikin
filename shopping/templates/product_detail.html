@@ -53,6 +53,14 @@
         max-height: 1000px; 
         transition: max-height 0.5s ease-in;
     }
+    @keyframes popupBounce {
+        0% { transform: scale(0.5); opacity: 0; }
+        60% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    #customPopup {
+        animation: popupBounce 0.5s ease-out;
+    }
 </style>
 
 <div class="container mx-auto px-4 py-8 max-w-7xl">
@@ -129,6 +137,13 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div id="customPopup" class="fixed bottom-8 left-8 bg-white border border-coklat-1 rounded-md p-4 shadow-md hidden z-50 w-80">
+    <p id="popupMessage" class="text-coklat-2 font-poppins mb-3"></p>
+    <div class="flex justify-end">
+      <button onclick="closePopup()" class="bg-gradient-coklat text-white px-6 py-1 rounded-md hover:opacity-90 transition duration-300 text-sm">Tutup</button>
     </div>
 </div>
 
@@ -209,7 +224,7 @@ function toggleWishlist() {
     })
     .then(response => response.json())
     .then(data => {
-        alert(data.message);
+        showPopup(data.message);
         const likeButton = document.getElementById('likeButton');
         const svg = likeButton.querySelector('svg');
         if (data.status === 'added') {
@@ -224,7 +239,7 @@ function toggleWishlist() {
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Terjadi kesalahan saat menambahkan ke wishlist.');
+        showPopup('Terjadi kesalahan saat menambahkan ke wishlist.');
     });
 }
 
@@ -240,18 +255,36 @@ function addToCart() {
     })
     .then(response => response.json())
     .then(data => {
-        alert(data.message);
+        showPopup(data.message);
         document.getElementById('quantity').value = '1';
         document.getElementById('decrementBtn').disabled = true;
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Terjadi kesalahan saat menambahkan ke keranjang.');
+        showPopup('Terjadi kesalahan saat menambahkan ke keranjang.');
     });
 }
 
 function updateLocalStorage(productId, status) {
     localStorage.setItem(`wishlist_${productId}`, status);
+}
+
+function showPopup(message) {
+    const popup = document.getElementById('customPopup');
+    const popupMessage = document.getElementById('popupMessage');
+    popupMessage.textContent = message;
+    popup.style.animation = 'none';
+    popup.offsetHeight; 
+    popup.style.animation = null;
+    popup.classList.remove('hidden');
+    setTimeout(() => {
+        closePopup();
+    }, 3000); 
+}
+
+function closePopup() {
+    const popup = document.getElementById('customPopup');
+    popup.classList.add('hidden');
 }
 </script>
 {% endblock %}
