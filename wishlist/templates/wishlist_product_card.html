@@ -1,0 +1,35 @@
+<div class="product-card border border-[#D8CDB3] rounded-lg p-4 hover:shadow-md transition-all duration-300">
+    <!-- Product Image -->
+    <div class="relative aspect-square overflow-hidden m-4">
+        <img src="{{ product.image_urls.0 }}" alt="{{ product.product_name }}" class="object-cover w-full h-full">
+    </div>
+
+    <!-- Product Details -->
+    <div class="p-4 space-y-2">
+        <!-- Category -->
+        <span class="inline-block px-2 py-1 text-xs border border-gradient-coklat rounded-full text-black">
+            {{ product.get_category_display }}
+        </span>
+
+        <!-- Product Name -->
+        <h3 class="text-base font-semibold text-[#4C3108]">{{ product.product_name }}</h3>
+
+        <!-- Price and Remove Button -->
+        <div class="flex justify-between items-center">
+            <!-- Price -->
+            <span class="text-lg font-bold text-[#754B0B]">{{ product.price }}</span>
+
+            <!-- Remove from Wishlist Button -->
+            <button class="remove-btn" onclick="removeFromWishlist({{ product.id }})">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#754B0B]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Add to Cart Button -->
+    <button class="add-to-cart-btn bg-[#754B0B] text-white rounded-lg w-full py-2 mt-2 hover:bg-[#5C3708]" onclick="addToCart({{ product.id }})">
+        Tambahkan Ke Keranjang
+    </button>
+</div>

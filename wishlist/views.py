@@ -1,43 +1,27 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
-from shopping.models import Product
-from .models import Wishlist
-from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from shopping.views import add_to_wishlist  
+from shopping.models import Product, Wishlist  
 
+@login_required
+def wishlist_view(request):
+    wishlist_items = Wishlist.objects.filter(user=request.user).select_related('product')
+    wishlist_count = wishlist_items.count()
 
-def view_wishlist(request):
-    wishlist, _ = Wishlist.objects.get_or_create(user=request.user)
-    products = wishlist.products.all()
-    product_count = products.count()  
-
-    return render(request, 'wishlist/wishlist.html', {
-        'products': products,
-        'product_count': product_count
+    return render(request, 'wishlist/templates/wishlist_view.html', {
+        'wishlist_items': wishlist_items,
+        'wishlist_count': wishlist_count,
     })
 
 
-@csrf_exempt
-def add_to_wishlist(request, pk):
-    product = get_object_or_404(Product, id=pk)
-    wishlist, created = Wishlist.objects.get_or_create(user=request.user)
-    wishlist.products.add(product)
-
-    # Debugging print
-    print(f"Added {product.name} to wishlist for user {request.user.username}")
-
-    return JsonResponse({'status': 'added'})
+@login_required
+def add_to_wishlist_from_wishlist_app(request, product_id):
+    return add_to_wishlist(request, product_id)
 
 
-@csrf_exempt
-def remove_from_wishlist(request, pk):
-    product = get_object_or_404(Product, id=pk)
-    wishlist = Wishlist.objects.get(user=request.user)
-    wishlist.products.remove(product)
-    return JsonResponse({'status': 'removed'})
+@login_required
+def remove_from_wishlist(request, product_id):
 
-def wishlist_count(request):
-    if request.user.is_authenticated:
-        wishlist, _ = Wishlist.objects.get_or_create(user=request.user)
-        return JsonResponse({'count': wishlist.products.count()})
-    return JsonResponse({'count': 0})
-
+    wishlist_item = get_object_or_404(Wishlist, user=request.user, product_id=product_id)
+    wishlist_item.delete()
+    return redirect('wishlist_view')
