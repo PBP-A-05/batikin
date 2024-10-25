@@ -30,7 +30,7 @@
     }
 </style>
 
-<a href="{% url 'workshop_detail' pk=workshop.id %}" class="workshop-card block bg-white border border-coklat-1-rgba rounded-md overflow-hidden hover:shadow-md transition-all duration-300">
+<a href="{% url 'workshop_detail' pk=workshop.pk %}" class="workshop-card block bg-white border border-coklat-1-rgba rounded-md overflow-hidden hover:shadow-md transition-all duration-300">
     <div class="relative aspect-square overflow-hidden m-4">
         <img src="{{ workshop.image_url }}" alt="{{ workshop.name }}" class="object-cover w-full h-full">
     </div>

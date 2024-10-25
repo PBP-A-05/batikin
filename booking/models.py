@@ -1,13 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
+import uuid
 
 class Workshop(models.Model):
-    title = models.CharField(max_length=100)  # Nama workshop
-    location = models.CharField(max_length=200)  # Lokasi workshop
-    description = models.TextField()  # Deskripsi workshop
-    schedule = models.CharField(max_length=50)  # Jadwal waktu
-    rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.0)  # Rating workshop
-    image = models.ImageField(upload_to='workshops/', null=True, blank=True)  # Gambar workshop
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    title = models.CharField(max_length=100)
+    location = models.CharField(max_length=200)
+    description = models.TextField()
+    schedule = models.CharField(max_length=50)
+    rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.0)
+    image = models.ImageField(upload_to='workshops/', null=True, blank=True)
 
     def __str__(self):
         return self.title
