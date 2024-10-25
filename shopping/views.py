@@ -12,14 +12,15 @@ def product_list(request):
         products = Product.objects.filter(category=category)
     product_categories = Product.CATEGORY_CHOICES
     
+    wishlist_products = []
     if request.user.is_authenticated:
-        for product in products:
-            product.is_in_wishlist = Wishlist.objects.filter(user=request.user, product=product).exists()
+        wishlist_products = Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True)
     
     return render(request, 'shopping/templates/product_list.html', {
         'products': products,
         'product_categories': product_categories,
-        'current_category': category
+        'current_category': category,
+        'wishlist_products': list(map(str, wishlist_products))  
     })
 
 @login_required

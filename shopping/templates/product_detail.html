@@ -58,7 +58,6 @@
 <div class="container mx-auto px-4 py-8 max-w-7xl">
     <div class="bg-white border border-coklat-1-rgba rounded-md p-6">
         <div class="flex flex-row gap-4">
-            <!-- Foto Produk -->
             <div class="w-3/5 flex gap-4">
                 <div class="w-1/5 flex flex-col justify-between space-y-2">
                     {% for image_url in product.image_urls|slice:":5" %}
@@ -74,7 +73,6 @@
                 </div>
             </div>
             
-            <!-- Detail Produk -->
             <div class="w-2/5 flex flex-col justify-between">
                 <div class="space-y-4">
                     <span class="inline-block px-2 py-1 text-sm border border-coklat-1-rgba rounded-full text-black">{{ product.get_category_display }}</span>
@@ -135,115 +133,123 @@
 </div>
 
 <script>
-    
-    function changeMainImage(imageUrl, thumbnail) {
-        const mainImage = document.getElementById('mainImage').querySelector('img');
-        mainImage.style.opacity = '0';
-        setTimeout(() => {
-            mainImage.src = imageUrl;
-            mainImage.style.opacity = '1';
-        }, 300);
-
-        document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
-        thumbnail.classList.add('active');
-    }
-
-    function incrementQuantity() {
-        const input = document.getElementById('quantity');
-        input.value = parseInt(input.value) + 1;
-        document.getElementById('decrementBtn').disabled = false;
-    }
-
-    function decrementQuantity() {
-        const input = document.getElementById('quantity');
-        if (parseInt(input.value) > 1) {
-            input.value = parseInt(input.value) - 1;
-        }
-        if (parseInt(input.value) === 1) {
-            document.getElementById('decrementBtn').disabled = true;
-        }
-    }
-
-    function toggleDescription() {
-        const description = document.getElementById('productDescription');
-        const icon = document.getElementById('toggleIcon');
-        const content = description.querySelector('.description-content');
-
-        if (description.classList.contains('open')) {
-            description.style.maxHeight = null;
-            icon.classList.remove('rotate-180');
-            description.classList.remove('open');
-        } else {
-            description.style.maxHeight = content.scrollHeight + "px";
-            icon.classList.add('rotate-180');
-            description.classList.add('open');
-        }
-    }
-
-    function toggleWishlist() {
-        fetch(`/shopping/wishlist/add/{{ product.id }}/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-            const likeButton = document.getElementById('likeButton');
-            const svg = likeButton.querySelector('svg');
-            if (data.status === 'added') {
-                svg.style.fill = '#754B0B';
-                likeButton.classList.add('liked');
-            } else {
-                svg.style.fill = 'none';
-                likeButton.classList.remove('liked');
-            }
-            // Update localStorage to sync with product list
-            localStorage.setItem('wishlist_{{ product.id }}', data.status === 'added' ? 'true' : 'false');
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat menambahkan ke wishlist.');
-        });
-    }
-
-    function addToCart() {
-        const quantity = document.getElementById('quantity').value;
-        fetch(`/shopping/cart/add/{{ product.id }}/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ quantity: quantity })
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat menambahkan ke keranjang.');
-        });
-    }
-
-    // Inisialisasi status wishlist
+window.addEventListener('load', function() {
     const likeButton = document.getElementById('likeButton');
     const svg = likeButton.querySelector('svg');
-    if ({{ is_in_wishlist|yesno:"true,false" }}) {
+    const isInWishlist = localStorage.getItem('wishlist_{{ product.id }}') === 'true' || {{ is_in_wishlist|yesno:"true,false" }};
+    if (isInWishlist) {
         svg.style.fill = '#754B0B';
         likeButton.classList.add('liked');
+        localStorage.setItem('wishlist_{{ product.id }}', 'true');
+    } else {
+        svg.style.fill = 'none';
+        likeButton.classList.remove('liked');
+        localStorage.setItem('wishlist_{{ product.id }}', 'false');
     }
 
-    window.addEventListener('load', function() {
-        const description = document.getElementById('productDescription');
-        const content = description.querySelector('.description-content');
-        const icon = document.getElementById('toggleIcon');
-        
+    const description = document.getElementById('productDescription');
+    const content = description.querySelector('.description-content');
+    const icon = document.getElementById('toggleIcon');
+    
+    description.style.maxHeight = content.scrollHeight + "px";
+    description.classList.add('open');
+    icon.classList.add('rotate-180');
+});
+
+function changeMainImage(imageUrl, thumbnail) {
+    const mainImage = document.getElementById('mainImage').querySelector('img');
+    mainImage.style.opacity = '0';
+    setTimeout(() => {
+        mainImage.src = imageUrl;
+        mainImage.style.opacity = '1';
+    }, 300);
+
+    document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
+    thumbnail.classList.add('active');
+}
+
+function incrementQuantity() {
+    const input = document.getElementById('quantity');
+    input.value = parseInt(input.value) + 1;
+    document.getElementById('decrementBtn').disabled = false;
+}
+
+function decrementQuantity() {
+    const input = document.getElementById('quantity');
+    if (parseInt(input.value) > 1) {
+        input.value = parseInt(input.value) - 1;
+    }
+    if (parseInt(input.value) === 1) {
+        document.getElementById('decrementBtn').disabled = true;
+    }
+}
+
+function toggleDescription() {
+    const description = document.getElementById('productDescription');
+    const icon = document.getElementById('toggleIcon');
+    const content = description.querySelector('.description-content');
+
+    if (description.classList.contains('open')) {
+        description.style.maxHeight = null;
+        icon.classList.remove('rotate-180');
+        description.classList.remove('open');
+    } else {
         description.style.maxHeight = content.scrollHeight + "px";
-        description.classList.add('open');
         icon.classList.add('rotate-180');
+        description.classList.add('open');
+    }
+}
+
+function toggleWishlist() {
+    fetch(`/shopping/wishlist/add/{{ product.id }}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        const likeButton = document.getElementById('likeButton');
+        const svg = likeButton.querySelector('svg');
+        if (data.status === 'added') {
+            svg.style.fill = '#754B0B';
+            likeButton.classList.add('liked');
+            updateLocalStorage('{{ product.id }}', 'true');
+        } else {
+            svg.style.fill = 'none';
+            likeButton.classList.remove('liked');
+            updateLocalStorage('{{ product.id }}', 'false');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat menambahkan ke wishlist.');
     });
+}
+
+function addToCart() {
+    const quantity = document.getElementById('quantity').value;
+    fetch(`/shopping/cart/add/{{ product.id }}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ quantity: quantity })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat menambahkan ke keranjang.');
+    });
+}
+
+function updateLocalStorage(productId, status) {
+    localStorage.setItem(`wishlist_${productId}`, status);
+}
 </script>
 {% endblock %}
