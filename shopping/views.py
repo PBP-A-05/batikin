@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Product, Wishlist, Cart
+from .models import Product
+from wishlist.models import Wishlist
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden
 import json
 
@@ -52,54 +53,6 @@ def filter_products(request):
     ]
     return JsonResponse(data, safe=False)
 
-@login_required
-def add_to_wishlist(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    wishlist, created = Wishlist.objects.get_or_create(user=request.user, product=product)
-    
-    if created:
-        message = 'Produk ditambahkan ke wishlist!'
-        status = 'added'
-    else:
-        Wishlist.objects.filter(user=request.user, product=product).delete()
-        message = 'Produk dihapus dari wishlist!'
-        status = 'removed'
-    
-    return JsonResponse({'message': message, 'status': status})
 
-@login_required
-def add_to_cart(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    data = json.loads(request.body)
-    quantity = int(data.get('quantity', 1))
-    cart_item, created = Cart.objects.get_or_create(user=request.user, product=product)
-    
-    if not created:
-        cart_item.quantity += quantity
-        cart_item.save()
-    else:
-        cart_item.quantity = quantity
-        cart_item.save()
-    
-    message = f'{quantity} produk berhasil dimasukkan ke keranjang!'
-    return JsonResponse({'message': message})
-
-from django.http import JsonResponse
-from .models import Product
-from django.views.decorators.http import require_POST
-from wishlist.models import Wishlist
-
-@require_POST
-def like_product(request):
-    data = json.loads(request.body)
-    product_id = data.get('product_id')
-    product = Product.objects.get(id=product_id)
-    user = request.user
-
-    product.like(user)
-
-    wishlist_count = Wishlist.objects.filter(user=user).count()
-
-    return JsonResponse({'success': True, 'wishlist_count': wishlist_count})
 
 
