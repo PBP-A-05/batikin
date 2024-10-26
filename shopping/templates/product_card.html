@@ -1,64 +1,4 @@
-<style>
-    .like-button:hover svg {
-        transform: scale(1.1);
-        filter: drop-shadow(0 0 2px rgba(117, 75, 11, 0.5));
-    }
-
-    .like-button:active svg {
-        transform: scale(0.9);
-    }
-
-    .like-button svg {
-        transition: all 0.3s ease;
-    }
-
-    .like-button .heart-filled {
-        display: none;
-    }
-
-    .like-button.liked .heart-outline {
-        display: none;
-    }
-
-    .like-button.liked .heart-filled {
-        display: block;
-        fill: #754B0B; 
-    }
-    .product-card {
-        transition: all 0.3s ease;
-    }
-
-    .product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .product-card:active {
-        transform: translateY(-2px);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .border-gradient-coklat {
-    position: relative;
-}
-
-  .border-gradient-coklat::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50px; 
-    padding: 1px; 
-    background: linear-gradient(90deg, #754B0B 0%, #DB8C15 100%);
-    -webkit-mask: 
-      linear-gradient(#fff 0 0) content-box, 
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-            mask-composite: exclude; 
-
-  }
-</style>
-
-<a href="{% url 'product_detail' pk=product.id %}" class="product-card block bg-white border border-coklat-1-rgba rounded-md overflow-hidden hover:shadow-md transition-all duration-300">
+<div class="product-card block bg-white border border-coklat-1-rgba rounded-md overflow-hidden hover:shadow-md transition-all duration-300" data-product-id="{{ product.id }}">
     <div class="relative aspect-square overflow-hidden m-4">
         <img src="{{ product.image_urls.0 }}" alt="{{ product.product_name }}" class="object-cover w-full h-full">
     </div>
@@ -67,9 +7,8 @@
         <h3 class="text-base font-semibold text-coklat-1">{{ product.product_name }}</h3>
         <div class="flex justify-between items-center">
             <span class="text-lg font-bold text-coklat-2">{{ product.price }}</span>
-            <button class="like-button focus:outline-none" onclick="event.preventDefault(); likeProduct(this);">
-                <!-- Outline heart -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-outline" viewBox="0 0 24 24" stroke="currentColor" fill="none">
+            <button class="like-button focus:outline-none" onclick="event.stopPropagation(); addToWishlist('{{ product.id }}', this);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1" viewBox="0 0 24 24" stroke="currentColor" fill="none">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
                 <!-- Filled heart -->
@@ -80,10 +19,4 @@
             </button>
         </div>
     </div>
-</a>
-
-<script>
-    function likeProduct(button) {
-        button.classList.toggle('liked');
-    }
-</script>
+</div>

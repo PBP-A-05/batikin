@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'shopping',
     'wishlist',
     'django_extensions',
+    'booking'
+
 ]
 
 MIDDLEWARE = [

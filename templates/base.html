@@ -23,7 +23,7 @@
 </head>
 <body class="bg-[#f6f6f6] w-full h-full">
     <!-- Navbar -->
-    <header class="w-screen bg-white" style="box-shadow: 0px 4px 4px rgba(117, 75, 11, 0.25);">
+    <header class="w-screen bg-white" style="box-shadow: 0px 4px 4px rgba(117, 75, 11, 0.1);">
         <div class="container-custom flex gap-12 justify-between items-center mx-auto py-4 w-max-[1536px] max-md:px-8">
 
             <a class="flex items-center space-x-2 md:hidden" href="/">
@@ -43,7 +43,7 @@
                 <a href="{% url 'product_list' %}?category=pakaian_pria" class="text-coklat-1">Pria</a>
                 <a href="{% url 'product_list' %}?category=pakaian_wanita" class="text-coklat-1">Wanita</a>
                 <a href="{% url 'product_list' %}?category=aksesoris" class="text-coklat-1">Aksesoris</a>
-                <a href="{% url 'product_list' %}?category=aksesoris" class="text-coklat-1">Workshop</a>
+                <a href="{% url 'workshop_list' %}" class="text-coklat-1">Workshop</a>
             </nav>
 
             <a class="flex items-center space-x-2 max-md:hidden" href="/">
@@ -64,6 +64,15 @@
                     </button>
                     <input type="text" placeholder="Cari produk" class="border rounded-lg py-2 px-4 w-64 focus:outline-none focus:ring-2 border-coklat-rgba placeholder-[#754b0b66]">
                 </div>
+                
+                <!-- Seach icon on < 1024 -->
+                <button class="flex items-center lg:hidden">
+                    <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.2252 18.9799C13.28 18.9799 15.2507 18.1636 16.7037 16.7106C18.1566 15.2577 18.9729 13.287 18.9729 11.2322C18.9729 9.17737 18.1566 7.20672 16.7037 5.75374C15.2507 4.30077 13.28 3.4845 11.2252 3.4845C9.17041 3.4845 7.19976 4.30077 5.74679 5.75374C4.29381 7.20672 3.47754 9.17737 3.47754 11.2322C3.47754 13.287 4.29381 15.2577 5.74679 16.7106C7.19976 18.1636 9.17041 18.9799 11.2252 18.9799Z" stroke="#754B0B" stroke-width="1.44" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M20.5224 21.5155L16.5781 17.5712" stroke="#754B0B" stroke-width="1.44" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                
                 
                 <!-- Seach icon on < 1024 -->
                 <button class="flex items-center lg:hidden">
@@ -124,7 +133,7 @@
                 <a href="{% url 'product_list' %}?category=pakaian_pria" class="text-coklat-1">Pria</a>
                 <a href="{% url 'product_list' %}?category=pakaian_wanita" class="text-coklat-1">Wanita</a>
                 <a href="{% url 'product_list' %}?category=aksesoris" class="text-coklat-1">Aksesoris</a>
-                <a href="{% url 'product_list' %}?category=aksesoris" class="text-coklat-1">Workshop</a>
+                <a href="{% url 'workshop_list' %}" class="text-coklat-1">Workshop</a>
                 <a href="/account" class="block text-coklat-1">Account</a>
                 <a href="#" class="block text-coklat-1">Wishlist</a> 
                 <a href="#" class="block text-coklat-1">Cart</a>
@@ -136,13 +145,94 @@
     {% block content %}
 
     {% endblock %}
-
-
+        <!-- Footer Dekstop -->
+        <footer class="bg-coklat-2 px-16 py-6 h-72 text-coklat-1 flex text-white max-md:hidden">
+            <div class="flex w-full mt-8">
+                <div class="flex flex-col w-[80%] gap-4">
+                    <h2 class="font-semibold text-xl border-b-[1px] border-white leading-10">Eksplorasi Yogyakarta bersama.</h2>
+                    <a class="flex items-center space-x-2" href="/">
+                        <img src="{% static 'assets/logo.png' %}" alt="Batikin Logo" class="h-16 w-16">
+                        <span class="text-3xl font-javanese leading-6 mt-2 text-whtie">Batikin</span>
+                    </a>
+                    <h2 class="font-semibold text-lg mt-6">2024. Crafted with artistry by PBP A.05</h2>                
+            </div>
     
+                <div class="flex flex-col w-[20%] ml-11">
+                    <h2 class="font-semibold">Kategori</h2>
+                    <div class="space-y-4 font-javanese flex flex-col">
+                        <a href="{% url 'product_list' %}?category=pakaian_pria mt-2" class="text-white mt-2 font-javanese ">Pakaian Pria</a>
+                        <a href="{% url 'product_list' %}?category=pakaian_wanita" class="text-white font-javanese ">Pakaian Wanita</a>
+                        <a href="{% url 'product_list' %}?category=aksesoris" class="text-white font-javanese ">Aksesoris</a>
+                        <a href="{% url 'workshop_list' %}" class="text-white font-javanese ">Workshop</a>
+                    </div>
+                </div>
     
-    <footer class="bg-coklat-2 py-6 h-32 text-center text-coklat-1">
-        © 2024 Batikin. All rights reserved.
-    </footer>
+                <div class="flex flex-col w-[20%]">
+                    <h2 class="font-semibold">Navigasi</h2>
+                    <div class="space-y-4 font-javanese flex flex-col">
+                        <a href="/about" class="text-white mt-2 font-javanese ">Beranda</a>
+                        <a href="/contact" class="text-white font-javanese ">Akun saya</a>
+                        <a href="/faq" class="text-white font-javanese ">Keranjang saya</a>
+                        <a href="/tos" class="text-white font-javanese ">Produk disukai</a>
+                    </div>
+          
+                </div>
+                
+                <div class="flex flex-col w-[20%]">
+                    <h2 class="font-semibold">Tentang Kami</h2>
+                    <div class="space-y-4 font-javanese flex flex-col">
+                        <a href="/about" class="text-white mt-2 font-javanese ">Profil Batikin</a>
+                        <a href="/contact" class="text-white font-javanese ">Hubungi Kami</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Footer Mobile -->
+        <footer class="bg-coklat-2 px-10 py-6 h-[60vh] text-coklat-1 flex flex-col text-white md:hidden">
+            <div class="flex w-full mt-8">
+                <div class="flex flex-col w-[100%] gap-4">
+                    <h2 class="font-bold text-xl border-b-[1px] border-white leading-10">Eksplorasi Yogyakarta Bersama</h2>
+                    <a class="flex items-center space-x-2" href="/">
+                        <img src="{% static 'assets/logo.png' %}" alt="Batikin Logo" class="h-16 w-16">
+                        <span class="text-3xl font-javanese leading-6 mt-2 text-whtie">Batikin</span>
+                    </a>
+                </div>                
+            </div>
+            <div class="flex flex-row justify-end mt-6 ml-auto gap-6">
+                <div class="flex flex-col flex-1">
+                    <h2 class="font-bold">Kategori</h2>
+                    <div class="space-y-4 font-javanese flex flex-col">
+                        <a href="{% url 'product_list' %}?category=pakaian_pria mt-2" class="text-white mt-2 font-javanese ">Pakaian Pria</a>
+                        <a href="{% url 'product_list' %}?category=pakaian_wanita" class="text-white font-javanese ">Pakaian Wanita</a>
+                        <a href="{% url 'product_list' %}?category=aksesoris" class="text-white font-javanese ">Aksesoris</a>
+                        <a href="{% url 'workshop_list' %}" class="text-white font-javanese ">Workshop</a>
+                    </div>
+                </div>
+    
+                <div class="flex flex-col flex-1">
+                    <h2 class="font-bold">Navigasi</h2>
+                    <div class="space-y-4 font-javanese flex flex-col">
+                        <a href="/about" class="text-white mt-2 font-javanese ">Beranda</a>
+                        <a href="/contact" class="text-white font-javanese ">Akun saya</a>
+                        <a href="/faq" class="text-white font-javanese ">Keranjang saya</a>
+                        <a href="/tos" class="text-white font-javanese ">Produk disukai</a>
+                    </div>
+          
+                </div>
+                
+                <div class="flex flex-col flex-1">
+                    <h2 class="font-bold">Tentang Kami</h2>
+                    <div class="space-y-4 font-javanese flex flex-col">
+                        <a href="/about" class="text-white mt-2 font-javanese ">Profil Batikin</a>
+                        <a href="/contact" class="text-white font-javanese ">Hubungi Kami</a>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="font-semibold text-xl mt-12">2024. Crafted with artistry by PBP A.05</h2>  
+
+        </footer>
     {% load static %}
     <script src="{% static 'script/account_script.js' %}"></script>
 </body>

@@ -1,0 +1,7 @@
+{% for workshop in workshops %}
+    {% include "workshop_card.html" with workshop=workshop %}
+{% empty %}
+    <div class="col-span-full text-center text-gray-500 p-4">
+        No products found in this category.
+    </div>
+{% endfor %}
