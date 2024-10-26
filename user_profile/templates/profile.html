@@ -5,30 +5,69 @@
 
 {% block content %}
 <!-- Add Modal HTML -->
-<div id="editProfileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-    <div class="bg-white p-8 rounded-xl max-w-md w-full mx-4">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-coklat-2">Edit Profile</h2>
-            <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
-        <form id="profileForm" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <div class="flex justify-end gap-4 mt-6">
-                <button type="button" onclick="closeModal()" 
-                    class="px-4 py-2 text-coklat-2 border border-coklat-2 rounded-lg hover:bg-gray-100">
-                    Cancel
-                </button>
-                <button type="submit" 
-                    class="px-4 py-2 bg-gradient-to-r from-[#754B0B] to-[#DB8C15] text-white rounded-lg hover:opacity-90">
-                    Save Changes
+<div id="editProfileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 overflow-y-auto">
+    <div class="bg-white rounded-xl max-w-md w-full mx-4 my-8">
+        <div class="p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-coklat-2">Edit Profile</h2>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
                 </button>
             </div>
-        </form>
+            <form id="profileForm" method="post" enctype="multipart/form-data" class="max-h-[70vh] overflow-y-auto pr-4">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="block text-coklat-2 font-bold mb-2">First Name</label>
+                    {{ form.first_name }}
+                </div>
+                <div class="mb-4">
+                    <label class="block text-coklat-2 font-bold mb-2">Last Name</label>
+                    {{ form.last_name }}
+                </div>
+                <div class="mb-4">
+                    <label class="block text-coklat-2 font-bold mb-2">Phone Number</label>
+                    {{ form.phone_number }}
+                </div>
+                
+                <!-- Addresses Section -->
+                <div class="mb-4">
+                    <label class="block text-coklat-2 font-bold mb-2">Addresses (Max 3)</label>
+                    <div id="addressesContainer">
+                        {% for address_form in address_forms %}
+                        <div class="address-form mb-3 p-3 border rounded relative">
+                            <button type="button" class="remove-address-btn absolute top-2 right-2 text-red-500 hover:text-red-700" onclick="removeAddress(this)">
+                                &times;
+                            </button>
+                            <div class="mb-2">
+                                <label class="block text-sm font-medium text-coklat-2">Title</label>
+                                {{ address_form.title }}
+                            </div>
+                            <div class="mb-2">
+                                <label class="block text-sm font-medium text-coklat-2">Address</label>
+                                {{ address_form.address }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" id="addAddressBtn" class="mt-2 px-4 py-2 bg-gradient-to-r from-[#754B0B] to-[#DB8C15] text-white rounded-lg hover:opacity-90 transition duration-300">
+                        Add Address
+                    </button>
+                </div>
+                
+                <div class="flex justify-end gap-4 mt-6">
+                    <button type="button" onclick="closeModal()" 
+                        class="px-4 py-2 text-coklat-2 border border-coklat-2 rounded-lg hover:bg-gray-100">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                        class="px-4 py-2 bg-gradient-to-r from-[#754B0B] to-[#DB8C15] text-white rounded-lg hover:opacity-90">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -66,11 +105,11 @@
 document.addEventListener('DOMContentLoaded', function() {
     const contentArea = document.getElementById('contentArea');
     const navLinks = document.querySelectorAll('.nav-link');
-    console.log('{{ request.user.profile.profile_picture }}');
-    const user = '{{ request.user }}';
-    const profile = '{{ request.user.profile }}';
-    console.log(user);
-    console.log(profile);
+    const addAddressBtn = document.getElementById('addAddressBtn');
+    const addressesContainer = document.getElementById('addressesContainer');
+    let addressCount = {{ addresses|length }};  // Use actual number of addresses
+
+    // Function to load content based on the selected tab
     function loadContent(target) {
         let content = '';
         switch(target) {
@@ -78,18 +117,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 content = `
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold text-coklat-2">Informasi Profile</h2>
-                        <button onclick="openModal()" class="px-4 py-2 text-coklat-2 border border-coklat-2 rounded-lg hover:bg-coklat-2 hover:text-white transition-colors">
+                        <button onclick="openModal()" class="px-4 py-2 text-coklat-2 border border-coklat-2 rounded-lg hover:bg-coklat-2 hover:text-gradient-coklat transition-colors">
                             Edit Profile
                         </button>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="profileInfo">
                         <!-- Profile Picture -->
                         <div class="flex flex-col items-start">
                             <label class="text-lg font-bold text-coklat-2 mb-2">Profile Picture</label>
-                            <img class="w-24 h-24 rounded-full object-cover mb-4" 
-                                src="${'{{ user.profile.profile_picture }}' || 'https://via.placeholder.com/150'}" 
-                                alt="Profile Picture">
-                            <p>{{ user.profile.profile_picture }}</p>
+                            <div class="flex">
+                                <img class="w-24 h-24 rounded-full object-cover mb-4" 
+                                    src="${'{{ user.profile.profile_picture }}'}" 
+                                    alt="Profile Picture">
+                            </div>
+
+                         
                         </div>
                         <!-- User Info -->
                         <div class="flex flex-col">
@@ -101,11 +143,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             <label class="text-lg font-bold text-coklat-2 mb-2">Phone Number</label>
                             <p class="text-gray-700">${'{{ request.user.profile.phone_number }}' || 'Not set'}</p>
                         </div>
-                        <!-- Address -->
+                        <!-- Addresses -->
                         <div class="flex flex-col">
-                            <label class="text-lg font-bold text-coklat-2 mb-2">Address</label>
-                            <p class="text-gray-700">${'{{ request.user.profile.address_line1 }}' || 'Not set'}</p>
-                            <p class="text-gray-700">${'{{ request.user.profile.address_line2 }}' || ''}</p>
+                            <label class="text-lg font-bold text-coklat-2 mb-2">Addresses</label>
+                            {% for address in addresses %}
+                            <div class="mb-2">
+                                <p class="font-semibold text-coklat-2">{{ address.title }}</p>
+                                <p class="text-gray-700">{{ address.address }}</p>
+                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 `;
@@ -128,8 +174,8 @@ document.addEventListener('DOMContentLoaded', function() {
         contentArea.innerHTML = content;
     }
 
+    // Set active navigation
     function setActiveTab(link) {
-        // Remove active class from all links
         navLinks.forEach(l => {
             l.classList.remove('font-bold');
             const indicator = l.querySelector('.nav-indicator');
@@ -138,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Add active class to clicked link
+        // Add active class to clicked nav
         link.classList.add('font-bold');
         const activeIndicator = link.querySelector('.nav-indicator');
         if(activeIndicator) {
@@ -146,6 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Event listener for each nav link
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
@@ -155,28 +202,28 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Load default content (Account) and set it as active
+    // Load default content (account) saat pertama kali halaman
     if(navLinks.length > 0){
         loadContent('account');
         setActiveTab(navLinks[0]);
     }
 
-    // Add these functions for modal handling
+    // Handle modal
     window.openModal = function() {
         document.getElementById('editProfileModal').classList.remove('hidden');
         document.getElementById('editProfileModal').classList.add('flex');
     }
 
+    // Handle modal
     window.closeModal = function() {
         document.getElementById('editProfileModal').classList.add('hidden');
         document.getElementById('editProfileModal').classList.remove('flex');
     }
 
-    // Handle form submission
     document.getElementById('profileForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const formData = new FormData(this);
-        
+
         fetch('{% url "update_profile" %}', {
             method: 'POST',
             body: formData,
@@ -188,14 +235,101 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.status === 'success') {
                 closeModal();
-                // Reload the profile content
-                loadContent('account');
+                updateProfileInfo(data);
             } else {
-                // Handle errors
-                console.error(data.errors);
+                console.error('Form errors:', data.errors);
+                alert('There was an error updating your profile. Please check the console for details.');
             }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An unexpected error occurred. Please try again later.');
         });
     });
+
+    function updateProfileInfo(data) {
+        // Update name
+        const nameElement = document.querySelector('#contentArea p.text-gray-700');
+        if (nameElement) {
+            nameElement.textContent = `${data.first_name} ${data.last_name}`;
+        }
+
+        // Update phone number
+        const phoneNumber = document.querySelector('#contentArea div.flex.flex-col:nth-child(3) p.text-gray-700');
+        if (phoneNumber) {
+            phoneNumber.textContent = data.phone_number || 'Not set';
+        }
+
+        // Update addresses
+        const addressesContainer = document.querySelector('#contentArea div.flex.flex-col:last-child');
+        if (addressesContainer) {
+            let addressesHTML = '<label class="text-lg font-bold text-coklat-2 mb-2">Addresses</label>';
+            data.addresses.forEach(address => {
+                addressesHTML += `
+                    <div class="mb-2">
+                        <p class="font-semibold text-coklat-2">${address.title}</p>
+                        <p class="text-gray-700">${address.address}</p>
+                    </div>
+                `;
+            });
+            addressesContainer.innerHTML = addressesHTML;
+        }
+    }
+
+    // Handle adding a new address form
+    addAddressBtn.addEventListener('click', function() {
+        if(addressCount >= 3){
+            alert('You can only add up to 3 addresses.');
+            return;
+        }
+
+        const newAddressForm = `
+            <div class="address-form mb-3 p-3 border rounded relative">
+                <button type="button" class="remove-address-btn absolute top-2 right-2 text-red-500 hover:text-red-700" onclick="removeAddress(this)">
+                    &times;
+                </button>
+                <div class="mb-2">
+                    <label class="block text-sm font-medium text-coklat-2">Title</label>
+                    <input type="text" name="address_${addressCount}-title" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
+                </div>
+                <div class="mb-2">
+                    <label class="block text-sm font-medium text-coklat-2">Address</label>
+                    <textarea name="address_${addressCount}-address" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" rows="3" required></textarea>
+                </div>
+            </div>
+        `;
+        addressesContainer.insertAdjacentHTML('beforeend', newAddressForm);
+        addressCount += 1;
+
+        if(addressCount >= 3){
+            addAddressBtn.disabled = true;
+            addAddressBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+    });
+
+    // Function to remove an address form
+    window.removeAddress = function(button) {
+        const addressForm = button.parentElement;
+        addressForm.remove();
+        addressCount -= 1;
+
+        if(addressCount < 3){
+            addAddressBtn.disabled = false;
+            addAddressBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        // Re-index the remaining address forms
+        Array.from(addressesContainer.children).forEach((form, index) => {
+            // Update the name attributes
+            const titleInput = form.querySelector('input[name^="address_"][name$="-title"]');
+            const addressTextarea = form.querySelector('textarea[name^="address_"][name$="-address"]');
+            if(titleInput && addressTextarea){
+                titleInput.name = `address_${index}-title`;
+                addressTextarea.name = `address_${index}-address`;
+            }
+        });
+    }
 });
 </script>
 {% endblock %}
+

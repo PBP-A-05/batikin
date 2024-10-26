@@ -8,7 +8,7 @@ def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(
             user=instance,
-            profile_picture="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRooEnD32-UtBw55GBfDTxxUZApMhWWnRaoLw&s"
+            profile_picture="static/assets/profile-picture/default.jpg"
         )
 
 @receiver(post_save, sender=User)
@@ -18,5 +18,5 @@ def save_user_profile(sender, instance, **kwargs):
     except Profile.DoesNotExist:
         Profile.objects.create(
             user=instance,
-            profile_picture="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRooEnD32-UtBw55GBfDTxxUZApMhWWnRaoLw&s"
+            profile_picture="static/assets/profile-picture/default.jpg"
         )

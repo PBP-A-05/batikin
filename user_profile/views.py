@@ -1,22 +1,85 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from .models import Profile
-from .forms import ProfileForm
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from .models import Profile, Address
+from .forms import CombinedForm, ProfileForm, AddressForm
+import os
+
 
 @login_required
 def profile_view(request):
-    profile, created = Profile.objects.get_or_create(user=request.user)
-    form = ProfileForm(instance=profile)
-    return render(request, 'profile.html', {'form': form})
+    user = request.user
+    profile, created = Profile.objects.get_or_create(user=user)
+    addresses = Address.objects.filter(user=user)
+    
+    initial_data = {
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'phone_number': profile.phone_number,
+    }
+    form = CombinedForm(initial=initial_data)
+    address_forms = [AddressForm(prefix=f'address_{i}', instance=addr) for i, addr in enumerate(addresses)]
+    
+    return render(request, 'profile.html', {
+        'form': form,
+        'address_forms': address_forms,
+        'addresses': addresses,
+    })
 
 @login_required
 def update_profile(request):
-    profile, created = Profile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
-        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        user = request.user
+        profile, created = Profile.objects.get_or_create(user=user)
+        form = CombinedForm(request.POST)
+        
         if form.is_valid():
-            form.save()
-            return JsonResponse({'status': 'success'})
-        return JsonResponse({'status': 'error', 'errors': form.errors})
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.save()
+            
+            profile.phone_number = form.cleaned_data['phone_number']
+            profile.save()
+            
+            # Handle addresses
+            addresses_data = []
+            i = 0
+            while f'address_{i}-title' in request.POST:
+                title = request.POST.get(f'address_{i}-title')
+                address = request.POST.get(f'address_{i}-address')
+                if title and address:
+                    addresses_data.append({
+                        'title': title,
+                        'address': address
+                    })
+                i += 1
+
+            # Update addresses
+            Address.objects.filter(user=request.user).delete()
+            addresses = []
+            for addr_data in addresses_data:
+                address = Address.objects.create(
+                    user=request.user,
+                    title=addr_data['title'],
+                    address=addr_data['address']
+                )
+                addresses.append({
+                    'title': address.title,
+                    'address': address.address
+                })
+            
+            return JsonResponse({
+                'status': 'success',
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'phone_number': profile.phone_number,
+                'addresses': addresses,
+            })
+        else:
+            return JsonResponse({
+                'status': 'error',
+                'errors': form.errors.as_json()
+            })
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
