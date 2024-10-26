@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'shopping',
     'wishlist',
     'django_extensions',
-    'booking'
+    'booking',
+    'cart',
 
 ]
 
@@ -74,7 +75,7 @@ ROOT_URLCONF = "batikin.urls"
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR, 'templates'],  # Ensure this points to the global templates directory
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Ensure this points to the global templates directory
         'APP_DIRS': True,  # This enables looking in each app's templates folder as well
         'OPTIONS': {
             'context_processors': [

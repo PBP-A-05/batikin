@@ -20,8 +20,7 @@ from batikin.views import home_view
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('profile/', include('user_profile.urls')), 
-    path('wishlist/', include('wishlist.urls')),  
+    path('profile/', include('user_profile.urls')),  
 ]
 
 
