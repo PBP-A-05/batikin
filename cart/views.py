@@ -3,8 +3,9 @@ from decimal import Decimal, InvalidOperation
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.template.loader import render_to_string
-from .models import Cart, CartItem
+from .models import Cart, CartItem, Order, OrderItem
 from shopping.models import Product
 from user_profile.models import Address
 import json
@@ -84,3 +85,35 @@ def remove_from_cart(request, item_id):
         cart_item.delete()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+@login_required
+@require_POST
+def create_order(request):
+    data = json.loads(request.body)
+    address_id = data.get('address_id')
+    items = data.get('items')
+
+    try:
+        address = Address.objects.get(id=address_id, user=request.user)
+    except Address.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Alamat tidak ditemukan'})
+
+    total_price = sum(item['price'] * item['quantity'] for item in items)
+
+    order = Order.objects.create(
+        user=request.user,
+        address=address,
+        total_price=total_price
+    )
+
+    for item in items:
+        OrderItem.objects.create(
+            order=order,
+            product_id=item['product_id'],
+            quantity=item['quantity'],
+            price=item['price']
+        )
+
+    # Clear the user's cart here
+
+    return JsonResponse({'status': 'success', 'message': 'Pesanan berhasil dibuat'})

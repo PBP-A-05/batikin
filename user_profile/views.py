@@ -93,3 +93,9 @@ def update_profile(request):
                 'errors': form.errors
             })
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+@login_required
+def get_addresses(request):
+    addresses = Address.objects.filter(user=request.user)
+    address_data = [{'id': addr.id, 'title': addr.title, 'address': addr.address} for addr in addresses]
+    return JsonResponse({'addresses': address_data})
