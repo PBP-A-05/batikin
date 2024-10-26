@@ -1,4 +1,3 @@
-
 <style>
     .border-gradient-coklat-2 {
         position: relative;
@@ -8,15 +7,16 @@
         position: absolute;
         inset: 0;
         border-radius: 50px; 
-        padding:2px; 
+        padding: 2px; 
         background: linear-gradient(90deg, #754B0B 0%, #DB8C15 100%);
         -webkit-mask: 
             linear-gradient(#fff 0 0) content-box, 
             linear-gradient(#fff 0 0);
         -webkit-mask-composite: xor;
-                mask-composite: exclude; 
+        mask-composite: exclude; 
     }
 </style>
+
 <div class="product-card border border-[#D8CDB3] rounded-lg p-4 hover:shadow-md transition-all duration-300">
     <!-- Product Image -->
     <div class="relative aspect-square overflow-hidden m-4">
@@ -52,3 +52,43 @@
         Tambahkan Ke Keranjang
     </button>
 </div>
+
+<script>
+    // Function to remove item from wishlist
+    function removeFromWishlist(productId) {
+        fetch("{% url 'remove_from_wishlist' product_id=product.id %}".replace("product.id", productId), {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Produk berhasil dihapus dari wishlist!");
+                location.reload(); // Reload the page to update the wishlist
+            } else {
+                alert("Gagal menghapus produk dari wishlist.");
+            }
+        });
+    }
+
+    // Function to add item to cart
+    function addToCart(productId) {
+        fetch("{% url 'add_to_cart' product_id=product.id %}".replace("product.id", productId), {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ quantity: 1 }) // Default quantity to 1
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert(data.message);
+            } else {
+                alert("Gagal menambahkan produk ke keranjang.");
+            }
+        });
+    }
+</script>
