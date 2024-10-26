@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+
+from cart.models import Cart, CartItem
 from .models import Product
 from wishlist.models import Wishlist
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden
@@ -52,6 +54,45 @@ def filter_products(request):
         for product in products
     ]
     return JsonResponse(data, safe=False)
+
+@login_required
+def add_to_cart(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    data = json.loads(request.body)
+    quantity = int(data.get('quantity', 1))
+
+    cart, created = Cart.objects.get_or_create(user=request.user)
+
+    cart_item, item_created = CartItem.objects.get_or_create(cart=cart, product=product)
+
+    if not item_created:
+        cart_item.quantity += quantity
+    else:
+        cart_item.quantity = quantity
+    
+    cart_item.save()  
+
+    message = f'{quantity} produk berhasil dimasukkan ke keranjang!'
+    return JsonResponse({'message': message})
+
+@login_required
+def add_to_wishlist(request, product_id):
+    if request.method == 'POST':
+        product = get_object_or_404(Product, id=product_id)
+        wishlist, created = Wishlist.objects.get_or_create(user=request.user, product=product)
+        
+        if created:
+            message = 'Produk ditambahkan ke wishlist!'
+            status = 'added'
+        else:
+            wishlist.delete()
+            message = 'Produk dihapus dari wishlist!'
+            status = 'removed'
+        
+        return JsonResponse({'message': message, 'status': status})
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
 
 
 
