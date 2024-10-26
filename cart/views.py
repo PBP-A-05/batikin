@@ -10,14 +10,17 @@ import json
 @login_required
 def view_cart(request):
     cart_items = CartItem.objects.filter(cart__user=request.user)
-
+    
     total_price = Decimal('0.0')
+    total_quantity = 0
     items_with_totals = []
+
     for item in cart_items:
         try:
             price = Decimal(str(item.product.price).replace('Rp', '').replace('.', '').replace(',', '.'))
             item_total = price * item.quantity
             total_price += item_total
+            total_quantity += item.quantity  
             items_with_totals.append({
                 'item': item,
                 'item_total': item_total
@@ -26,12 +29,14 @@ def view_cart(request):
             return render(request, 'cart/view_cart.html', {
                 'cart_items': items_with_totals,
                 'total_price': total_price,
+                'total_quantity': total_quantity,
                 'error': f"Invalid price format for {item.product}"
             })
 
     return render(request, 'cart/view_cart.html', {
         'cart_items': items_with_totals,
         'total_price': total_price,
+        'total_quantity': total_quantity,  
     })
 
 @login_required

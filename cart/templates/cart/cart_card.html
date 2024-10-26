@@ -1,29 +1,62 @@
-<div class="product-card p-4 border border-gray-300 rounded-lg shadow flex justify-between items-center">
-    <!-- Product Image -->
-    <div class="product-image w-16 h-16 bg-gray-200 rounded-md"></div> <!-- Placeholder for image -->
+<div class="order-info-section bg-[#F9F9F9] py-8 px-6 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-semibold text-[#4C3108] mb-4">Informasi Pesanan</h2>
 
-    <!-- Product Details -->
-    <div class="product-details flex-grow ml-4">
-        <h2 class="text-xl font-semibold text-[#4C3108]">{{ item.product.name }}</h2>
-        <p class="text-md text-[#714503]">Price: {{ item.product.price }}</p>
-        
-        <!-- Quantity Control -->
-        <div class="quantity-control flex items-center space-x-2 mt-2">
-            <button onclick="adjustQuantity({{ item.id }}, -1)" class="px-2 py-1 border border-gray-300 rounded">-</button>
-            <input type="number" id="quantity-{{ item.id }}" name="quantity" value="{{ item.quantity }}" min="1" class="w-12 text-center border border-gray-300 rounded p-1" readonly />
-            <button onclick="adjustQuantity({{ item.id }}, 1)" class="px-2 py-1 border border-gray-300 rounded">+</button>
+    <div class="product-card border border-[#D8CDB3] rounded-lg p-6 flex items-center justify-between bg-white shadow-md">
+        <!-- Product Image -->
+        <div class="product-image flex-shrink-0">
+            <img src="{{ item_with_total.item.product.image_urls.0 }}" alt="{{ item_with_total.item.product.product_name }}" class="w-24 h-24 object-cover rounded-lg">
+        </div>
+
+        <!-- Product Details -->
+        <div class="product-details ml-4 flex-grow">
+            <h3 class="text-lg font-semibold text-[#4C3108]">{{ item_with_total.item.product.product_name }}</h3>
+            <p class="text-sm text-[#714503]">{{ item_with_total.item.product.category }} - {{ item_with_total.item.product.size }}</p>
+            <p class="text-sm text-[#714503]">+{{ item_with_total.item.quantity|add:"-1" }} produk lainnya</p>
+        </div>
+
+        <!-- Quantity Selector -->
+        <div class="quantity-selector mr-4">
+            <label for="quantity-{{ item_with_total.item.product.id }}" class="text-sm font-semibold text-[#4C3108]">Kuantitas:</label>
+            <div class="flex items-center space-x-2 mt-1">
+                <button onclick="adjustQuantity({{ item_with_total.item.product.id }}, -1)" class="px-2 py-1 border rounded-full bg-[#754B0B] text-white">-</button>
+                <input id="quantity-{{ item_with_total.item.product.id }}" type="number" min="1" value="{{ item_with_total.item.quantity }}" class="w-12 text-center border rounded-md">
+                <button onclick="adjustQuantity({{ item_with_total.item.product.id }}, 1)" class="px-2 py-1 border rounded-full bg-[#754B0B] text-white">+</button>
+            </div>
+        </div>
+
+        <!-- Total Price -->
+        <div class="total-price text-right">
+            <p class="text-sm font-semibold text-[#714503]">Total Belanja</p>
+            <p class="text-lg font-bold text-[#4C3108]">Rp{{ item_with_total.item_total }}</p>
         </div>
     </div>
-
-    <!-- Actions -->
-    <div class="product-actions mt-4 flex space-x-4">
-        <!-- Remove from Cart Button -->
-        <form action="{% url 'cart:remove_from_cart' item.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded">Remove</button>
-        </form>
-    </div>
-
-    <!-- Product Price -->
-    <div class="product-price text-right text-lg font-bold text-[#4C3108]">Rp{{ item.product.price * item.quantity }}</div>
 </div>
+
+<script>
+    function adjustQuantity(productId, adjustment) {
+        const quantityInput = document.getElementById(`quantity-${productId}`);
+        let newQuantity = parseInt(quantityInput.value) + adjustment;
+        if (newQuantity < 1) newQuantity = 1;
+        quantityInput.value = newQuantity;
+
+        const updateUrl = `/cart/update/${productId}/`;
+        fetch(updateUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ 'quantity': newQuantity })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Quantity updated successfully!');
+                location.reload(); // Reload to reflect changes
+            } else {
+                alert('Failed to update quantity.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+</script>
