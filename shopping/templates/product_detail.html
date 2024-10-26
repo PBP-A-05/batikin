@@ -61,6 +61,22 @@
     #customPopup {
         animation: popupBounce 0.5s ease-out;
     }
+    .border-gradient-coklat {
+        position: relative;
+    }
+    .border-gradient-coklat::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50px; 
+        padding: 2px; 
+        background: linear-gradient(90deg, #754B0B 0%, #DB8C15 100%);
+        -webkit-mask: 
+            linear-gradient(#fff 0 0) content-box, 
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+                mask-composite: exclude; 
+    }
 </style>
 
 <div class="container mx-auto px-4 py-8 max-w-7xl">
@@ -83,7 +99,7 @@
             
             <div class="w-2/5 flex flex-col justify-between">
                 <div class="space-y-4">
-                    <span class="inline-block px-2 py-1 text-sm border border-coklat-1-rgba rounded-full text-black">{{ product.get_category_display }}</span>
+                    <span class="inline-block px-2 py-1 text-xs border-gradient-coklat rounded-full text-black">{{ product.get_category_display }}</span>
                     <h2 class="text-3xl font-bold text-coklat-3">{{ product.product_name }}</h2>
                     <p class="text-2xl font-bold text-coklat-2">{{ product.price }}</p>
                     <div class="flex items-center">
