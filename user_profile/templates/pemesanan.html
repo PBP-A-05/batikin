@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Batikin | Pemesanan{% endblock %}
+
+{% block content %}
+<main class="min-h-screen w-full bg-[#F6F6F6]">
+    <section class="mx-auto max-w-[1536px] px-8 flex flex-col items-center min-h-screen mt-16">
+        <h1 class="text-4xl font-bold text-coklat-2 mb-6 text-left">Pemesanan</h1>
+
+        <!-- Navigation Tabs -->
+        {% include 'partials/nav_tabs.html' with active='pemesanan' %}
+
+        <div class="w-full md:w-3/5 lg:w-2/3 h-auto bg-white p-8 rounded-xl shadow-lg" style="border: 0.2px solid rgba(117, 75, 11, 0.25);">
+            <div >
+
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}
+
+

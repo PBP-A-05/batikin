@@ -22,11 +22,19 @@ def profile_view(request):
     form = CombinedForm(initial=initial_data)
     address_forms = [AddressForm(prefix=f'address_{i}', instance=addr) for i, addr in enumerate(addresses)]
     
-    return render(request, 'profile.html', {
+    return render(request, 'account.html', {
         'form': form,
         'address_forms': address_forms,
         'addresses': addresses,
     })
+
+@login_required
+def pemesanan_view(request):
+    return render(request, 'pemesanan.html')
+
+@login_required
+def booking_view(request):
+    return render(request, 'booking.html')
 
 @login_required
 def update_profile(request):
@@ -70,6 +78,8 @@ def update_profile(request):
                     'address': address.address
                 })
             
+            print("Updated addresses:", addresses)  # Debug print
+            
             return JsonResponse({
                 'status': 'success',
                 'first_name': user.first_name,
@@ -80,6 +90,6 @@ def update_profile(request):
         else:
             return JsonResponse({
                 'status': 'error',
-                'errors': form.errors.as_json()
+                'errors': form.errors
             })
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})

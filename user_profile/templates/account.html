@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Batikin | Settings Page{% endblock %}
+{% block title %}Batikin | Account{% endblock %}
 
 {% block content %}
 <!-- Add Modal HTML -->
@@ -74,26 +74,49 @@
 <main class="min-h-screen w-full bg-[#F6F6F6]">
     <section class="mx-auto max-w-[1536px] px-8 flex flex-col items-center min-h-screen mt-16">
         <!-- Settings Title -->
-        <h1 class="text-4xl font-bold text-coklat-2 mb-6 text-left">Settings</h1>
+        <h1 class="text-4xl font-bold text-coklat-2 mb-6 text-left">Account Settings</h1>
 
         <!-- Navigation Tabs -->
-        <div class="flex space-x-8 mb-8">
-            <a class="nav-link text-lg text-coklat-2 hover:underline relative pb-2" href="#" data-target="account">
-                Account
-                <div class="nav-indicator absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#754B0B] to-[#DB8C15] transform scale-x-0 transition-transform duration-300 origin-left"></div>
-            </a>
-            <a class="nav-link text-lg text-coklat-2 hover:underline relative pb-2" href="#" data-target="pemesanan">
-                Pemesanan
-                <div class="nav-indicator absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#754B0B] to-[#DB8C15] transform scale-x-0 transition-transform duration-300 origin-left"></div>
-            </a>
-            <a class="nav-link text-lg text-coklat-2 hover:underline relative pb-2" href="#" data-target="booking">
-                Booking Workshop
-                <div class="nav-indicator absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#754B0B] to-[#DB8C15] transform scale-x-0 transition-transform duration-300 origin-left"></div>
-            </a>
-        </div>
+        {% include 'partials/nav_tabs.html' with active='account' %}
 
-        <div id="contentArea" class="w-full md:w-3/5 lg:w-2/3 h-auto bg-white p-8 rounded-xl shadow-lg" style="border: 0.2px solid rgba(117, 75, 11, 0.25);">
-        
+        <div class="w-full md:w-3/5 lg:w-2/3 h-auto bg-white p-8 rounded-xl shadow-lg" style="border: 0.2px solid rgba(117, 75, 11, 0.25);">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-coklat-2">Informasi Profile</h2>
+                <button onclick="openModal()" class="px-4 py-2 text-coklat-2 border border-coklat-2 rounded-lg hover:bg-coklat-2 hover:text-white transition-colors">
+                    Edit Profile
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="profileInfo">
+                <!-- Profile Picture -->
+                <div class="flex flex-col items-start">
+                    <label class="text-lg font-bold text-coklat-2 mb-2">Profile Picture</label>
+                    <div class="flex">
+                        <img class="w-24 h-24 rounded-full object-cover mb-4" 
+                            src="{{ user.profile.profile_picture }}" 
+                            alt="Profile Picture">
+                    </div>
+                </div>
+                <!-- User Info -->
+                <div class="flex flex-col">
+                    <label class="text-lg font-bold text-coklat-2 mb-2">Name</label>
+                    <p class="text-gray-700">{{ request.user.get_full_name }}</p>
+                </div>
+                <!-- Phone Number -->
+                <div class="flex flex-col">
+                    <label class="text-lg font-bold text-coklat-2 mb-2">Phone Number</label>
+                    <p class="text-gray-700">{{ request.user.profile.phone_number|default:"Not set" }}</p>
+                </div>
+                <!-- Addresses -->
+                <div class="flex flex-col" id="addressesDisplay">
+                    <label class="text-lg font-bold text-coklat-2 mb-2">Addresses</label>
+                    {% for address in addresses %}
+                    <div class="mb-2">
+                        <p class="font-semibold text-coklat-2">{{ address.title }}</p>
+                        <p class="text-gray-700">{{ address.address }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </section>
 </main>
@@ -102,111 +125,9 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const contentArea = document.getElementById('contentArea');
-    const navLinks = document.querySelectorAll('.nav-link');
     const addAddressBtn = document.getElementById('addAddressBtn');
     const addressesContainer = document.getElementById('addressesContainer');
-    let addressCount = {{ addresses|length }};  // Use actual number of addresses
-
-    // Function to load content based on the selected tab
-    function loadContent(target) {
-        let content = '';
-        switch(target) {
-            case 'account':
-                content = `
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-coklat-2">Informasi Profile</h2>
-                        <button onclick="openModal()" class="px-4 py-2 text-coklat-2 border border-coklat-2 rounded-lg hover:bg-coklat-2 hover:text-gradient-coklat transition-colors">
-                            Edit Profile
-                        </button>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="profileInfo">
-                        <!-- Profile Picture -->
-                        <div class="flex flex-col items-start">
-                            <label class="text-lg font-bold text-coklat-2 mb-2">Profile Picture</label>
-                            <div class="flex">
-                                <img class="w-24 h-24 rounded-full object-cover mb-4" 
-                                    src="${'{{ user.profile.profile_picture }}'}" 
-                                    alt="Profile Picture">
-                            </div>
-
-                         
-                        </div>
-                        <!-- User Info -->
-                        <div class="flex flex-col">
-                            <label class="text-lg font-bold text-coklat-2 mb-2">Name</label>
-                            <p class="text-gray-700">${'{{ request.user.get_full_name }}'}</p>
-                        </div>
-                        <!-- Phone Number -->
-                        <div class="flex flex-col">
-                            <label class="text-lg font-bold text-coklat-2 mb-2">Phone Number</label>
-                            <p class="text-gray-700">${'{{ request.user.profile.phone_number }}' || 'Not set'}</p>
-                        </div>
-                        <!-- Addresses -->
-                        <div class="flex flex-col">
-                            <label class="text-lg font-bold text-coklat-2 mb-2">Addresses</label>
-                            {% for address in addresses %}
-                            <div class="mb-2">
-                                <p class="font-semibold text-coklat-2">{{ address.title }}</p>
-                                <p class="text-gray-700">{{ address.address }}</p>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                `;
-                break;
-            case 'pemesanan':
-                content = `
-                    {% include 'pemesanan.html' %}
-                `;
-                break;
-            case 'booking':
-                content = `
-                    <h2 class="text-2xl font-bold text-coklat-2 mb-6">Booking Workshop</h2>
-                    <p>Your booking workshop content goes here.</p>
-                `;
-                break;
-            default:
-                content = '<p>Content not found.</p>';
-        }
-        contentArea.innerHTML = content;
-    }
-
-    
-
-    // Set active navigation
-    function setActiveTab(link) {
-        navLinks.forEach(l => {
-            l.classList.remove('font-bold');
-            const indicator = l.querySelector('.nav-indicator');
-            if(indicator) {
-                indicator.classList.remove('scale-x-100');
-            }
-        });
-
-        // Add active class to clicked nav
-        link.classList.add('font-bold');
-        const activeIndicator = link.querySelector('.nav-indicator');
-        if(activeIndicator) {
-            activeIndicator.classList.add('scale-x-100');
-        }
-    }
-
-    // Event listener for each nav link
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const target = this.getAttribute('data-target');
-            setActiveTab(this);
-            loadContent(target);
-        });
-    });
-
-    // Load default content (account) saat pertama kali halaman
-    if(navLinks.length > 0){
-        loadContent('account');
-        setActiveTab(navLinks[0]);
-    }
+    let addressCount = {{ addresses|length }};
 
     // Handle modal
     window.openModal = function() {
@@ -214,7 +135,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('editProfileModal').classList.add('flex');
     }
 
-    // Handle modal
     window.closeModal = function() {
         document.getElementById('editProfileModal').classList.add('hidden');
         document.getElementById('editProfileModal').classList.remove('flex');
@@ -249,19 +169,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateProfileInfo(data) {
         // Update name
-        const nameElement = document.querySelector('#contentArea p.text-gray-700');
+        const nameElement = document.querySelector('#profileInfo div:nth-child(2) p.text-gray-700');
         if (nameElement) {
             nameElement.textContent = `${data.first_name} ${data.last_name}`;
         }
 
         // Update phone number
-        const phoneNumber = document.querySelector('#contentArea div.flex.flex-col:nth-child(3) p.text-gray-700');
+        const phoneNumber = document.querySelector('#profileInfo div:nth-child(3) p.text-gray-700');
         if (phoneNumber) {
             phoneNumber.textContent = data.phone_number || 'Not set';
         }
 
         // Update addresses
-        const addressesContainer = document.querySelector('#contentArea div.flex.flex-col:last-child');
+        const addressesContainer = document.querySelector('#addressesDisplay');
         if (addressesContainer) {
             let addressesHTML = '<label class="text-lg font-bold text-coklat-2 mb-2">Addresses</label>';
             data.addresses.forEach(address => {
@@ -332,4 +252,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endblock %}
-
