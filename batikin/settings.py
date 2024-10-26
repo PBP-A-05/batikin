@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'batikin',
     'user_profile',
     'shopping',
+    'booking'
 ]
 
 MIDDLEWARE = [
