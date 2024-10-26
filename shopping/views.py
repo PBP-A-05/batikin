@@ -1,6 +1,9 @@
+from decimal import Decimal
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Product, Wishlist, Cart
+from .models import Product
+from wishlist.models import Wishlist
+from cart.models import Cart, CartItem
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden
 import json
 
@@ -52,6 +55,7 @@ def filter_products(request):
     ]
     return JsonResponse(data, safe=False)
 
+
 @login_required
 def add_to_wishlist(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -72,15 +76,29 @@ def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     data = json.loads(request.body)
     quantity = int(data.get('quantity', 1))
-    cart_item, created = Cart.objects.get_or_create(user=request.user, product=product)
+
+    # Ensure the price is a decimal and strip any currency formatting
+    try:
+        price = Decimal(str(product.price).replace('Rp', '').replace('.', '').replace(',', '.'))
+    except:
+        return JsonResponse({'error': 'Invalid price format'}, status=400)
+
+    # Retrieve or create the cart for the user
+    cart, created = Cart.objects.get_or_create(user=request.user)
+
+    # Retrieve or create the cart item with the correct price
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        product=product,
+        defaults={'quantity': quantity, 'price': price}
+    )
     
+    # If the cart item already exists, update the quantity
     if not created:
         cart_item.quantity += quantity
         cart_item.save()
-    else:
-        cart_item.quantity = quantity
-        cart_item.save()
-    
+
     message = f'{quantity} produk berhasil dimasukkan ke keranjang!'
     return JsonResponse({'message': message})
+
 

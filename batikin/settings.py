@@ -28,12 +28,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['daanish-inayat-batikin.pbp.cs.ui.ac.id', '12', "localhost", "127.0.0.1"]
 STATIC_URL = '/static/'
+
+# For development, use STATICFILES_DIRS to locate where your static files are stored
 if DEBUG:
     STATICFILES_DIRS = [
-        BASE_DIR / 'static' # merujuk ke /static root project pada mode development
+        BASE_DIR / 'static',  # Point to the 'static' folder in your project for development
     ]
 else:
-    STATIC_ROOT = BASE_DIR / 'static' # merujuk ke /static root project pada mode production
+    # For production, use STATIC_ROOT to collect all static files in one directory
+    STATIC_ROOT = BASE_DIR / 'staticfiles'  # Directory where static files will be collected in production
 
 # Application definition
 
@@ -47,7 +50,11 @@ INSTALLED_APPS = [
     'batikin',
     'user_profile',
     'shopping',
-    'booking'
+    'wishlist',
+    'django_extensions',
+    'booking',
+    'cart',
+
 ]
 
 MIDDLEWARE = [
@@ -60,6 +67,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'django.contrib.messages.middleware.MessageMiddleware',
 
+
 ]
 
 ROOT_URLCONF = "batikin.urls"
@@ -67,7 +75,7 @@ ROOT_URLCONF = "batikin.urls"
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR, 'templates'],  # Ensure this points to the global templates directory
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Ensure this points to the global templates directory
         'APP_DIRS': True,  # This enables looking in each app's templates folder as well
         'OPTIONS': {
             'context_processors': [
@@ -129,6 +137,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
