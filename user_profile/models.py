@@ -6,7 +6,7 @@ class Profile(models.Model):
     phone_number = models.CharField(max_length=15, blank=True)
     addresses = models.ManyToManyField('Address')
     profile_picture = models.URLField(
-        default="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRooEnD32-UtBw55GBfDTxxUZApMhWWnRaoLw&s",
+        default="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOizmxkQV5rf4N9ayOC3pojndp0nzIDAFUtg&s",
         blank=True
     )
 
