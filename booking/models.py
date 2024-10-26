@@ -29,7 +29,6 @@ class WorkshopProduct(models.Model):  # Mengganti nama kelas menjadi WorkshopPro
     title = models.CharField(max_length=100)  # Nama produk workshop
     description = models.TextField()  # Deskripsi produk workshop
     price = models.DecimalField(max_digits=10, decimal_places=2)  # Harga produk workshop
-    stock = models.IntegerField(default=0)  # Stok produk workshop
 
     def __str__(self):
         return self.title

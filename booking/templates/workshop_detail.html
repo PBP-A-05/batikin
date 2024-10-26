@@ -71,7 +71,10 @@
 
                 <div class="space-y-4 mt-auto">
                     <div class="flex space-x-4">
-                        <button class="flex-grow py-3 px-4 bg-gradient-coklat text-white rounded-md" onclick="window.location.href='/workshop-book/{{ workshop.id }}/'">Make a booking</button>
+                        <button class="flex-grow py-3 px-4 bg-gradient-coklat text-white rounded-md" 
+                                onclick="window.location.href='{% url 'workshop_book' workshop.id %}'">
+                            Make a booking
+                        </button>
                         <button class="p-2 border border-coklat-1-rgba rounded-md hover:bg-coklat-1-rgba transition duration-300 like-button focus:outline-none" onclick="likeProduct(this)">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-outline" viewBox="0 0 24 24" stroke="currentColor" fill="none">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -81,7 +84,7 @@
                             </svg>
                         </button>
                     </div>
-                </div>                
+                </div>                               
             </div>
         </div>
         

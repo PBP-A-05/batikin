@@ -17,8 +17,18 @@ def workshop_product_list(request):
     return render(request, 'workshop_list.html', {'workshops': workshops})
 
 def workshop_book(request, pk):
-    workshop = get_object_or_404(Workshop, pk=pk)  # Asumsi Workshop adalah model Anda
-    return render(request, 'workshop_book.html', {'workshop': workshop})
+    # Ambil objek Workshop berdasarkan ID
+    workshop = get_object_or_404(Workshop, pk=pk)
+    
+    # Pecah jadwal menjadi daftar waktu terpisah
+    available_times = workshop.schedule.split(', ')
+    
+    context = {
+        'workshop': workshop,
+        'available_times': available_times,
+    }
+    
+    return render(request, 'workshop_book.html', context)
 
 @login_required
 def add_to_wishlist(request, workshop_id):
