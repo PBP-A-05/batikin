@@ -1,46 +1,54 @@
-<div class="order-info-section bg-[#F9F9F9] py-8 px-6 rounded-lg shadow-lg">
-    <h2 class="text-2xl font-semibold text-[#4C3108] mb-4">Informasi Pesanan</h2>
-
-    <div class="product-card border border-[#D8CDB3] rounded-lg p-6 flex items-center justify-between bg-white shadow-md">
-        <!-- Product Image -->
-        <div class="product-image flex-shrink-0">
-            <img src="{{ item_with_total.item.product.image_urls.0 }}" alt="{{ item_with_total.item.product.product_name }}" class="w-24 h-24 object-cover rounded-lg">
+<div id="cart-item-{{ item_with_total.item.id }}" class="product-card border border-[#D8CDB3] rounded-lg p-6 bg-white shadow-md mb-4">
+    <div class="flex items-start space-x-20">
+        <!-- Checkbox and Product Image -->
+        <div class="flex items-start space-x-4">
+            <input type="checkbox" id="select-{{ item_with_total.item.id }}" class="form-checkbox h-5 w-5 text-[#4C3108] mt-1" onchange="updateSelection({{ item_with_total.item.id }}, this.checked)">
+            <div class="product-image flex-shrink-0">
+                <img src="{{ item_with_total.item.product.image_urls.0 }}" alt="{{ item_with_total.item.product.product_name }}" class="w-24 h-24 object-cover rounded-lg">
+            </div>
         </div>
 
         <!-- Product Details -->
-        <div class="product-details ml-4 flex-grow">
-            <h3 class="text-lg font-semibold text-[#4C3108]">{{ item_with_total.item.product.product_name }}</h3>
-            <p class="text-sm text-[#714503]">{{ item_with_total.item.product.category }} - {{ item_with_total.item.product.size }}</p>
-            <p class="text-sm text-[#714503]">+{{ item_with_total.item.quantity|add:"-1" }} produk lainnya</p>
-        </div>
-
-        <!-- Quantity Selector -->
-        <div class="quantity-selector mr-4">
-            <label for="quantity-{{ item_with_total.item.product.id }}" class="text-sm font-semibold text-[#4C3108]">Kuantitas:</label>
-            <div class="flex items-center space-x-2 mt-1">
-                <button onclick="adjustQuantity({{ item_with_total.item.product.id }}, -1)" class="px-2 py-1 border rounded-full bg-[#754B0B] text-white">-</button>
-                <input id="quantity-{{ item_with_total.item.product.id }}" type="number" min="1" value="{{ item_with_total.item.quantity }}" class="w-12 text-center border rounded-md">
-                <button onclick="adjustQuantity({{ item_with_total.item.product.id }}, 1)" class="px-2 py-1 border rounded-full bg-[#754B0B] text-white">+</button>
-            </div>
+        <div class="product-details flex-grow">
+            <h3 class="text-lg font-semibold text-[#4C3108] mb-2">{{ item_with_total.item.product.product_name }}</h3>
+            <span class="inline-block px-2 py-1 text-xs border-gradient-coklat rounded-full text-[#4C3108]">{{ item_with_total.item.product.get_category_display }}</span>
         </div>
 
         <!-- Total Price -->
         <div class="total-price text-right">
-            <p class="text-sm font-semibold text-[#714503]">Total Belanja</p>
-            <p class="text-lg font-bold text-[#4C3108]">Rp{{ item_with_total.item_total }}</p>
+            <p class="text-2xl font-bold text-[#4C3108]" id="price-{{ item_with_total.item.id }}">Rp{{ item_with_total.item_total|floatformat:0 }}</p>
+        </div>
+    </div>
+
+    <!-- Quantity Selector and Delete Button -->
+    <div class="flex items-center justify-end space-x-4 mt-4">
+        <button onclick="removeFromCart({{ item_with_total.item.id }})" class="text-red-500 hover:text-red-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+        </button>
+        <div class="quantity-input flex items-center border border-coklat-1-rgba rounded-md">
+            <button onclick="adjustQuantity({{ item_with_total.item.id }}, -1)" class="text-coklat-1 px-2 py-1" id="decrementBtn-{{ item_with_total.item.id }}">-</button>
+            <input id="quantity-{{ item_with_total.item.id }}" type="number" min="1" value="{{ item_with_total.item.quantity }}" class="w-12 text-center text-coklat-2 focus:outline-none" readonly>
+            <button onclick="adjustQuantity({{ item_with_total.item.id }}, 1)" class="text-coklat-1 px-2 py-1">+</button>
         </div>
     </div>
 </div>
 
 <script>
-    function adjustQuantity(productId, adjustment) {
-        const quantityInput = document.getElementById(`quantity-${productId}`);
+    function adjustQuantity(itemId, adjustment) {
+        const quantityInput = document.getElementById(`quantity-${itemId}`);
+        const decrementBtn = document.getElementById(`decrementBtn-${itemId}`);
         let newQuantity = parseInt(quantityInput.value) + adjustment;
         if (newQuantity < 1) newQuantity = 1;
         quantityInput.value = newQuantity;
+        decrementBtn.disabled = newQuantity === 1;
 
-        const updateUrl = `/cart/update/${productId}/`;
-        fetch(updateUrl, {
+        updateCartItem(itemId, newQuantity);
+    }
+
+    function updateCartItem(itemId, newQuantity) {
+        fetch(`/cart/update/${itemId}/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -51,12 +59,35 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Quantity updated successfully!');
-                location.reload(); // Reload to reflect changes
+                document.getElementById(`price-${itemId}`).textContent = `Rp${Math.round(data.new_total)}`;
+                updateGrandTotal();
             } else {
                 alert('Failed to update quantity.');
             }
         })
         .catch(error => console.error('Error:', error));
+    }
+
+    function removeFromCart(itemId) {
+        fetch(`/cart/remove/${itemId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById(`cart-item-${itemId}`).remove();
+                updateGrandTotal();
+            } else {
+                alert('Failed to remove item from cart.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function updateSelection(itemId, isChecked) {
+        updateGrandTotal();
     }
 </script>

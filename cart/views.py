@@ -3,8 +3,10 @@ from decimal import Decimal, InvalidOperation
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.template.loader import render_to_string
 from .models import Cart, CartItem
 from shopping.models import Product
+from user_profile.models import Address
 import json
 
 @login_required
@@ -67,7 +69,8 @@ def update_cart_item(request, item_id):
         if quantity > 0:
             cart_item.quantity = quantity
             cart_item.save()
-            return JsonResponse({'success': True, 'new_quantity': cart_item.quantity})
+            new_total = cart_item.quantity * cart_item.price
+            return JsonResponse({'success': True, 'new_quantity': cart_item.quantity, 'new_total': new_total})
         else:
             cart_item.delete()
             return JsonResponse({'success': True, 'deleted': True})
@@ -76,6 +79,8 @@ def update_cart_item(request, item_id):
 
 @login_required
 def remove_from_cart(request, item_id):
-    cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
-    cart_item.delete()
-    return redirect('cart:view_cart')
+    if request.method == "POST":
+        cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+        cart_item.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False, 'error': 'Invalid request'})

@@ -1,31 +1,73 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="min-h-screen flex flex-col">
-    <div class="container-custom mx-auto py-16 flex-grow">
-        <div class="mb-8 ml-20">
-            <h1 class="text-5xl font-bold text-[#4C3108]">Keranjang</h1>
-            <p class="text-2xl text-[#714503]">
-                {{ total_quantity }} {% if total_quantity == 1 %} item {% else %} items {% endif %}
-            </p>            
+<style>
+    .border-gradient-coklat {
+        position: relative;
+    }
+    .border-gradient-coklat::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50px; 
+        padding: 2px; 
+        background: linear-gradient(90deg, #754B0B 0%, #DB8C15 100%);
+        -webkit-mask: 
+            linear-gradient(#fff 0 0) content-box, 
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+                mask-composite: exclude; 
+    }
+</style>
+
+<div class="min-h-screen flex flex-col bg-[#f6f6f6]">
+    <div class="container-custom mx-auto py-16 flex-grow max-w-5xl">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-[#4C3108]">Keranjang</h1>
         </div>
 
         {% if cart_items %}
-            <div class="mt-6">
-                {% for item_with_total in cart_items %}
-                    {% include 'cart/cart_card.html' %}
-                {% endfor %}
-            </div>
-            <div class="text-right mt-4">
-                <p class="text-2xl font-semibold text-[#754B0B]">Grand Total: Rp{{ total_price }}</p>
+            <div class="space-y-6">
+                <div id="cart-items-container" class="space-y-6">
+                    {% for item_with_total in cart_items %}
+                        {% include 'cart/cart_card.html' %}
+                    {% endfor %}
+                </div>
+                <div class="w-full md:w-2/3 lg:w-1/2 ml-auto">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-lg font-semibold text-[#4C3108] mb-1">Ringkasan belanja</h2>
+                        <hr class="border-t border-[#D8CDB3] mb-3">
+                        <div class="flex justify-between items-center mb-6">
+                            <span class="text-[#4C3108]">Total</span>
+                            <span id="grand-total" class="text-2xl font-semibold text-[#754B0B]">Rp{{ total_price|default:"0" }}</span>
+                        </div>
+                        <button class="w-full bg-gradient-coklat text-white py-3 rounded-lg font-medium hover:opacity-90 transition duration-300">
+                            Beli sekarang!
+                        </button>
+                    </div>
+                </div>
             </div>
         {% else %}
-            <div class="flex items-center justify-center h-full">
-                <p class="text-xl text-[#714503]">Tidak ada item di keranjang</p>
+            <div class="flex items-center justify-center h-64 bg-white rounded-lg shadow-md">
+                <p class="text-xl text-[#714503] opacity-70 text-center px-4">Produk yang dimasukkan ke keranjang akan muncul di sini.</p>
             </div>
         {% endif %}
     </div>
-    <footer class="bg-[#4D3108] py-2">
-        <div class="container mx-auto text-center"></div>
-    </footer>
 </div>
+
+<script>
+    function updateGrandTotal() {
+        let total = 0;
+        document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            const itemId = checkbox.id.split('-')[1];
+            const priceElement = document.getElementById(`price-${itemId}`);
+            total += parseFloat(priceElement.textContent.replace('Rp', '').replace(',', ''));
+        });
+        document.getElementById('grand-total').textContent = `Rp${Math.round(total)}`;
+    }
+
+    updateGrandTotal();
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', updateGrandTotal);
+    });
+</script>
 {% endblock %}
