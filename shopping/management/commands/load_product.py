@@ -17,6 +17,8 @@ class Command(BaseCommand):
             return 'pakaian_pria'
         elif file_type == 'pakaian_batik_perempuan':
             return 'pakaian_wanita'
+        elif file_type == 'sesuatu_jogja':
+            return 'aksesoris'
             
         # Fallback logic if needed
         if 'wanita' in product_name_lower:
@@ -94,7 +96,8 @@ class Command(BaseCommand):
         json_files = [
             ('static/assets/kain_batik.json', 'kain_batik'),
             ('static/assets/pakaian_batik_laki.json', 'pakaian_batik_laki'),
-            ('static/assets/pakaian_batik_perempuan.json', 'pakaian_batik_perempuan')
+            ('static/assets/pakaian_batik_perempuan.json', 'pakaian_batik_perempuan'),
+            ('static/assets/sesuatu_jogja.json', 'sesuatu_jogja')
         ]
         
         all_products = []

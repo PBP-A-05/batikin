@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'batikin',
     'user_profile',
     'shopping',
+    'booking',
     'comment_review',
 ]
 
