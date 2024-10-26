@@ -177,7 +177,7 @@ function attachProductCardListeners() {
                         if (response.ok) {
                             window.location.href = `/shopping/${productId}/`;
                         } else if (response.status === 403) {
-                            showPopupMessage('Masuk ke Batikin untuk melihat detail produk!');
+                            showPopup('Masuk ke Batikin untuk melihat detail produk!');
                             setTimeout(() => {
                                 window.location.href = '{% url "login" %}';
                             }, 2000);
