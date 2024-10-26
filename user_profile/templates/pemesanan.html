@@ -4,20 +4,161 @@
 {% block title %}Batikin | Pemesanan{% endblock %}
 
 {% block content %}
+<style>
+    /* Ensure the modal covers the screen */
+    #orderModal {
+        z-index: 50; /* Ensure it appears above other elements */
+    }
+
+    /* When the modal is visible */
+    .modal-open {
+        display: flex !important;
+    }
+
+    /* Hide the modal by default */
+    #orderModal.hidden {
+        display: none;
+    }
+
+    /* Make the modal content scrollable if it exceeds the max-height */
+    .modal-content {
+        max-height: 400px;  /* You can adjust the height as needed */
+        overflow-y: auto;   /* Enable vertical scrolling */
+    }
+
+</style>
+
 <main class="min-h-screen w-full bg-[#F6F6F6]">
-    <section class="mx-auto max-w-[1536px] px-8 flex flex-col items-center min-h-screen mt-16">
-        <h1 class="text-4xl font-bold text-coklat-2 mb-6 text-left">Pemesanan</h1>
+    <section class="mx-auto max-w-[1536px] px-4 md:px-8 flex flex-col items-center min-h-screen mt-8 md:mt-16">
+        <h1 class="text-2xl md:text-4xl font-bold text-coklat-2 mb-4 md:mb-6 text-left">Pemesanan</h1>
 
         <!-- Navigation Tabs -->
         {% include 'partials/nav_tabs.html' with active='pemesanan' %}
 
-        <div class="w-full md:w-3/5 lg:w-2/3 h-auto bg-white p-8 rounded-xl shadow-lg" style="border: 0.2px solid rgba(117, 75, 11, 0.25);">
-            <div >
+        <div class="w-full md:w-3/5 lg:w-2/3 h-auto bg-white p-4 md:p-8 rounded-xl shadow-lg" style="border: 0.2px solid rgba(117, 75, 11, 0.25);">
+            <div class="flex justify-between items-center mb-4 md:mb-6">
+                <h2 class="text-xl md:text-2xl font-bold text-coklat-2">Informasi Booking</h2>
+            </div>
 
+            <div class="flex flex-col md:flex-row p-4 rounded-lg shadow-md bg-[#FAF4ED]" style="border: 0.2px solid rgba(117, 75, 11, 0.35);">
+                <!-- Image placeholder container -->
+                <div class="w-full md:w-1/4 md:flex md:items-stretch mb-4 md:mb-0 md:mr-4 max-md:flex max-md:justify-center">
+                    <div class="w-36 md:w-full h-36 md:h-full bg-[#4a412c]"></div>
+                </div>
+                <!-- Content section -->
+                <div class="w-full md:w-3/4 flex flex-col justify-between">
+                    <div class="flex flex-col md:flex-row justify-between md:items-start">
+                        <div class="w-full md:w-[75%] mb-2 md:mb-0">
+                            <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek- Racanapati - mensbatik slimfit - L</h3>
+                            <p class="text-sm text-gray-600">+2 produk lainnya</p>
+                        </div>
+                        <div class="md:text-right">
+                            <span class="text-lg font-bold text-coklat-2">Rp341.050</span>
+                        </div>
+                    </div>
+                    <!-- Trigger Button -->
+                    <div class="mt-4 flex flex-col md:flex-row justify-end items-start md:items-center space-y-2 md:space-y-0 md:space-x-4">
+                        <a href="javascript:void(0)" class="text-sm font-medium text-coklat-2" onclick="toggleModal()">Lihat Detail Pemesanan</a>
+                        <button class="w-full md:w-auto px-4 py-1 text-sm font-medium bg-white text-coklat-2 border rounded-lg">Ulas</button>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <!-- Modal -->
+        <div id="orderModal" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-white w-full max-w-lg p-6 rounded-lg shadow-lg relative">
+                <!-- Close button -->
+                <button class="absolute top-4 right-4 text-xl font-bold" onclick="toggleModal()">×</button>
+                <h2 class="text-2xl font-bold text-coklat-2 mb-4">Detail Pemesanan</h2>
+                
+                <!-- Scrollable content -->
+                <div class="modal-content overflow-y-auto" style="max-height: 400px;">
+                    <p class="text-lg">Here you can display all the order details...</p>
+                    
+                    <!-- Add order details here -->
+                    <div class="mt-4">
+                        <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek - Sigma - mensbatik slimfit - L</h3>
+                        <p class="text-sm text-gray-600">Quantity: 2</p>
+                        <p class="text-lg font-bold text-coklat-2">Rp449.000</p>
+                    </div>
+
+                    <!-- Add more product details here -->
+                    <div class="mt-4">
+                        <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek - Racanapati - mensbatik slimfit - L</h3>
+                        <p class="text-sm text-gray-600">Quantity: 1</p>
+                        <p class="text-lg font-bold text-coklat-2">Rp341.050</p>
+                    </div>
+                    
+                    <!-- More products (Example for scroll) -->
+                    <div class="mt-4">
+                        <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek - Another Product</h3>
+                        <p class="text-sm text-gray-600">Quantity: 3</p>
+                        <p class="text-lg font-bold text-coklat-2">Rp500.000</p>
+                    </div>
+
+
+                        
+                    <!-- Add order details here -->
+                    <div class="mt-4">
+                        <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek - Sigma - mensbatik slimfit - L</h3>
+                        <p class="text-sm text-gray-600">Quantity: 2</p>
+                        <p class="text-lg font-bold text-coklat-2">Rp449.000</p>
+                    </div>
+
+                    <!-- Add more product details here -->
+                    <div class="mt-4">
+                        <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek - Racanapati - mensbatik slimfit - L</h3>
+                        <p class="text-sm text-gray-600">Quantity: 1</p>
+                        <p class="text-lg font-bold text-coklat-2">Rp341.050</p>
+                    </div>
+                    
+                    <!-- More products (Example for scroll) -->
+                    <div class="mt-4">
+                        <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek - Another Product</h3>
+                        <p class="text-sm text-gray-600">Quantity: 3</p>
+                        <p class="text-lg font-bold text-coklat-2">Rp500.000</p>
+                    </div>
+
+                        
+                    <!-- Add order details here -->
+                    <div class="mt-4">
+                        <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek - Sigma - mensbatik slimfit - L</h3>
+                        <p class="text-sm text-gray-600">Quantity: 2</p>
+                        <p class="text-lg font-bold text-coklat-2">Rp449.000</p>
+                    </div>
+
+                    <!-- Add more product details here -->
+                    <div class="mt-4">
+                        <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek - Racanapati - mensbatik slimfit - L</h3>
+                        <p class="text-sm text-gray-600">Quantity: 1</p>
+                        <p class="text-lg font-bold text-coklat-2">Rp341.050</p>
+                    </div>
+                    
+                    <!-- More products (Example for scroll) -->
+                    <div class="mt-4">
+                        <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek - Another Product</h3>
+                        <p class="text-sm text-gray-600">Quantity: 3</p>
+                        <p class="text-lg font-bold text-coklat-2">Rp500.000</p>
+                    </div>
+
+                    <!-- You can continue adding more items... -->
+                </div>
+
+                <!-- Close button -->
+                <div class="flex justify-end mt-6">
+                    <button class="px-4 py-2 bg-coklat-2 text-white rounded-md" onclick="toggleModal()">Close</button>
+                </div>
+            </div>
+        </div>
+
     </section>
 </main>
+
+<script>
+    function toggleModal() {
+        const modal = document.getElementById('orderModal');
+        modal.classList.toggle('hidden');
+    }
+</script>
 {% endblock %}
-
-
