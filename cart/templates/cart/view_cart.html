@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col">
+
+    <div class="container-custom mx-auto py-16 flex-grow">
+        
+        <div class="mb-8 ml-20">
+            <h1 class="text-5xl font-bold text-[#4C3108]" style="font-family: 'Poppins'; font-size: 30px; font-weight: bold; margin-bottom: 8px;">
+                Keranjang
+            </h1>
+            <p class="text-2xl text-[#714503]" style="font-family: 'Poppins'; font-size: 15px; font-weight: 600; margin-top: -8px;">
+                {{ cart_items.count }} {% if cart_items.count == 1 %} item {% else %} items {% endif %}
+            </p>
+        </div>
+
+        {% if cart_items %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
+                {% for item in cart_items %}
+                    {% include 'cart_card.html' %}
+                {% endfor %}
+            </div>
+        {% else %}
+        
+            <div class="flex items-center justify-center h-full">
+                <p class="text-xl text-[#714503]">Tidak ada item di keranjang</p>
+            </div>
+        {% endif %}
+    </div>
+
+    
+    <footer class="bg-[#4D3108] py-2">
+        <div class="container mx-auto text-center">
+        </div>
+    </footer>
+</div>
+
+
+<script>
+    function updateCart(productId, quantity) {
+        alert('Produk ' + productId + ' berhasil diupdate dengan kuantitas ' + quantity + '!');
+    }
+
+    function removeFromCart(productId) {
+        alert('Produk ' + productId + ' berhasil dihapus dari keranjang!');
+    }
+    function adjustQuantity(itemId, adjustment) {
+        const quantityInput = document.getElementById(`quantity-${itemId}`);
+        let newQuantity = parseInt(quantityInput.value) + adjustment;
+
+        if (newQuantity < 1) {
+            newQuantity = 1; 
+        }
+        
+        quantityInput.value = newQuantity;
+
+        const updateUrl = `/cart/update/${itemId}/`;
+
+        
+        fetch(updateUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'  
+            },
+            body: JSON.stringify({ 'quantity': newQuantity })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Quantity updated successfully!');
+            } else {
+                alert('Failed to update quantity.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+</script>
+{% endblock %}
