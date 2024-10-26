@@ -33,3 +33,13 @@ class WorkshopProduct(models.Model):  # Mengganti nama kelas menjadi WorkshopPro
 
     def __str__(self):
         return self.title
+    
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="wishlists")
+    workshop = models.ForeignKey(Workshop, on_delete=models.CASCADE, related_name="wishlisted_by")
+
+    class Meta:
+        unique_together = ('user', 'workshop')  # Ensure that a user can only wish-list a workshop once
+
+    def __str__(self):
+        return f"{self.user.username} - {self.workshop.name}"

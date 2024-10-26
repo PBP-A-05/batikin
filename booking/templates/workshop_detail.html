@@ -25,7 +25,7 @@
 <div class="container mx-auto px-4 py-8 max-w-7xl">
     <div class="bg-white border border-coklat-1-rgba rounded-md p-6">
         <div class="flex flex-row gap-4">
-            <!-- Foto Produk -->
+            <!-- Foto Workshop -->
             <div class="w-3/5 flex gap-4">
                 <div class="w-1/5 flex flex-col justify-between">
                     {% for image_url in workshop.image_urls|slice:":5" %}
@@ -36,12 +36,12 @@
                 </div>
                 <div class="w-4/5">
                     <div id="mainImage" class="relative aspect-[4/3] rounded-md w-full h-full">
-                        <img src="https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/jogjapos/2024/05/20221122_083254.jpg" alt="{{ workshop.name }}" class="object-cover w-full h-full rounded-md">
+                        <img src="{{ workshop.image_urls.0 }}" alt="{{ workshop.name }}" class="object-cover w-full h-full rounded-md">
                     </div>
                 </div>
             </div>
             
-            <!-- Detail Produk -->
+            <!-- Detail Workshop -->
             <div class="w-2/5 flex flex-col justify-between">
                 <div class="space-y-4">
                     <h2 class="text-2xl font-bold text-coklat-3">{{ workshop.name }}</h2>
@@ -63,15 +63,15 @@
                         </svg>
                         <span>Kota Yogyakarta</span>
                     </div>
-                    <a href="{{ webstore.store_url }}" target="_blank" class="flex items-center hover:text-coklat-2 transition duration-300">
-                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
-                        <span>Kunjungi Web link</span>
+                    <a href="{{ workshop.website }}" target="_blank" class="flex items-center hover:text-coklat-2 transition duration-300">
+                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                        <span>Kunjungi Website</span>
                     </a>
                 </div>
 
                 <div class="space-y-4 mt-auto">
                     <div class="flex space-x-4">
-                        <button class="flex-grow py-3 px-4 bg-gradient-coklat text-white rounded-md opacity-50 cursor-not-allowed" disabled>Make a booking</button>
+                        <button class="flex-grow py-3 px-4 bg-gradient-coklat text-white rounded-md" onclick="window.location.href='/workshop-book/{{ workshop.id }}/'">Make a booking</button>
                         <button class="p-2 border border-coklat-1-rgba rounded-md hover:bg-coklat-1-rgba transition duration-300 like-button focus:outline-none" onclick="likeProduct(this)">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-outline" viewBox="0 0 24 24" stroke="currentColor" fill="none">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -81,22 +81,21 @@
                             </svg>
                         </button>
                     </div>
-                </div>
+                </div>                
             </div>
         </div>
         
         <div class="mt-8 border-t border-coklat-1-rgba pt-6">
             <div class="flex justify-between items-center cursor-pointer" onclick="toggleDescription()">
                 <h3 class="text-xl font-bold text-coklat-2">Deskripsi Workshop</h3>
-                <svg id="toggleIcon" class="w-6 h-6 text-coklat-2 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                <svg id="toggleIcon" class="w-6 h-6 text-coklat-2 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             </div>
             <div id="productDescription" class="mt-4 text-coklat-2 overflow-hidden transition-all duration-300 max-h-0">
                 <p>Sentra Batik Giriloyo merupakan kampung yang terletak di Kelurahan Wukirsari, Kecamatan Imogiri, Kabupaten Bantul. Kampung ini dikenal sebagai sentra kerajinan batik tulis di Daerah Istimewa Yogyakarta. Sebagaimana dengan namanya, hampir 90 persen aktivitas masyarakat di desa yang berada tidak jauh dari Makam Raja-raja Mataram ini adalah membatik.</p>
                 <p>Selain sering didatangi pengunjung yang ingin membeli batik, Sentra Batik Giriloyo juga kerap dipenuhi wisatawan yang ingin melihat proses pembuatan batik. Biasanya wisatawan ini berasal dari siswa sekolah, instansi, keluarga, hingga turis mancanegara. Mereka juga bisa belajar membatik secara langsung.</p>
-                <p>Paket wisata belajar membatik ini dibanderol dengan tarif Rp 250.000 untuk minimal peserta 5 orang. Para peserta akan diberi penjelasan mengenai sejarah batik Giriloyo dan diajari cara membatik oleh perajin-perajin batik. Hasil karya berupa kain batik berukuran 35×35 cm dapat dibawa pulang sebagai cindera mata.</p>
+                <p>Paket wisata belajar membatik ini dibanderol dengan tarif Rp 250.000 untuk minimal peserta 5 orang. Para peserta akan diberi penjelasan mengenai sejarah batik dan cara membuat batik oleh pembatik lokal.</p>
             </div>
         </div>
-
     </div>
 </div>
 
@@ -114,12 +113,10 @@
     }
 
     function likeProduct(button) {
-        const heartOutline = button.querySelector('.heart-outline');
-        const heartFilled = button.querySelector('.heart-filled');
-
-        heartOutline.classList.toggle('hidden');
-        heartFilled.classList.toggle('hidden');
+        const filledHeart = button.querySelector('.heart-filled');
+        const outlineHeart = button.querySelector('.heart-outline');
+        filledHeart.classList.toggle('hidden');
+        outlineHeart.classList.toggle('hidden');
     }
 </script>
-
 {% endblock %}

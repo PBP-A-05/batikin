@@ -31,6 +31,7 @@
       display: block;
       fill: #754B0B; 
   }
+
   .workshop-card {
       transition: all 0.3s ease;
   }
@@ -77,23 +78,23 @@
       {% for workshop in workshops %}
       <a href="{% url 'workshop_detail' workshop.id %}" class="workshop-card block bg-white border border-coklat-1-rgba rounded-md overflow-hidden hover:shadow-md transition-all duration-300">
         <div class="relative aspect-square overflow-hidden m-4">
-          <img src="{{ workshop.image_url }}" alt="{{ workshop.name }}" class="object-cover w-full h-full">
+          <img src="{{ workshop.image_urls }}" alt="{{ workshop.title }}" class="object-cover w-full h-full">
         </div>
         <div class="p-4 space-y-2">
-          <h3 class="text-base font-semibold text-coklat-1">{{ workshop.name }}</h3>
-          <p class="text-sm text-coklat-1">{{ workshop.address }}</p>
+          <h3 class="text-base font-semibold text-coklat-1">{{ workshop.title }}</h3>
+          <p class="text-sm text-coklat-1">{{ workshop.location }}</p>
           <div class="flex justify-between items-center">
-            <span class="text-sm font-bold text-coklat-2">{{ workshop.time }}</span>
-            <button class="like-button focus:outline-none" onclick="event.preventDefault(); likeProduct(this);">
+            <span class="text-sm font-bold text-coklat-2">{{ workshop.open_time }}</span>
+            <button class="like-button focus:outline-none" onclick="event.preventDefault(); likeProduct(this, '{{ workshop.id }}');" data-workshop-id="{{ workshop.id }}">
               <!-- Outline heart -->
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-outline" viewBox="0 0 24 24" stroke="currentColor" fill="none">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
               <!-- Filled heart -->
               <svg width="24" height="25" class="h-6 w-6 text-coklat-1 heart-filled hidden" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12.0048 19.5L4.791 13.0513C0.870448 9.18258 6.63333 1.75337 12.0048 7.76384C17.3763 1.75337 23.1141 9.20729 19.22 13.0513L12.0048 19.5Z" fill="#754B0B" stroke="#754B0B" stroke-width="1.42857" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M12.0048 19.5L4.791 13.0513C0.870448 9.18258 6.63333 1.75337 12.0048 7.76384C17.3763 1.75337 23.1141 9.20729 19.22 13.0513L12.0048 19.5Z" fill="#754B0B" stroke="#754B0B" stroke-width="1.42857" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-            </button>
+            </button>          
           </div>
         </div>
       </a>
@@ -102,9 +103,91 @@
   </div>
 </div>
 
+<div id="customPopup" class="fixed bottom-8 left-8 bg-white border border-coklat-1 rounded-md p-4 shadow-md hidden z-50 w-80">
+  <p id="popupMessage" class="text-coklat-2 font-poppins mb-3"></p>
+  <div class="flex justify-end">
+    <button onclick="closePopup()" class="bg-gradient-coklat text-white px-6 py-1 rounded-md hover:opacity-90 transition duration-300 text-sm">Tutup</button>
+  </div>
+</div>
+
+<div id="customPopup" class="fixed bottom-8 left-8 bg-white border border-coklat-1 rounded-md p-4 shadow-md hidden z-50 w-80">
+  <p id="popupMessage" class="text-coklat-2 font-poppins mb-3"></p>
+  <div class="flex justify-end">
+    <button onclick="closePopup()" class="bg-gradient-coklat text-white px-6 py-1 rounded-md hover:opacity-90 transition duration-300 text-sm">Tutup</button>
+  </div>
+</div>
+
 <script>
-  function likeProduct(button) {
-    button.classList.toggle('liked');
-  }
+document.addEventListener('DOMContentLoaded', function() {
+    attachWorkshopCardListeners();
+});
+
+function attachWorkshopCardListeners() {
+    document.querySelectorAll('.workshop-card').forEach(card => {
+        card.addEventListener('click', function(event) {
+            const workshopId = this.dataset.workshopId;
+            fetch(`/workshops/${workshopId}/check/`)
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = `/workshops/${workshopId}/`;
+                    } else if (response.status === 403) {
+                        showPopupMessage('Masuk ke Batikin untuk melihat detail workshop!');
+                        setTimeout(() => {
+                            window.location.href = '{% url "login" %}';
+                        }, 2000);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    });
+}
+
+function updateActiveButton(category) {
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        if (btn.dataset.category.toLowerCase() === category.toLowerCase()) {
+            btn.classList.add('text-gradient-coklat', 'border-gradient-coklat', 'shadow-lg');
+            btn.classList.remove('text-coklat-1', 'border-coklat-rgba');
+        } else {
+            btn.classList.remove('text-gradient-coklat', 'border-gradient-coklat', 'shadow-lg');
+            btn.classList.add('text-coklat-1', 'border-coklat-rgba');
+        }
+    });
+}
+
+function updateWishlistStatus() {
+    document.querySelectorAll('.workshop-card').forEach(card => {
+        const workshopId = card.dataset.workshopId;
+        const likeButton = card.querySelector('.like-button');
+        const svg = likeButton.querySelector('svg');
+        const isInWishlist = localStorage.getItem(`wishlist_${workshopId}`) === 'true';
+        if (isInWishlist) {
+            svg.style.fill = '#754B0B';
+            likeButton.classList.add('liked');
+        } else {
+            svg.style.fill = 'none';
+            likeButton.classList.remove('liked');
+        }
+    });
+}
+
+function showPopup(message) {
+    const popup = document.getElementById('customPopup');
+    const popupMessage = document.getElementById('popupMessage');
+    popupMessage.textContent = message;
+    popup.style.animation = 'none';
+    popup.offsetHeight; 
+    popup.style.animation = null;
+    popup.classList.remove('hidden');
+    setTimeout(() => {
+        closePopup();
+    }, 3000); 
+}
+
+function closePopup() {
+    const popup = document.getElementById('customPopup');
+    popup.classList.add('hidden');
+}
 </script>
 {% endblock %}

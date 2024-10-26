@@ -1,66 +1,14 @@
-<style>
-    .workshop-card {
-        transition: all 0.3s ease;
-    }
-    .workshop-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    .workshop-card:active {
-        transform: translateY(-2px);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    .like-button:hover svg {
-        transform: scale(1.1);
-        filter: drop-shadow(0 0 2px rgba(117, 75, 11, 0.5));
-    }
-    .like-button:active svg {
-        transform: scale(0.9);
-    }
-    .like-button svg {
-        transition: all 0.3s ease;
-    }
-    .like-button.liked svg {
-        fill: #754B0B;
-        animation: heartBounce 0.3s ease-in-out;
-    }
-    @keyframes heartBounce {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.2); }
-    }
-</style>
-
-<a href="{% url 'workshop_detail' pk=workshop.pk %}" class="workshop-card block bg-white border border-coklat-1-rgba rounded-md overflow-hidden hover:shadow-md transition-all duration-300">
-    <div class="relative aspect-square overflow-hidden m-4">
-        <img src="{{ workshop.image_url }}" alt="{{ workshop.name }}" class="object-cover w-full h-full">
-    </div>
-    <div class="p-4 space-y-2">
-        <span class="inline-block px-2 py-1 text-xs border border-coklat-1-rgba rounded-full text-black">Workshop</span>
-        <h3 class="text-base font-semibold text-coklat-1">{{ workshop.name }}</h3>
-        <div class="flex justify-between items-center">
-            <span class="text-sm text-coklat-1">{{ workshop.address }}</span>
-            <button class="like-button focus:outline-none" onclick="event.preventDefault(); likeWorkshop(this);">
-                <!-- Outline heart -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-outline" viewBox="0 0 24 24" stroke="currentColor" fill="none">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-                <!-- Filled heart -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-filled" viewBox="0 0 24 24" fill="currentColor">
-                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L12 8.343l3.172-3.171a4 4 0 115.656 5.656L12 19.657l-8.828-8.829a4 4 0 010-5.656z" clip-rule="evenodd" />
-                </svg>
-            </button>
+<div id="workshopsGrid">
+    {% for workshop in workshops %}
+    <div class="workshop-card block bg-white border border-coklat-1-rgba rounded-md overflow-hidden hover:shadow-md transition-all duration-300" data-workshop-id="{{ workshop.id }}">
+        <div class="relative aspect-square overflow-hidden m-4">
+            <img src="{{ workshop.image_url }}" alt="{{ workshop.name }}" class="object-cover w-full h-full">
+        </div>
+        <div class="p-4 space-y-2">
+            <h3 class="text-base font-semibold text-coklat-1">{{ workshop.name }}</h3>
+            <span class="text-sm text-coklat-2">{{ workshop.address }}</span>
+            <span class="text-sm text-coklat-2">{{ workshop.time }}</span>
         </div>
     </div>
-</a>
-
-<script>
-    function likeWorkshop(button) {
-        button.classList.toggle('liked');
-        const svg = button.querySelector('svg');
-        if (button.classList.contains('liked')) {
-            svg.style.fill = '#754B0B';
-        } else {
-            svg.style.fill = 'none';
-        }
-    }
-</script>
+    {% endfor %}
+</div>
