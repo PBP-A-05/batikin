@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'batikin',
-    'user_profile',
+    'user_profile.apps.UserProfileConfig',  # Use this instead of just 'user_profile'
     'shopping',
     'booking'
 ]

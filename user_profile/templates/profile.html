@@ -1,16 +1,201 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %} Batikin | Landing Page {% endblock %}
+{% block title %}Batikin | Settings Page{% endblock %}
 
 {% block content %}
-    <main class="h-full w-screen bg-[#F6F6F6]">
-        <section class="mx-auto w-max-[1536px] max-md:px-8 flex justify-center items-center min-h-screen">
-            <div class="w-[50vw] h-[30vh] bg-white" style="border: 0.2px solid rgba(117, 75, 11, 0.25); border-radius: 23px;">
-                <h2 class="text-2xl font-bold text-coklat-1 mb-6 text-center">Welcome, {{ request.user.first_name|default:request.user.username }}!</h2>
-
+<!-- Add Modal HTML -->
+<div id="editProfileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white p-8 rounded-xl max-w-md w-full mx-4">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-coklat-2">Edit Profile</h2>
+            <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <form id="profileForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="flex justify-end gap-4 mt-6">
+                <button type="button" onclick="closeModal()" 
+                    class="px-4 py-2 text-coklat-2 border border-coklat-2 rounded-lg hover:bg-gray-100">
+                    Cancel
+                </button>
+                <button type="submit" 
+                    class="px-4 py-2 bg-gradient-to-r from-[#754B0B] to-[#DB8C15] text-white rounded-lg hover:opacity-90">
+                    Save Changes
+                </button>
             </div>
-        </section>  
-    </main>
+        </form>
+    </div>
+</div>
+
+<main class="min-h-screen w-full bg-[#F6F6F6]">
+    <section class="mx-auto max-w-[1536px] px-8 flex flex-col items-center min-h-screen mt-16">
+        <!-- Settings Title -->
+        <h1 class="text-4xl font-bold text-coklat-2 mb-6 text-left">Settings</h1>
+
+        <!-- Navigation Tabs -->
+        <div class="flex space-x-8 mb-8">
+            <a class="nav-link text-lg text-coklat-2 hover:underline relative pb-2" href="#" data-target="account">
+                Account
+                <div class="nav-indicator absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#754B0B] to-[#DB8C15] transform scale-x-0 transition-transform duration-300 origin-left"></div>
+            </a>
+            <a class="nav-link text-lg text-coklat-2 hover:underline relative pb-2" href="#" data-target="pemesanan">
+                Pemesanan
+                <div class="nav-indicator absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#754B0B] to-[#DB8C15] transform scale-x-0 transition-transform duration-300 origin-left"></div>
+            </a>
+            <a class="nav-link text-lg text-coklat-2 hover:underline relative pb-2" href="#" data-target="booking">
+                Booking Workshop
+                <div class="nav-indicator absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#754B0B] to-[#DB8C15] transform scale-x-0 transition-transform duration-300 origin-left"></div>
+            </a>
+        </div>
+
+        <!-- Content Area -->
+        <div id="contentArea" class="w-full md:w-3/5 lg:w-2/3 h-auto bg-white p-8 rounded-xl shadow-lg" style="border: 0.2px solid rgba(117, 75, 11, 0.25);">
+            <!-- Content will be loaded here via AJAX -->
+        </div>
+    </section>
+</main>
 {% endblock %}
 
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const contentArea = document.getElementById('contentArea');
+    const navLinks = document.querySelectorAll('.nav-link');
+    console.log('{{ request.user.profile.profile_picture }}');
+    const user = '{{ request.user }}';
+    const profile = '{{ request.user.profile }}';
+    console.log(user);
+    console.log(profile);
+    function loadContent(target) {
+        let content = '';
+        switch(target) {
+            case 'account':
+                content = `
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-coklat-2">Informasi Profile</h2>
+                        <button onclick="openModal()" class="px-4 py-2 text-coklat-2 border border-coklat-2 rounded-lg hover:bg-coklat-2 hover:text-white transition-colors">
+                            Edit Profile
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Profile Picture -->
+                        <div class="flex flex-col items-start">
+                            <label class="text-lg font-bold text-coklat-2 mb-2">Profile Picture</label>
+                            <img class="w-24 h-24 rounded-full object-cover mb-4" 
+                                src="${'{{ user.profile.profile_picture }}' || 'https://via.placeholder.com/150'}" 
+                                alt="Profile Picture">
+                            <p>{{ user.profile.profile_picture }}</p>
+                        </div>
+                        <!-- User Info -->
+                        <div class="flex flex-col">
+                            <label class="text-lg font-bold text-coklat-2 mb-2">Name</label>
+                            <p class="text-gray-700">${'{{ request.user.get_full_name }}'}</p>
+                        </div>
+                        <!-- Phone Number -->
+                        <div class="flex flex-col">
+                            <label class="text-lg font-bold text-coklat-2 mb-2">Phone Number</label>
+                            <p class="text-gray-700">${'{{ request.user.profile.phone_number }}' || 'Not set'}</p>
+                        </div>
+                        <!-- Address -->
+                        <div class="flex flex-col">
+                            <label class="text-lg font-bold text-coklat-2 mb-2">Address</label>
+                            <p class="text-gray-700">${'{{ request.user.profile.address_line1 }}' || 'Not set'}</p>
+                            <p class="text-gray-700">${'{{ request.user.profile.address_line2 }}' || ''}</p>
+                        </div>
+                    </div>
+                `;
+                break;
+            case 'pemesanan':
+                content = `
+                    <h2 class="text-2xl font-bold text-coklat-2 mb-6">Pemesanan</h2>
+                    <p>Your pemesanan content goes here.</p>
+                `;
+                break;
+            case 'booking':
+                content = `
+                    <h2 class="text-2xl font-bold text-coklat-2 mb-6">Booking Workshop</h2>
+                    <p>Your booking workshop content goes here.</p>
+                `;
+                break;
+            default:
+                content = '<p>Content not found.</p>';
+        }
+        contentArea.innerHTML = content;
+    }
+
+    function setActiveTab(link) {
+        // Remove active class from all links
+        navLinks.forEach(l => {
+            l.classList.remove('font-bold');
+            const indicator = l.querySelector('.nav-indicator');
+            if(indicator) {
+                indicator.classList.remove('scale-x-100');
+            }
+        });
+
+        // Add active class to clicked link
+        link.classList.add('font-bold');
+        const activeIndicator = link.querySelector('.nav-indicator');
+        if(activeIndicator) {
+            activeIndicator.classList.add('scale-x-100');
+        }
+    }
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = this.getAttribute('data-target');
+            setActiveTab(this);
+            loadContent(target);
+        });
+    });
+
+    // Load default content (Account) and set it as active
+    if(navLinks.length > 0){
+        loadContent('account');
+        setActiveTab(navLinks[0]);
+    }
+
+    // Add these functions for modal handling
+    window.openModal = function() {
+        document.getElementById('editProfileModal').classList.remove('hidden');
+        document.getElementById('editProfileModal').classList.add('flex');
+    }
+
+    window.closeModal = function() {
+        document.getElementById('editProfileModal').classList.add('hidden');
+        document.getElementById('editProfileModal').classList.remove('flex');
+    }
+
+    // Handle form submission
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        fetch('{% url "update_profile" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                closeModal();
+                // Reload the profile content
+                loadContent('account');
+            } else {
+                // Handle errors
+                console.error(data.errors);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
