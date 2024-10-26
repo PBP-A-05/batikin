@@ -23,7 +23,7 @@
 </head>
 <body class="bg-[#f6f6f6] w-full h-full">
     <!-- Navbar -->
-    <header class="w-screen bg-white" style="box-shadow: 0px 4px 4px rgba(117, 75, 11, 0.25);">
+    <header class="w-screen bg-white" style="box-shadow: 0px 4px 4px rgba(117, 75, 11, 0.1);">
         <div class="container-custom flex gap-12 justify-between items-center mx-auto py-4 w-max-[1536px] max-md:px-8">
 
             <a class="flex items-center space-x-2 md:hidden" href="/">
@@ -136,13 +136,94 @@
     {% block content %}
 
     {% endblock %}
-
-
+        <!-- Footer Dekstop -->
+        <footer class="bg-coklat-2 px-16 py-6 h-72 text-coklat-1 flex text-white max-md:hidden">
+            <div class="flex w-full mt-8">
+                <div class="flex flex-col w-[80%] gap-4">
+                    <h2 class="font-bold text-xl border-b-[1px] border-white leading-10">Eksplorasi Yogyakarta Bersama</h2>
+                    <a class="flex items-center space-x-2" href="/">
+                        <img src="{% static 'assets/logo.png' %}" alt="Batikin Logo" class="h-16 w-16">
+                        <span class="text-3xl font-javanese leading-6 mt-2 text-whtie">Batikin</span>
+                    </a>
+                    <h2 class="font-semibold text-xl mt-6">2024. Crafted with artistry by PBP A.05</h2>                
+            </div>
     
+                <div class="flex flex-col w-[20%] ml-11">
+                    <h2 class="font-bold">Kategori</h2>
+                    <div class="space-y-4 font-javanese flex flex-col">
+                        <a href="{% url 'product_list' %}?category=pakaian_pria mt-2" class="text-white mt-2 font-javanese ">Pakaian Pria</a>
+                        <a href="{% url 'product_list' %}?category=pakaian_wanita" class="text-white font-javanese ">Pakaian Wanita</a>
+                        <a href="{% url 'product_list' %}?category=aksesoris" class="text-white font-javanese ">Aksesoris</a>
+                        <a href="{% url 'workshop_list' %}" class="text-white font-javanese ">Workshop</a>
+                    </div>
+                </div>
     
-    <footer class="bg-coklat-2 py-6 h-32 text-center text-coklat-1">
-        © 2024 Batikin. All rights reserved.
-    </footer>
+                <div class="flex flex-col w-[20%]">
+                    <h2 class="font-bold">Navigasi</h2>
+                    <div class="space-y-4 font-javanese flex flex-col">
+                        <a href="/about" class="text-white mt-2 font-javanese ">Beranda</a>
+                        <a href="/contact" class="text-white font-javanese ">Akun saya</a>
+                        <a href="/faq" class="text-white font-javanese ">Keranjang saya</a>
+                        <a href="/tos" class="text-white font-javanese ">Produk disukai</a>
+                    </div>
+          
+                </div>
+                
+                <div class="flex flex-col w-[20%]">
+                    <h2 class="font-bold">Tentang Kami</h2>
+                    <div class="space-y-4 font-javanese flex flex-col">
+                        <a href="/about" class="text-white mt-2 font-javanese ">Profil Batikin</a>
+                        <a href="/contact" class="text-white font-javanese ">Hubungi Kami</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Footer Mobile -->
+        <footer class="bg-coklat-2 px-10 py-6 h-[60vh] text-coklat-1 flex flex-col text-white md:hidden">
+            <div class="flex w-full mt-8">
+                <div class="flex flex-col w-[100%] gap-4">
+                    <h2 class="font-bold text-xl border-b-[1px] border-white leading-10">Eksplorasi Yogyakarta Bersama</h2>
+                    <a class="flex items-center space-x-2" href="/">
+                        <img src="{% static 'assets/logo.png' %}" alt="Batikin Logo" class="h-16 w-16">
+                        <span class="text-3xl font-javanese leading-6 mt-2 text-whtie">Batikin</span>
+                    </a>
+                </div>                
+            </div>
+            <div class="flex flex-row justify-end mt-6 ml-auto gap-6">
+                <div class="flex flex-col flex-1">
+                    <h2 class="font-bold">Kategori</h2>
+                    <div class="space-y-4 font-javanese flex flex-col">
+                        <a href="{% url 'product_list' %}?category=pakaian_pria mt-2" class="text-white mt-2 font-javanese ">Pakaian Pria</a>
+                        <a href="{% url 'product_list' %}?category=pakaian_wanita" class="text-white font-javanese ">Pakaian Wanita</a>
+                        <a href="{% url 'product_list' %}?category=aksesoris" class="text-white font-javanese ">Aksesoris</a>
+                        <a href="{% url 'workshop_list' %}" class="text-white font-javanese ">Workshop</a>
+                    </div>
+                </div>
+    
+                <div class="flex flex-col flex-1">
+                    <h2 class="font-bold">Navigasi</h2>
+                    <div class="space-y-4 font-javanese flex flex-col">
+                        <a href="/about" class="text-white mt-2 font-javanese ">Beranda</a>
+                        <a href="/contact" class="text-white font-javanese ">Akun saya</a>
+                        <a href="/faq" class="text-white font-javanese ">Keranjang saya</a>
+                        <a href="/tos" class="text-white font-javanese ">Produk disukai</a>
+                    </div>
+          
+                </div>
+                
+                <div class="flex flex-col flex-1">
+                    <h2 class="font-bold">Tentang Kami</h2>
+                    <div class="space-y-4 font-javanese flex flex-col">
+                        <a href="/about" class="text-white mt-2 font-javanese ">Profil Batikin</a>
+                        <a href="/contact" class="text-white font-javanese ">Hubungi Kami</a>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="font-semibold text-xl mt-12">2024. Crafted with artistry by PBP A.05</h2>  
+
+        </footer>
     {% load static %}
     <script src="{% static 'script/account_script.js' %}"></script>
 </body>
