@@ -24,6 +24,7 @@
     }
     #customPopup {
         animation: popupBounce 0.5s ease-out;
+        z-index: 9999;
     }
 </style>
 
@@ -67,16 +68,14 @@
         <h2 class="text-2xl font-bold text-[#4C3108] mb-4">Ringkasan Pemesanan</h2>
         <hr class="border-t border-[#D8CDB3] mb-4">
         <div id="modalContent" class="space-y-4 overflow-y-auto flex-grow">
-            <!-- to be filled, modal content -->
         </div>
         <hr class="border-t border-[#D8CDB3] my-4">
         <div id="addressSection" class="mb-4">
             <h2 class="text-2xl font-bold text-[#4C3108] mb-2">Pilih alamat pengiriman</h2>
             <div id="addressList">
-                <!-- to be filled, address list -->
             </div>
         </div>
-        <div class="flex justify-end mt-6 space-x-4">
+        <div class="flex justify-end space-x-4">
             <button id="closeModal" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-300">
                 Tutup
             </button>
@@ -166,7 +165,7 @@
                     let addressContent = '';
                     data.addresses.forEach((address, index) => {
                         addressContent += `
-                            <div class="mb-4">
+                            <div class="mb-2">
                                 <div class="flex items-center">
                                     <input type="radio" id="address_${index}" name="address" value="${address.id}" class="mr-2">
                                     <label for="address_${index}" class="text-[#4C3108] font-bold">${address.title}</label>
@@ -179,7 +178,6 @@
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
                 showPopup('Terjadi kesalahan saat mengambil alamat.');
             });
 
@@ -202,14 +200,13 @@
             const itemId = checkbox.id.split('-')[1];
             const card = document.getElementById(`cart-item-${itemId}`);
             return {
-                product_id: itemId,
-                quantity: card.querySelector('input[type="number"]').value,
+                product_id: card.dataset.productId,
+                quantity: parseInt(card.querySelector('input[type="number"]').value),
                 price: parseFloat(card.querySelector('p').textContent.replace('Rp', '').replace(',', ''))
             };
         });
-
         const orderData = {
-            address_id: selectedAddress.value,
+            address_id: parseInt(selectedAddress.value),
             items: orderItems
         };
 
@@ -224,15 +221,15 @@
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                showPopup('Pembelian berhasil!');
                 document.getElementById('checkoutModal').classList.add('hidden');
-                location.reload();
+                showPopup('Pesanan berhasil diproses!', function() {
+                    location.reload();
+                });
             } else {
-                showPopup('Terjadi kesalahan saat membuat pesanan.');
+                showPopup('Terjadi kesalahan saat membuat pesanan: ' + data.message);
             }
         })
         .catch(error => {
-            console.error('Error:', error);
             showPopup('Terjadi kesalahan saat membuat pesanan.');
         });
     });
@@ -241,7 +238,7 @@
         document.getElementById('checkoutModal').classList.add('hidden');
     });
 
-    function showPopup(message) {
+    function showPopup(message, callback) {
         const popup = document.getElementById('customPopup');
         const popupMessage = document.getElementById('popupMessage');
         popupMessage.textContent = message;
@@ -251,6 +248,7 @@
         popup.classList.remove('hidden');
         setTimeout(() => {
             closePopup();
+            if (callback) callback();
         }, 3000); 
     }
 

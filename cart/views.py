@@ -1,10 +1,8 @@
-
 from decimal import Decimal, InvalidOperation
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from django.template.loader import render_to_string
 from .models import Cart, CartItem, Order, OrderItem
 from shopping.models import Product
 from user_profile.models import Address
@@ -98,7 +96,7 @@ def create_order(request):
     except Address.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Alamat tidak ditemukan'})
 
-    total_price = sum(item['price'] * item['quantity'] for item in items)
+    total_price = sum(float(item['price']) * int(item['quantity']) for item in items)
 
     order = Order.objects.create(
         user=request.user,
@@ -107,13 +105,21 @@ def create_order(request):
     )
 
     for item in items:
-        OrderItem.objects.create(
-            order=order,
-            product_id=item['product_id'],
-            quantity=item['quantity'],
-            price=item['price']
-        )
+        try:
+            product = Product.objects.get(id=item['product_id'])
+            OrderItem.objects.create(
+                order=order,
+                product=product,
+                quantity=int(item['quantity']),
+                price=float(item['price'])
+            )
+        except Product.DoesNotExist:
+            order.delete()
+            return JsonResponse({'status': 'error', 'message': f'Produk dengan ID {item["product_id"]} tidak ditemukan'})
+        except Exception as e:
+            order.delete()
+            return JsonResponse({'status': 'error', 'message': f'Error saat membuat OrderItem: {str(e)}'})
 
-    # Clear the user's cart here
+    CartItem.objects.filter(cart__user=request.user).delete()
 
     return JsonResponse({'status': 'success', 'message': 'Pesanan berhasil dibuat'})

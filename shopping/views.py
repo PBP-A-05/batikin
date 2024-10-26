@@ -77,23 +77,19 @@ def add_to_cart(request, product_id):
     data = json.loads(request.body)
     quantity = int(data.get('quantity', 1))
 
-    # Ensure the price is a decimal and strip any currency formatting
     try:
         price = Decimal(str(product.price).replace('Rp', '').replace('.', '').replace(',', '.'))
     except:
         return JsonResponse({'error': 'Invalid price format'}, status=400)
 
-    # Retrieve or create the cart for the user
     cart, created = Cart.objects.get_or_create(user=request.user)
 
-    # Retrieve or create the cart item with the correct price
     cart_item, created = CartItem.objects.get_or_create(
         cart=cart,
         product=product,
         defaults={'quantity': quantity, 'price': price}
     )
     
-    # If the cart item already exists, update the quantity
     if not created:
         cart_item.quantity += quantity
         cart_item.save()
