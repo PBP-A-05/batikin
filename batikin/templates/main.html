@@ -4,8 +4,195 @@
 {% block title %}Batikin | Landing Page{% endblock %}
 
 {% block content %}
-    <main class="min-h-screen w-screen bg-[#F6F6F6]">
-        <h2>Landing Page</h2>
-        <p>Welcome to the landing    page! TEST</p>
-    </main>
+<style>
+      /* hover, active states */
+  .like-button:hover svg {
+      transform: scale(1.1);
+      filter: drop-shadow(0 0 2px rgba(117, 75, 11, 0.5));
+  }
+
+  .like-button:active svg {
+      transform: scale(0.9);
+  }
+
+  .like-button svg {
+      transition: all 0.3s ease;
+  }
+
+  .like-button .heart-filled {
+      display: none;
+  }
+
+  .like-button.liked .heart-outline {
+      display: none;
+  }
+
+  .like-button.liked .heart-filled {
+      display: block;
+      fill: #754B0B; 
+  }
+</style>
+<main class="min-h-screen">
+    <section class="px-10 py-8 md:h-[70vh] h-[90vh] flex justify-center">
+        <div class="bg-[#e7c694] bg-opacity-29 max-w-[1536px] w-full h-full md:px-8 md:py-6 px-4 py-4 rounded-lg">        
+            <!-- Dekstop View -->
+            <div class="flex flex-row h-full gap-3 max-md:hidden">
+                <div class="relative w-[25%] h-full rounded-lg">
+                    <img src="{% static 'assets/IShowSpeedsss.png' %}" alt="Kemeja Slimfit Pria" class="rounded-lg w-full h-full object-cover shadow-md">
+                    <div class="absolute top-[50%] right-2 bg-white px-3 py-2 w-56 h-20 rounded-lg font-bold flex flex-col justify-center gap-2" style="border: 1px solid rgba(117, 75, 11, 0.25);">
+                        <h2>Kemeja Slimfit Pria</h2>
+                        <div class="flex flex-row justify-between w-full items-center">
+                            <p class="flex flex-row gap-2 font-normal text-coklat-1 items-center">
+                                <span>
+                                    <svg width="14" height="18" viewBox="0 0 7 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M0.685065 1.40694C2.0525 -0.439767 4.81953 -0.478316 6.22018 1.34919C6.65 1.91001 6.88669 2.57169 6.92751 3.24365C6.99598 4.37059 6.50026 5.29886 5.83826 6.06909C5.25404 6.74882 4.51414 7.33437 3.87112 7.84326C3.79144 7.90632 3.71324 7.9682 3.63701 8.02894C3.51661 8.12488 3.34588 8.12488 3.22548 8.02894C3.17595 7.98947 3.12566 7.94952 3.07476 7.90907C2.41379 7.38384 1.64781 6.77518 1.05208 6.06299C0.405378 5.28986 -0.070072 4.36103 0.00849892 3.24058C0.0540325 2.59126 0.280841 1.95285 0.685065 1.40694ZM5.69604 1.75091C4.56531 0.275567 2.3247 0.302333 1.21578 1.79992C0.888184 2.24234 0.704207 2.75982 0.667254 3.28678C0.604944 4.17535 0.974333 4.94079 1.55861 5.63929C2.09164 6.27653 2.77897 6.82988 3.43147 7.34895C3.44134 7.34112 3.45123 7.33329 3.46113 7.32545C4.11021 6.8113 4.7975 6.26686 5.33745 5.63864C5.93793 4.94 6.32251 4.17496 6.26836 3.2837C6.23531 2.7398 6.04388 2.20475 5.69604 1.75091Z" fill="#754B0B"/>
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M3.43402 2.40549C2.99637 2.40549 2.64157 2.76028 2.64157 3.19794C2.64157 3.6356 2.99637 3.99039 3.43402 3.99039C3.87168 3.99039 4.22647 3.6356 4.22647 3.19794C4.22647 2.76028 3.87168 2.40549 3.43402 2.40549ZM1.9812 3.19794C1.9812 2.39557 2.63165 1.74512 3.43402 1.74512C4.23639 1.74512 4.88684 2.39557 4.88684 3.19794C4.88684 4.00031 4.23639 4.65076 3.43402 4.65076C2.63165 4.65076 1.9812 4.00031 1.9812 3.19794Z" fill="#754B0B"/>
+                                    </svg>
+                                </span>
+                                Wukirsari
+                            </p>
+                            <button class="like-button focus:outline-none" onclick="event.preventDefault(); likeProduct(this);">
+                                <!-- Outline heart -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-outline" viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
+                                <!-- Filled heart -->
+                                <svg width="24" height="25" class="h-6 w-6 text-coklat-1 heart-filled hidden" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12.0048 19.5L4.791 13.0513C0.870448 9.18258 6.63333 1.75337 12.0048 7.76384C17.3763 1.75337 23.1141 9.20729 19.22 13.0513L12.0048 19.5Z" fill="#754B0B" stroke="#754B0B" stroke-width="1.42857" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-3 w-[75%] h-full">
+                    <div class="relative h-[50%] rounded-lg">
+                        <img src="{% static 'assets/landing_blouse_wanitaa.png' %}" alt="Blouse Batik Wanita" class="w-[60%] h-full rounded-lg object-cover  shadow-md">
+
+                        <div class="absolute bottom-2 left-2 bg-white px-3 py-2 h-20 rounded-lg font-bold flex flex-col justify-center gap-2" style="border: 1px solid rgba(117, 75, 11, 0.25);">
+                            <h2>Blouse Batik Wanita</h2>
+                            <div class="flex flex-row justify-between w-full items-center">
+                                <p class="flex flex-row gap-2 font-normal text-coklat-1 items-center">
+                                    <span>
+                                        <svg width="14" height="18" viewBox="0 0 7 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M0.685065 1.40694C2.0525 -0.439767 4.81953 -0.478316 6.22018 1.34919C6.65 1.91001 6.88669 2.57169 6.92751 3.24365C6.99598 4.37059 6.50026 5.29886 5.83826 6.06909C5.25404 6.74882 4.51414 7.33437 3.87112 7.84326C3.79144 7.90632 3.71324 7.9682 3.63701 8.02894C3.51661 8.12488 3.34588 8.12488 3.22548 8.02894C3.17595 7.98947 3.12566 7.94952 3.07476 7.90907C2.41379 7.38384 1.64781 6.77518 1.05208 6.06299C0.405378 5.28986 -0.070072 4.36103 0.00849892 3.24058C0.0540325 2.59126 0.280841 1.95285 0.685065 1.40694ZM5.69604 1.75091C4.56531 0.275567 2.3247 0.302333 1.21578 1.79992C0.888184 2.24234 0.704207 2.75982 0.667254 3.28678C0.604944 4.17535 0.974333 4.94079 1.55861 5.63929C2.09164 6.27653 2.77897 6.82988 3.43147 7.34895C3.44134 7.34112 3.45123 7.33329 3.46113 7.32545C4.11021 6.8113 4.7975 6.26686 5.33745 5.63864C5.93793 4.94 6.32251 4.17496 6.26836 3.2837C6.23531 2.7398 6.04388 2.20475 5.69604 1.75091Z" fill="#754B0B"/>
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M3.43402 2.40549C2.99637 2.40549 2.64157 2.76028 2.64157 3.19794C2.64157 3.6356 2.99637 3.99039 3.43402 3.99039C3.87168 3.99039 4.22647 3.6356 4.22647 3.19794C4.22647 2.76028 3.87168 2.40549 3.43402 2.40549ZM1.9812 3.19794C1.9812 2.39557 2.63165 1.74512 3.43402 1.74512C4.23639 1.74512 4.88684 2.39557 4.88684 3.19794C4.88684 4.00031 4.23639 4.65076 3.43402 4.65076C2.63165 4.65076 1.9812 4.00031 1.9812 3.19794Z" fill="#754B0B"/>
+                                        </svg>
+                                    </span>
+                                    Wukirsari
+                                </p>
+                                <button class="like-button focus:outline-none" onclick="event.preventDefault(); likeProduct(this);">
+                                    <!-- Outline heart -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-outline" viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                    </svg>
+                                    <!-- Filled heart -->
+                                    <svg width="24" height="25" class="h-6 w-6 text-coklat-1 heart-filled hidden" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12.0048 19.5L4.791 13.0513C0.870448 9.18258 6.63333 1.75337 12.0048 7.76384C17.3763 1.75337 23.1141 9.20729 19.22 13.0513L12.0048 19.5Z" fill="#754B0B" stroke="#754B0B" stroke-width="1.42857" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="relative h-[50%] w-full rounded-lg flex">
+                        <img src="{% static 'assets/landing_kemeja_lakii.png' %}" alt="Kemeja Slimfit" class="w-[45%] h-full rounded-lg object-cover shadow-md">
+                        
+                        <div class="absolute bottom-2 left-2 bg-white px-3 py-2 h-20 rounded-lg font-bold flex flex-col justify-center gap-2" style="border: 1px solid rgba(117, 75, 11, 0.25);">
+                            <h2>Kemeja Slimfit Pria</h2>
+                            <div class="flex flex-row justify-between w-full items-center">
+                                <p class="flex flex-row gap-2 font-normal text-coklat-1 items-center">
+                                    <span>
+                                        <svg width="14" height="18" viewBox="0 0 7 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M0.685065 1.40694C2.0525 -0.439767 4.81953 -0.478316 6.22018 1.34919C6.65 1.91001 6.88669 2.57169 6.92751 3.24365C6.99598 4.37059 6.50026 5.29886 5.83826 6.06909C5.25404 6.74882 4.51414 7.33437 3.87112 7.84326C3.79144 7.90632 3.71324 7.9682 3.63701 8.02894C3.51661 8.12488 3.34588 8.12488 3.22548 8.02894C3.17595 7.98947 3.12566 7.94952 3.07476 7.90907C2.41379 7.38384 1.64781 6.77518 1.05208 6.06299C0.405378 5.28986 -0.070072 4.36103 0.00849892 3.24058C0.0540325 2.59126 0.280841 1.95285 0.685065 1.40694ZM5.69604 1.75091C4.56531 0.275567 2.3247 0.302333 1.21578 1.79992C0.888184 2.24234 0.704207 2.75982 0.667254 3.28678C0.604944 4.17535 0.974333 4.94079 1.55861 5.63929C2.09164 6.27653 2.77897 6.82988 3.43147 7.34895C3.44134 7.34112 3.45123 7.33329 3.46113 7.32545C4.11021 6.8113 4.7975 6.26686 5.33745 5.63864C5.93793 4.94 6.32251 4.17496 6.26836 3.2837C6.23531 2.7398 6.04388 2.20475 5.69604 1.75091Z" fill="#754B0B"/>
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M3.43402 2.40549C2.99637 2.40549 2.64157 2.76028 2.64157 3.19794C2.64157 3.6356 2.99637 3.99039 3.43402 3.99039C3.87168 3.99039 4.22647 3.6356 4.22647 3.19794C4.22647 2.76028 3.87168 2.40549 3.43402 2.40549ZM1.9812 3.19794C1.9812 2.39557 2.63165 1.74512 3.43402 1.74512C4.23639 1.74512 4.88684 2.39557 4.88684 3.19794C4.88684 4.00031 4.23639 4.65076 3.43402 4.65076C2.63165 4.65076 1.9812 4.00031 1.9812 3.19794Z" fill="#754B0B"/>
+                                        </svg>
+                                    </span>
+                                    Wukirsari
+                                </p>
+                                <button class="like-button focus:outline-none" onclick="event.preventDefault(); likeProduct(this);">
+                                    <!-- Outline heart -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-outline" viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                    </svg>
+                                    <!-- Filled heart -->
+                                    <svg width="24" height="25" class="h-6 w-6 text-coklat-1 heart-filled hidden" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12.0048 19.5L4.791 13.0513C0.870448 9.18258 6.63333 1.75337 12.0048 7.76384C17.3763 1.75337 23.1141 9.20729 19.22 13.0513L12.0048 19.5Z" fill="#754B0B" stroke="#754B0B" stroke-width="1.42857" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col justify-end w-[55%] pl-8">
+                            <h1 class="text-5xl max-xl:text-4xl max-lg:text-[2rem] text-gradient-coklat font-bold leading-tight">
+                                Jelajahi keindahan batik Yogyakarta.
+                            </h1>                            
+                            <p class="font-javanese font-bold text-xl text-[#6b4c12] mt-2">
+                                Di mana kreasi dan tradisi berpadu dalam setiap helai.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile  -->
+            <div class="md:hidden flex flex-col h-full">
+                <div class="flex flex-row h-full gap-3">
+                    <div class="relative w-[65%] h-full rounded-lg overflow-hidden max-[500px]:hidden">
+                        <img src="{% static 'assets/IShowSpeedsss.png' %}" alt="Kemeja Slimfit Pria" class="rounded-lg w-full h-full object-cover shadow-md">
+                        <div class="absolute bottom-2 left-2 bg-white bg-opacity-80 px-3 py-2 rounded-md font-bold">
+                            Kemeja Slimfit Pria <span class="block">Wukirsari</span>
+                        </div>
+                    </div>
+    
+                    <div class="flex flex-col gap-3 w-[75%] max-[500px]:w-full h-full">
+                        <div class="relative h-[50%] rounded-lg overflow-hidden">
+                            <img src="{% static 'assets/landing_blouse_wanitaa.png' %}" alt="Blouse Batik Wanita" class="w-[100%] h-full rounded-lg object-cover  shadow-md">
+                            <div class="absolute bottom-2 left-2 bg-white bg-opacity-80 px-3 py-2 rounded-md font-bold">
+                                Blouse Batik Wanita <span class="block">Imogiri, Bantul</span>
+                            </div>
+                        </div>
+    
+                        <div class="relative h-[40%] rounded-lg overflow-hidden flex mt-4 ml-5">
+                            <img src="{% static 'assets/landing_kemeja_lakii.png' %}" alt="Kemeja Slimfit" class="w-[75%] max-[500px]:w-[80%]  h-full rounded-lg object-cover shadow-md">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col justify-end h-[45%]">
+                    <h1 class="text-[2.5rem] max-[500px]:text-4xl text-gradient-coklat font-bold leading-tight">
+                        Jelajahi keindahan batik Yogyakarta.
+                    </h1>
+                    <p class="font-javanese font-bold text-2xl max-[500px]:text-xl text-[#6b4c12] mt-2">
+                        Di mana kreasi dan tradisi berpadu dalam setiap helai.
+                    </p>
+                </div>
+            </div>
+            </div>
+    </section>
+
+    <!-- Section 2 -->
+    <!-- Dekstop  -->
+    <section class="relative h-[40vh] flex justify-start items-center bg-cover bg-bottom max-md:hidden" style="background-image: linear-gradient(90deg, #4D3108 7.47%, rgba(89, 56, 7, 0.85) 28.15%, rgba(164, 100, 4, 0.75) 61.9%, rgba(190, 116, 5, 0.5) 83.67%, rgba(215, 131, 6, 0) 100%), url('{% static 'assets/background-landscape.png' %}');">
+        <div class="text-white px-28">
+            <h2 class="text-5xl max-lg:text-4xl font-bold">Pelajari seni batik langsung dari tempatnya.</h2>
+            <p class="font-javanese text-2xl mt-4">Rasakan kekayaan budaya Yogyakarta dalam setiap prosesnya.</p>
+        </div>
+    </section>
+
+    <!-- Mobile  -->
+    <section class="relative h-[50vh] flex justify-start items-center bg-cover bg-bottom md:hidden" style="background-image: linear-gradient(90deg, #4D3108 7.47%, rgba(89, 56, 7, 0.85) 28.15%, rgba(164, 100, 4, 0.75) 61.9%, rgba(190, 116, 5, 0.5) 83.67%, rgba(215, 131, 6, 0) 100%), url('{% static 'assets/background-landscape.png' %}');">
+        <div class="text-white px-16 mt-16">
+            <h2 class="text-4xl font-bold">Pelajari seni batik langsung dari tempatnya.</h2>
+            <p class="font-javanese text-2xl mt-4">Rasakan kekayaan budaya Yogyakarta dalam setiap prosesnya.</p>
+        </div>
+    </section>
+
+</main>
+<script>
+    function likeProduct(button) {
+        button.classList.toggle('liked');
+  }
+</script>
 {% endblock %}

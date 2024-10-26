@@ -17,11 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from batikin.views import home_view, login_view, register_view
+from . import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('', home_view, name='home'),  # Home page, extending base.html
     path('account/', include('user_profile.urls')),  # Include user_profile URLs
     path('login/', login_view, name='login'),
     path('register/', register_view, name='register'),
-    path('shopping/', include('shopping.urls')),  
+    path('shopping/', include('shopping.urls')),
+    path('workshop/', include('booking.urls')),
 ]
