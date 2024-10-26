@@ -11,11 +11,3 @@ class Wishlist(models.Model):
     class Meta:
         unique_together = ('user', 'product')
 
-class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_carts')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_carts')
-    quantity = models.PositiveIntegerField(default=1)
-    added_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('user', 'product')

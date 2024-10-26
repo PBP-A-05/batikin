@@ -73,7 +73,7 @@
         });
     }
 
-    // Function to add item to cart
+    
     function addToCart(productId) {
         fetch("{% url 'add_to_cart' product_id=product.id %}".replace("product.id", productId), {
             method: "POST",
