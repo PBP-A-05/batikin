@@ -118,10 +118,6 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    attachWorkshopCardListeners();
-});
-
 function attachWorkshopCardListeners() {
     document.querySelectorAll('.workshop-card').forEach(card => {
         card.addEventListener('click', function(event) {
@@ -131,10 +127,7 @@ function attachWorkshopCardListeners() {
                     if (response.ok) {
                         window.location.href = `/workshops/${workshopId}/`;
                     } else if (response.status === 403) {
-                        showPopupMessage('Masuk ke Batikin untuk melihat detail workshop!');
-                        setTimeout(() => {
-                            window.location.href = '{% url "login" %}';
-                        }, 2000);
+                        window.location.href = '{% url "register" %}';
                     }
                 })
                 .catch(error => {
@@ -156,21 +149,70 @@ function updateActiveButton(category) {
     });
 }
 
-function updateWishlistStatus() {
-    document.querySelectorAll('.workshop-card').forEach(card => {
-        const workshopId = card.dataset.workshopId;
-        const likeButton = card.querySelector('.like-button');
-        const svg = likeButton.querySelector('svg');
-        const isInWishlist = localStorage.getItem(`wishlist_${workshopId}`) === 'true';
-        if (isInWishlist) {
-            svg.style.fill = '#754B0B';
+function likeProduct(button, workshopId) {
+    const isAuthenticated = {{ user.is_authenticated|yesno:"true,false" }}; // Ambil status login dari Django
+    if (!isAuthenticated) {
+        // Tampilkan pesan pop-up atau arahkan ke halaman login
+        showPopup('Anda perlu login untuk menyukai workshop ini.'); // Tampilkan pesan
+        return; // Hentikan fungsi agar tidak melanjutkan
+    }
+
+    const likeButton = button;
+    const isLiked = likeButton.classList.toggle('liked');
+
+    localStorage.setItem(`wishlist_${workshopId}`, isLiked);
+
+    const svgOutline = likeButton.querySelector('.heart-outline');
+    const svgFilled = likeButton.querySelector('.heart-filled');
+
+    if (isLiked) {
+        svgOutline.style.display = 'none'; // Menyembunyikan heart-outline
+        svgFilled.style.display = 'block'; // Menampilkan heart-filled
+        showPopup(`Workshop ditambahkan ke wishlist!`);
+    } else {
+        svgOutline.style.display = 'block'; // Menampilkan heart-outline
+        svgFilled.style.display = 'none'; // Menyembunyikan heart-filled
+        showPopup(`Workshop dihapus dari wishlist!`);
+    }
+
+    updateWishlistStatus();
+}
+
+function updateLikeStatusOnList(workshopId, isLiked) {
+    const likeButton = document.querySelector(`.like-button[data-workshop-id="${workshopId}"]`);
+    if (likeButton) {
+        if (isLiked) {
             likeButton.classList.add('liked');
+            likeButton.querySelector('.heart-outline').style.display = 'none';
+            likeButton.querySelector('.heart-filled').style.display = 'block';
         } else {
-            svg.style.fill = 'none';
             likeButton.classList.remove('liked');
+            likeButton.querySelector('.heart-outline').style.display = 'block';
+            likeButton.querySelector('.heart-filled').style.display = 'none';
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const workshopButtons = document.querySelectorAll('.like-button'); // Ganti selector sesuai dengan tombol like
+
+    workshopButtons.forEach(button => {
+        const workshopId = button.dataset.workshopId; // Ambil ID dari atribut data
+        const isLiked = localStorage.getItem(`wishlist_${workshopId}`) === 'true';
+
+        // Set tampilan tombol berdasarkan status like yang disimpan
+        if (isLiked) {
+            button.classList.add('liked');
+            button.querySelector('.heart-outline').style.display = 'none';
+            button.querySelector('.heart-filled').style.display = 'block';
+        } else {
+            button.classList.remove('liked');
+            button.querySelector('.heart-outline').style.display = 'block';
+            button.querySelector('.heart-filled').style.display = 'none';
         }
     });
-}
+});
+
 
 function showPopup(message) {
     const popup = document.getElementById('customPopup');

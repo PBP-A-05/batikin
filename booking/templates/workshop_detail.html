@@ -43,83 +43,131 @@
             
             <!-- Detail Workshop -->
             <div class="w-2/5 flex flex-col justify-between">
-                <div class="space-y-4">
-                    <h2 class="text-2xl font-bold text-coklat-3">{{ workshop.name }}</h2>
-                    <p class="text-2xl font-bold text-coklat-2">{{ workshop.address }}</p>
-                    <span class="text-sm font-bold text-coklat-2">{{ workshop.time }}</span>
-                </div>
-                <div class="flex items-center">
-                    {% for i in '1234'|make_list %}
-                    <svg class="w-5 h-5 text-coklat-3 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                    {% endfor %}
-                    <svg class="w-5 h-5 text-coklat-1-rgba fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                </div>
-
-                <div class="flex flex-col items-start text-coklat-1 opacity-50">
-                    <div class="flex items-center mb-2">
-                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <div class="p-4 space-y-2">
+                    <h3 class="text-2xl font-bold text-coklat-3">{{ workshop.title }}</h3>
+                    <p class="text-sm text-coklat-1">{{ workshop.location }}</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-coklat-2">{{ workshop.open_time }}</span>
+                    </div>
+                    <div class="flex items-center">
+                        {% for i in '1234'|make_list %}
+                        <svg class="w-5 h-5 text-coklat-3 fill-current" viewBox="0 0 24 24">
+                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
                         </svg>
-                        <span>Kota Yogyakarta</span>
+                        {% endfor %}
+                        <svg class="w-5 h-5 text-coklat-1-rgba fill-current" viewBox="0 0 24 24">
+                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                        </svg>
                     </div>
-                    <a href="{{ workshop.website }}" target="_blank" class="flex items-center hover:text-coklat-2 transition duration-300">
-                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
-                        <span>Kunjungi Website</span>
-                    </a>
-                </div>
 
-                <div class="space-y-4 mt-auto">
-                    <div class="flex space-x-4">
-                        <button class="flex-grow py-3 px-4 bg-gradient-coklat text-white rounded-md" 
-                                onclick="window.location.href='{% url 'workshop_book' workshop.id %}'">
-                            Make a booking
-                        </button>
-                        <button class="p-2 border border-coklat-1-rgba rounded-md hover:bg-coklat-1-rgba transition duration-300 like-button focus:outline-none" onclick="likeProduct(this)">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-outline" viewBox="0 0 24 24" stroke="currentColor" fill="none">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    <div class="flex flex-col items-start text-coklat-1 opacity-50">
+                        <div class="flex items-center mb-2">
+                            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                             </svg>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-filled hidden" viewBox="0 0 24 24" fill="currentColor">
-                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L12 8.343l3.172-3.171a4 4 0 115.656 5.656L12 19.657l-8.828-8.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                            <span>Kota Yogyakarta</span>
+                        </div>
+                        <a href="{{ workshop.website }}" target="_blank" class="flex items-center hover:text-coklat-2 transition duration-300">
+                            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
                             </svg>
-                        </button>
+                            <span>Kunjungi Website</span>
+                        </a>
                     </div>
-                </div>                               
+
+                    <div class="space-y-4 mt-auto">
+                        <div class="flex space-x-4">
+                            <button class="flex-grow py-3 px-4 bg-gradient-coklat text-white rounded-md" 
+                                    onclick="window.location.href='{% url 'workshop_book' workshop.id %}'">
+                                Make a booking
+                            </button>
+                            <button class="p-2 border border-coklat-1-rgba rounded-md hover:bg-coklat-1-rgba transition duration-300 like-button" data-workshop-id="{{ workshop.id }}" onclick="likeProduct(this)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-filled hidden" viewBox="0 0 24 24" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L12 8.343l3.172-3.171a4 4 0 115.656 5.656L12 19.657l-8.828-8.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>                               
+                </div>
             </div>
         </div>
         
         <div class="mt-8 border-t border-coklat-1-rgba pt-6">
-            <div class="flex justify-between items-center cursor-pointer" onclick="toggleDescription()">
-                <h3 class="text-xl font-bold text-coklat-2">Deskripsi Workshop</h3>
-                <svg id="toggleIcon" class="w-6 h-6 text-coklat-2 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold">Deskripsi Workshop</h3>
+                <a href="#" class="text-coklat-2 hover:underline">Lihat di peta</a>
             </div>
-            <div id="productDescription" class="mt-4 text-coklat-2 overflow-hidden transition-all duration-300 max-h-0">
-                <p>Sentra Batik Giriloyo merupakan kampung yang terletak di Kelurahan Wukirsari, Kecamatan Imogiri, Kabupaten Bantul. Kampung ini dikenal sebagai sentra kerajinan batik tulis di Daerah Istimewa Yogyakarta. Sebagaimana dengan namanya, hampir 90 persen aktivitas masyarakat di desa yang berada tidak jauh dari Makam Raja-raja Mataram ini adalah membatik.</p>
-                <p>Selain sering didatangi pengunjung yang ingin membeli batik, Sentra Batik Giriloyo juga kerap dipenuhi wisatawan yang ingin melihat proses pembuatan batik. Biasanya wisatawan ini berasal dari siswa sekolah, instansi, keluarga, hingga turis mancanegara. Mereka juga bisa belajar membatik secara langsung.</p>
-                <p>Paket wisata belajar membatik ini dibanderol dengan tarif Rp 250.000 untuk minimal peserta 5 orang. Para peserta akan diberi penjelasan mengenai sejarah batik dan cara membuat batik oleh pembatik lokal.</p>
-            </div>
+            <p class="mt-4">{{ workshop.description }}</p>
         </div>
     </div>
 </div>
 
 <script>
     function changeMainImage(thumbnail, index) {
-        const mainImage = document.getElementById('mainImage').querySelector('img');
-        mainImage.src = thumbnail.querySelector('img').src;
-    }
-
-    function toggleDescription() {
-        const description = document.getElementById('productDescription');
-        const icon = document.getElementById('toggleIcon');
-        description.classList.toggle('max-h-0');
-        icon.classList.toggle('rotate-180');
+        const mainImage = document.getElementById('mainImage').children[0];
+        mainImage.src = thumbnail.children[0].src;
     }
 
     function likeProduct(button) {
-        const filledHeart = button.querySelector('.heart-filled');
-        const outlineHeart = button.querySelector('.heart-outline');
-        filledHeart.classList.toggle('hidden');
-        outlineHeart.classList.toggle('hidden');
+    const workshopId = button.getAttribute('data-workshop-id');
+    const heartOutline = button.querySelector('.heart-outline');
+    const heartFilled = button.querySelector('.heart-filled');
+
+    const isLiked = heartOutline.classList.contains('hidden');
+
+    // Toggle like status
+    if (isLiked) {
+        heartOutline.classList.remove('hidden');
+        heartFilled.classList.add('hidden');
+        localStorage.setItem(`wishlist_${workshopId}`, 'false');
+        updateLikeStatusOnList(workshopId, false);
+    } else {
+        heartOutline.classList.add('hidden');
+        heartFilled.classList.remove('hidden');
+        localStorage.setItem(`wishlist_${workshopId}`, 'true');
+        updateLikeStatusOnList(workshopId, true);
     }
+}
+
+function updateLikeStatusOnList(workshopId, isLiked) {
+    const likeButton = document.querySelector(`.like-button[data-workshop-id="${workshopId}"]`);
+    if (likeButton) {
+        if (isLiked) {
+            likeButton.classList.add('liked');
+            likeButton.querySelector('.heart-outline').style.display = 'none';
+            likeButton.querySelector('.heart-filled').style.display = 'block';
+        } else {
+            likeButton.classList.remove('liked');
+            likeButton.querySelector('.heart-outline').style.display = 'block';
+            likeButton.querySelector('.heart-filled').style.display = 'none';
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const likeButton = document.querySelector('.like-button');
+
+    if (likeButton) {
+        likeButton.addEventListener('click', function() {
+            likeProduct(likeButton);
+        });
+    }
+
+    const workshopId = likeButton ? likeButton.dataset.workshopId : null;
+    if (workshopId) {
+        const isLiked = localStorage.getItem(`wishlist_${workshopId}`) === 'true';
+
+        if (isLiked) {
+            likeButton.classList.add('liked');
+            likeButton.querySelector('.heart-outline').style.display = 'none';
+            likeButton.querySelector('.heart-filled').style.display = 'block';
+        }
+    }
+});
+
 </script>
 {% endblock %}

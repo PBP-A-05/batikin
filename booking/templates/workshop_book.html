@@ -4,59 +4,254 @@
 {% block title %}Book a Workshop{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
-    <h2 class="text-2xl font-semibold text-coklat-1 mb-6">Book a Workshop</h2>
-    
-    <form method="POST" action="{% url 'workshop_book' workshop.id %}">
-        {% csrf_token %}
-        
-        <!-- Pilih Tanggal -->
-        <div class="mb-4">
-            <label for="date" class="block text-sm font-medium text-gray-700 mb-2">Select a Date</label>
-            <input type="date" id="date" name="date" class="w-full p-2 border rounded-md focus:outline-none focus:ring-coklat-1 focus:border-coklat-1">
-        </div>
+<style>
+    .quantity-input {
+        display: flex;
+        align-items: center;
+    }
+    .quantity-input button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 40px;
+    }
+    .quantity-input input {
+        width: 50px;
+        text-align: center;
+    }
 
-        <!-- Pilih Waktu -->
-        <div class="mb-4">
-            <label for="time" class="block text-sm font-medium text-gray-700 mb-2">Select a Time</label>
-            <select id="time" name="time" class="w-full p-2 border rounded-md focus:outline-none focus:ring-coklat-1 focus:border-coklat-1">
-                {% for t in available_times %}
-                    <option value="{{ t }}">{{ t }}</option>
-                {% endfor %}
-            </select>
-        </div>
+    .calendar {
+        width: 100%;
+        margin: 20px 0;
+        border-collapse: collapse;
+        border: 1px solid #ccc;
+    }
 
-        <!-- Pilih Jumlah Peserta -->
-        <div class="mb-4">
-            <label for="quantity" class="block text-sm font-medium text-gray-700 mb-2">Number of Participants</label>
-            <div class="flex items-center">
-                <button type="button" class="bg-gray-200 p-2 rounded-l-md border" onclick="decreaseQuantity()">-</button>
-                <input type="number" id="quantity" name="quantity" value="1" min="1" class="w-16 text-center border-t border-b focus:outline-none">
-                <button type="button" class="bg-gray-200 p-2 rounded-r-md border" onclick="increaseQuantity()">+</button>
+    .calendar th, .calendar td {
+        text-align: center;
+        padding: 10px;
+        border: 1px solid #ccc;
+    }
+
+    .calendar th {
+        background-color: #f2f2f2;
+    }
+
+    .calendar .highlight {
+        background-color: #e0e0e0;
+        cursor: pointer;
+    }
+
+    .calendar .highlight:hover {
+        background-color: #d0d0d0;
+    }
+</style>
+
+<div class="container mx-auto px-4 py-8 max-w-7xl">
+    <div class="bg-white border border-coklat-1-rgba rounded-md p-6">
+        <h2 class="text-2xl font-semibold text-coklat-1 mb-6">Book a Workshop</h2>
+
+        <form method="POST" action="{% url 'workshop_book' workshop.id %}" id="bookingForm">
+            {% csrf_token %}
+
+            <div class="flex flex-wrap">
+                <!-- Pilih Tanggal (Kalender Besar) -->
+                <div class="w-full md:w-1/2 mb-4 md:mb-0 md:pr-4">
+                    <label for="date" class="block text-sm font-medium text-gray-700 mb-2">Select a Date</label>
+                    <div id="calendarContainer">
+                        <table class="calendar">
+                            <thead>
+                                <tr>
+                                    <th colspan="7">
+                                        <button type="button" onclick="previousMonth()">&lt;</button>
+                                        <span id="month"></span>
+                                        <span id="year"></span>
+                                        <button type="button" onclick="nextMonth()">&gt;</button>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>Sun</th>
+                                    <th>Mon</th>
+                                    <th>Tue</th>
+                                    <th>Wed</th>
+                                    <th>Thu</th>
+                                    <th>Fri</th>
+                                    <th>Sat</th>
+                                </tr>
+                            </thead>
+                            <tbody id="calendar-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pilih Waktu dan Jumlah Peserta -->
+                <div class="w-full md:w-1/2">
+                    <!-- Pilih Waktu -->
+                    <div class="mb-4">
+                        <label for="time" class="block text-sm font-medium text-gray-700 mb-2">Select a Time</label>
+                        <select 
+                            id="time" 
+                            name="time" 
+                            class="w-full p-2 border rounded-md focus:outline-none focus:ring-coklat-1 focus:border-coklat-1"
+                        >
+                            {% for t in available_times %}
+                                <option value="{{ t }}">{{ t }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Pilih Jumlah Peserta -->
+                    <div class="flex items-center space-x-4">
+                        <div class="quantity-input flex items-center border border-coklat-1-rgba rounded-md">
+                            <button 
+                                type="button" 
+                                class="text-coklat-1 disabled:opacity-50" 
+                                onclick="decrementQuantity()" 
+                                id="decrementBtn" 
+                                disabled
+                            >
+                                -
+                            </button>
+                            <input 
+                                type="number" 
+                                id="quantity" 
+                                class="text-center text-coklat-2 focus:outline-none" 
+                                value="1" 
+                                min="1" 
+                                readonly
+                            >
+                            <button 
+                                type="button" 
+                                class="text-coklat-1" 
+                                onclick="incrementQuantity()"
+                            >
+                                +
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Button Submit -->
+            <div class="mt-6">
+                <button 
+                    type="submit" 
+                    class="w-full bg-gradient-coklat text-white py-3 rounded-md hover:bg-coklat-1-dark transition duration-300"
+                >
+                    Confirm Booking
+                </button>
+            </div>
+        </form>
+
+        <!-- Popup Notification -->
+        <div id="successPopup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 hidden">
+            <div class="bg-green-500 text-white px-8 py-4 rounded-md shadow-lg text-center max-w-sm w-full">
+                Booking berhasil dibuat!
             </div>
         </div>
-
-        <!-- Button Submit -->
-        <div class="mt-6">
-            <button type="submit" class="w-full bg-coklat-1 text-white py-3 rounded-md hover:bg-coklat-1-dark transition duration-300">
-                Confirm Booking
-            </button>
-        </div>
-    </form>
+    </div>
 </div>
 
 <script>
-    function increaseQuantity() {
-        let quantityInput = document.getElementById("quantity");
-        quantityInput.value = parseInt(quantityInput.value) + 1;
-    }
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
 
-    function decreaseQuantity() {
-        let quantityInput = document.getElementById("quantity");
-        if (quantityInput.value > 1) {
-            quantityInput.value = parseInt(quantityInput.value) - 1;
+    const today = new Date();
+    let currentMonth = today.getMonth();
+    let currentYear = today.getFullYear();
+
+    const monthElement = document.getElementById("month");
+    const yearElement = document.getElementById("year");
+    const calendarBody = document.getElementById("calendar-body");
+
+    function updateCalendar() {
+        calendarBody.innerHTML = "";
+        monthElement.textContent = monthNames[currentMonth];
+        yearElement.textContent = currentYear;
+
+        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+        let row = document.createElement("tr");
+        for (let i = 0; i < firstDay; i++) {
+            row.appendChild(document.createElement("td"));
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const cell = document.createElement("td");
+            cell.textContent = day;
+
+            // Add click event to each day
+            cell.className = "highlight"; // Add highlight class for hover effect
+            cell.onclick = function() {
+                const selectedDate = `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                document.getElementById("date").value = selectedDate; // Set value untuk tanggal booking
+            };
+
+            row.appendChild(cell);
+
+            if ((day + firstDay) % 7 === 0) {
+                calendarBody.appendChild(row);
+                row = document.createElement("tr");
+            }
+        }
+
+        if (row.children.length > 0) {
+            calendarBody.appendChild(row);
         }
     }
+
+    function previousMonth() {
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        updateCalendar();
+    }
+
+    function nextMonth() {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        updateCalendar();
+    }
+
+    function incrementQuantity() {
+        const quantityInput = document.getElementById("quantity");
+        let currentValue = parseInt(quantityInput.value);
+        quantityInput.value = currentValue + 1;
+        document.getElementById("decrementBtn").disabled = false;
+    }
+
+    function decrementQuantity() {
+        const quantityInput = document.getElementById("quantity");
+        let currentValue = parseInt(quantityInput.value);
+
+        if (currentValue > 1) {
+            quantityInput.value = currentValue - 1;
+        }
+        
+        if (currentValue <= 2) {
+            document.getElementById("decrementBtn").disabled = true;
+        }
+    }
+
+    document.getElementById('bookingForm').addEventListener('submit', function(event) {
+        const successPopup = document.getElementById('successPopup');
+        successPopup.classList.remove('hidden');
+        event.preventDefault();
+        setTimeout(function() {
+            successPopup.classList.add('hidden');
+        }, 2000);
+    });
+
+    updateCalendar();
 </script>
 
 {% endblock %}

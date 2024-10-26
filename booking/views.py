@@ -1,9 +1,11 @@
 from django.http import Http404
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from .models import Workshop, Wishlist
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 
+@login_required(login_url='register')
+@login_required
 def workshop_detail(request, pk):
     workshop = get_object_or_404(Workshop, pk=pk)
     return render(request, 'workshop_detail.html', {'workshop': workshop})
