@@ -35,12 +35,11 @@ def add_to_wishlist(request, product_id):
         return JsonResponse({'message': message, 'status': status})
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
-
 @login_required
 def remove_from_wishlist(request, product_id):
     wishlist_item = get_object_or_404(Wishlist, user=request.user, product_id=product_id)
     wishlist_item.delete()
-    return redirect('wishlist_view')
+    return redirect('wishlist:wishlist_view') 
 
 @login_required
 def add_to_cart(request, product_id):
@@ -54,6 +53,7 @@ def add_to_cart(request, product_id):
         return JsonResponse({'error': 'Invalid price format'}, status=400)
 
     cart, created = Cart.objects.get_or_create(user=request.user)
+
     cart_item, created = CartItem.objects.get_or_create(
         cart=cart,
         product=product,
@@ -66,4 +66,3 @@ def add_to_cart(request, product_id):
 
     message = f'{quantity} produk berhasil dimasukkan ke keranjang!'
     return JsonResponse({'message': message})
-
