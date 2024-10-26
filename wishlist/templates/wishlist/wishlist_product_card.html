@@ -1,3 +1,22 @@
+
+<style>
+    .border-gradient-coklat-2 {
+        position: relative;
+    }
+    .border-gradient-coklat-2::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50px; 
+        padding:2px; 
+        background: linear-gradient(90deg, #754B0B 0%, #DB8C15 100%);
+        -webkit-mask: 
+            linear-gradient(#fff 0 0) content-box, 
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+                mask-composite: exclude; 
+    }
+</style>
 <div class="product-card border border-[#D8CDB3] rounded-lg p-4 hover:shadow-md transition-all duration-300">
     <!-- Product Image -->
     <div class="relative aspect-square overflow-hidden m-4">
@@ -7,7 +26,7 @@
     <!-- Product Details -->
     <div class="p-4 space-y-2">
         <!-- Category -->
-        <span class="inline-block px-2 py-1 text-xs border border-gradient-coklat rounded-full text-black">
+        <span class="inline-block px-2 py-1 text-xs border-gradient-coklat-2 rounded-full text-black">
             {{ product.get_category_display }}
         </span>
 
