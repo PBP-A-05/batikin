@@ -13,6 +13,7 @@ class Review(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="reviews")
+    profile_pic = models.JSONField(default=dict)
     rating = models.IntegerField()
     review = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

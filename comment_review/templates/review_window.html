@@ -8,7 +8,7 @@
 <head>
 <style>
     .container {
-        width: 1273px;
+        width: auto;
         height: auto;
         background: #F6F6F6;
         display: flex;
@@ -18,7 +18,7 @@
         box-sizing: border-box;
     }
     .form-container {
-        width: 898px;
+        width: auto;
         height: auto;
         background-color: #FFFFFF;
         padding: 32px;
@@ -41,7 +41,10 @@
         font-weight: 600;
         color: #754B0B;
         margin-bottom: 24px;
+        word-wrap: break-word;
+        word-break: break-all;
     }
+
     .form-label {
         color: #754B0B;
         font-weight: 600;
@@ -130,7 +133,6 @@
     .rate > label:hover ~ input:checked ~ label {
         color: #c59b08;
     }
-    /* Image style */
     .form-image {
         width: 100%;
         border-radius: 8px;
@@ -144,12 +146,12 @@
     <div class="form-container">
         <!-- Image Container -->
         <div class="image-container">
-            <img src="{{ image_url }}" alt="Product Image" class="form-image">
+            <img src="{{ product.image_urls }}" alt="Product Image" class="form-image">
         </div>
         
         <!-- Form Content -->
         <div class="form-content">
-            <h1 class="form-title">{{ name }}</h1>
+            <h1 class="form-title">{{ product.name }}</h1>
             <form method="POST" class="space-y-4">
                 {% csrf_token %}
                 <div class="rate">
