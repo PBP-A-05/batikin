@@ -57,7 +57,7 @@
 
 <div class="container mx-auto px-4 py-8 max-w-7xl">
     <div class="bg-white border border-coklat-1-rgba rounded-md p-6">
-        <h2 class="text-2xl font-semibold text-coklat-1 mb-6">Book a Workshop: {{ workshop.name }}</h2>
+        <h2 class="text-2xl font-semibold text-coklat-1 mb-6">Book a Workshop at {{ workshop.title }}!</h2>
 
         <form method="POST" action="{% url 'workshop_book' workshop.id %}" id="bookingForm">
             {% csrf_token %}
@@ -108,7 +108,7 @@
                                 <option disabled>No times available</option>
                             {% endfor %}
                         </select>
-                    </div>
+                    </div>                    
 
                     <!-- Pilih Jumlah Peserta -->
                     <div class="mb-4">
@@ -184,6 +184,22 @@
                 selectedDateElement = event.target;
             }
         });
+
+        // Handle form submission
+        const bookingForm = document.getElementById('bookingForm');
+        bookingForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            setTimeout(() => {
+                // Show success popup
+                document.getElementById('successPopup').classList.remove('hidden');
+
+                // Hide the popup after 3 seconds
+                setTimeout(() => {
+                    document.getElementById('successPopup').classList.add('hidden');
+                }, 3000);
+            }, 500); // Simulate network delay
+        });
     });
 
     function generateCalendar(date) {
@@ -251,5 +267,4 @@
         }
     }
 </script>
-
 {% endblock %}

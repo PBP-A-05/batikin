@@ -3,10 +3,9 @@ from .models import Workshop, Booking
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 
 @login_required(login_url='register')
-@login_required
 def workshop_detail(request, pk):
     workshop = get_object_or_404(Workshop, pk=pk)
     return render(request, 'workshop_detail.html', {'workshop': workshop})
@@ -24,20 +23,6 @@ def workshop_product_list(request):
     workshops = Workshop.objects.all()
     return render(request, 'workshop_list.html', {'workshops': workshops})
 
-def workshop_book(request, pk):
-    # Ambil objek Workshop berdasarkan ID
-    workshop = get_object_or_404(Workshop, pk=pk)
-    
-    # Pecah jadwal menjadi daftar waktu terpisah
-    available_times = workshop.schedule.split(', ')
-    
-    context = {
-        'workshop': workshop,
-        'available_times': available_times,
-    }
-    
-    return render(request, 'workshop_book.html', context)
-
 def generate_available_times(open_time, close_time):
     # Fungsi ini harus disesuaikan dengan logika Anda untuk menghasilkan waktu yang tersedia
     available_times = []
@@ -51,28 +36,33 @@ def generate_available_times(open_time, close_time):
 def workshop_book(request, pk):
     workshop = get_object_or_404(Workshop, pk=pk)
 
+    # Misalkan Anda memiliki daftar waktu yang tersedia
+    available_times = [time(hour=h) for h in range(9, 17)]  # Contoh jam dari 09:00 hingga 16:00
+
     if request.method == 'POST':
-        # Ambil data dari form
-        selected_date = request.POST.get('selected_date')  # Pastikan Anda mendapatkan tanggal yang dipilih
-        time = request.POST.get('time')
+        selected_date = request.POST.get('selected_date')
+        booking_time = request.POST.get('booking_time')  # Pastikan nama ini sesuai
         participants = int(request.POST.get('quantity', 1))
 
-        # Validasi jika tanggal belum dipilih
         if not selected_date:
-            # Anda bisa menambahkan error handling di sini
-            return render(request, 'workshop_book.html', {'workshop': workshop, 'error': 'Please select a date'})
+            return render(request, 'workshop_book.html', {
+                'workshop': workshop,
+                'error': 'Please select a date',
+                'available_times': available_times
+            })
 
-        # Buat instance booking
         booking = Booking(
             workshop=workshop,
             user=request.user,
-            booking_time=time,
+            booking_time=booking_time,
             participants=participants,
-            date=selected_date  # Simpan tanggal yang dipilih
+            booking_date=selected_date
         )
         booking.save()
 
-        return redirect('booking_success')  # Redirect ke halaman konfirmasi
+        return redirect('booking_success')
 
-    # Jika bukan POST, render form booking
-    return render(request, 'workshop_book.html', {'workshop': workshop})
+    return render(request, 'workshop_book.html', {
+        'workshop': workshop,
+        'available_times': available_times
+    })
