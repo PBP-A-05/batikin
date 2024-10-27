@@ -8,7 +8,7 @@ from shopping.models import Product
 from user_profile.models import Address
 import json
 
-@login_required
+@login_required(login_url='/login')
 def view_cart(request):
     cart_items = CartItem.objects.filter(cart__user=request.user)
     

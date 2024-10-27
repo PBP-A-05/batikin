@@ -9,7 +9,7 @@ from shopping.models import Product
 from uuid import UUID
 from django.db.models import F
 
-@login_required
+@login_required(login_url='/login')
 def wishlist_view(request):
     sort_by = request.GET.get('sort', 'price_asc')  
 

@@ -139,7 +139,7 @@
                 <div class="flex flex-col items-start">
                     <label class="text-lg font-bold text-coklat-2 mb-2">Profile Picture</label>
                     <div class="flex">
-                        <img class="w-24 h-24 rounded-full object-cover mb-4" 
+                        <img class="w-16 h-16 rounded-full object-cover mb-4" 
                             src="{{ user.profile.profile_picture }}" 
                             alt="Profile Picture" style="border: 0.2px solid rgba(117, 75, 11, 0.25);"">
                     </div>
@@ -147,22 +147,26 @@
                 <!-- User Info -->
                 <div class="flex flex-col">
                     <label class="text-lg font-bold text-coklat-2 mb-2">Name</label>
-                    <p class="text-gray-700">{{ request.user.get_full_name }}</p>
+                    <p class="text-coklat-3">{{ request.user.get_full_name }}</p>
                 </div>
                 <!-- Phone Number -->
                 <div class="flex flex-col">
                     <label class="text-lg font-bold text-coklat-2 mb-2">Phone Number</label>
-                    <p class="text-gray-700">{{ request.user.profile.phone_number|default:"Not set" }}</p>
+                    <p class="text-coklat-3">{{ request.user.profile.phone_number|default:"Anda belum menambahkan nomor telepon" }}</p>
                 </div>
                 <!-- Addresses -->
                 <div class="flex flex-col" id="addressesDisplay">
                     <label class="text-lg font-bold text-coklat-2 mb-2">Alamat Pengiriman</label>
+                    {% if addresses %}
                     {% for address in addresses %}
-                    <div class="mb-2">
-                        <p class="font-semibold text-coklat-2">{{ address.title }}</p>
-                        <p class="text-gray-700">{{ address.address }}</p>
-                    </div>
+                        <div class="mb-2">
+                            <p class="font-semibold text-coklat-2">{{ address.title }}</p>
+                            <p class="text-coklat-3">{{ address.address }}</p>
+                        </div>
                     {% endfor %}
+                    {% else %}
+                        <p class="text-coklat-3">Anda belum memiliki alamat pengiriman</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
