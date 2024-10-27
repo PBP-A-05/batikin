@@ -129,11 +129,11 @@
         modalContent.innerHTML = `
             <div class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0">
                 <div class="w-full md:w-1/5">
-                    <div class="bg-[#E3D9C3] w-full h-32"></div> 
+                    <img src="${booking.image_urls}" alt="${booking.workshop_title}" class="w-36 md:w-full h-36 md:h-full bg-[#4a412c]">
                 </div>
                 <div class="w-full md:w-[250px] md:pl-4">
                     <h3 class="text-lg font-bold text-coklat-2">${booking.workshop_title}</h3>
-                    <p class="text-sm text-coklat-3">Alamat: ${booking.location}</p>
+                    <a class="text-sm text-coklat-3 underline" href="${booking.location}" target="_blank">Link Google Maps</a>
                     <!-- Assuming 'contact' field is available in booking data -->
                     ${booking.contact ? `<p class="text-sm text-coklat-3">Kontak: ${booking.contact}</p>` : ''}
                 </div>
