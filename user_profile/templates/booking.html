@@ -4,38 +4,29 @@
 {% block title %}Batikin | Booking Workshop{% endblock %}
 
 {% block content %}
+<style>
+    .spinner {
+        border: 8px solid #f3f3f3; 
+        border-top: 8px solid #754B0B; 
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        animation: spin 1s linear infinite;
+        margin: auto; 
+    }
 
-
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
 <!-- Modal -->
 <div id="bookingModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 hidden">
     <div class="bg-white w-full max-w-[1000px] rounded-lg p-4 md:p-6 shadow-lg max-h-[90vh] overflow-y-auto">
         <div class="flex items-center mb-4">
             <h2 class="text-lg md:text-xl font-bold text-coklat-2">Booking Detail</h2>
         </div>
-        <div class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0">
-            <div class="w-full md:w-1/5">
-                <div class="bg-[#E3D9C3] w-full h-32"></div> 
-            </div>
-            <div class="w-full md:w-[250px] md:pl-4">
-                <h3 class="text-lg font-bold text-coklat-2">Kampung Batik Jogja Giriloyo</h3>
-                <p class="text-sm text-coklat-3">Alamat: Jl. Lingkar, Pondok Cina, Kecamatan Beji, Kota Depok, Jawa Barat 16424</p>
-                <p class="text-sm text-coklat-3">Kontak: +62 912388123123</p>
-            </div>
-            <div class="flex flex-row md:flex-row justify-between items-center w-full md:flex-1 mt-4 md:mt-0 md:pl-4">
-                <div class="hidden md:block h-24 w-[2px] bg-coklat-2 mx-2 md:mx-6 self-center"></div>
-                <div class="flex flex-col items-center w-[45%] md:w-[45%]">
-                    <h4 class="text-md font-light text-coklat-2">CHECK-IN</h4>
-                    <h4 class="text-2xl md:text-3xl font-bold text-coklat-2">31</h4>
-                    <p class="text-sm font-bold text-center text-coklat-2">Desember<span><br>Minggu</span></p>
-                    <p class="text-sm text-coklat-2">17:00 - 18:00</p>
-                </div>
-                <div class="hidden md:block h-24 w-[2px] bg-coklat-2 mx-2 md:mx-6 self-center"></div>
-                <div class="flex flex-col items-center w-[45%] md:w-[45%]">
-                    <h4 class="text-md font-light text-coklat-2">Kapasitas</h4>
-                    <h4 class="text-2xl md:text-3xl font-bold text-coklat-">7</h4>
-                    <p class="text-sm font-bold text-center text-coklat-2">Orang</p>
-                </div>
-            </div>
+        <div id="modalContent">
         </div>
         <div class="flex justify-end mt-6">
             <button class="px-4 py-2 text-sm font-medium bg-coklat-2 text-white rounded-lg" onclick="toggleModal()">Tutup</button>
@@ -47,43 +38,150 @@
     <section class="mx-auto max-w-[1536px] px-8 flex flex-col items-center min-h-screen mt-16">
         <h1 class="text-4xl font-bold text-coklat-2 mb-6 text-left">Booking Workshop</h1>
 
-        <!-- Navigation Tabs -->
         {% include 'partials/nav_tabs.html' with active='booking' %}
 
-        <div class="w-full md:w-3/5 lg:w-2/3 h-auto bg-white p-4 md:p-8 rounded-xl shadow-lg" style="border: 0.2px solid rgba(117, 75, 11, 0.25);">
-            <div class="flex justify-between items-center mb-4 md:mb-6">
-                <h2 class="text-xl md:text-2xl font-bold text-coklat-2">Informasi Booking</h2>
-            </div>
-
-            <div class="flex flex-col md:flex-row p-4 rounded-lg shadow-md bg-[#FAF4ED]" style="border: 0.2px solid rgba(117, 75, 11, 0.35);">
-                <div class="w-full md:w-1/4 md:flex md:items-stretch mb-4 md:mb-0 md:mr-4 max-md:flex max-md:justify-center">
-                    <div class="w-36 md:w-full h-36 md:h-full bg-[#4a412c]"></div>
-                </div>
-                <div class="w-full md:w-3/4 flex flex-col justify-between">
-                    <div class="flex flex-col md:flex-row justify-between md:items-start">
-                        <div class="w-full md:w-[75%] mb-2 md:mb-0">
-                            <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek- Racanapati - mensbatik slimfit - L</h3>
-                            <p class="text-sm text-gray-600">+2 produk lainnya</p>
-                        </div>
-                        <div class="md:text-right">
-                            <span class="text-lg font-bold text-coklat-2">Rp341.050</span>
-                        </div>
-                    </div>
-                    <div class="mt-4 flex flex-col md:flex-row justify-end items-start md:items-center space-y-2 md:space-y-0 md:space-x-4">
-                        <a href="javascript:void(0)" class="text-sm font-medium text-coklat-2" onclick="toggleModal()">Lihat Detail Pemesanan</a>
-                        <button class="w-full md:w-auto px-4 py-1 text-sm font-medium bg-white text-coklat-2 border rounded-lg">Ulas</button>
-                    </div>
-                </div>
-            </div>
+        <div id="bookingsContainer" class="w-full md:w-3/5 lg:w-2/3 h-auto bg-white p-4 md:p-8 rounded-xl shadow-lg" style="border: 0.2px solid rgba(117, 75, 11, 0.25);">
         </div>
     </section>
 </main>
 
 <script>
     function toggleModal() {
-    const modal = document.getElementById('bookingModal');
-    modal.classList.toggle('hidden');
+        const modal = document.getElementById('bookingModal');
+        modal.classList.toggle('hidden');
+    }
+
+    async function fetchBookings() {
+        const bookingsContainer = document.getElementById('bookingsContainer');
+        bookingsContainer.innerHTML = `
+            <div class="flex items-center justify-center h-64">
+                <div class="spinner"></div>
+            </div>
+        `;
+
+        try {
+            const response = await fetch('/booking/api/get-bookings/');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            console.log(response)
+            const data = await response.json();
+            displayBookings(data.bookings);
+        } catch (error) {
+            console.error('Error fetching bookings:', error);
+            document.getElementById('bookingsContainer').innerHTML = 
+                `<p class="text-center text-red-500 py-4">Error loading bookings: ${error.message}</p>`;
+        }
+    }
+
+    let allBookings = []; 
+
+    function displayBookings(bookings) {
+        const bookingsContainer = document.getElementById('bookingsContainer');
+
+        if (bookings.length === 0) {
+            bookingsContainer.innerHTML = '<p class="text-center text-coklat-3 py-4">Anda belum melakukan booking apapun.</p>';
+            return;
+        }
+
+        allBookings = bookings;
+
+        bookingsContainer.innerHTML = bookings.map((booking, index) => `
+            <div class="flex flex-col md:flex-row p-4 rounded-lg shadow-md bg-[#FAF4ED] mb-4" 
+                style="border: 0.2px solid rgba(117, 75, 11, 0.35);">
+                <!-- Placeholder for workshop image -->
+                <div class="w-full md:w-1/4 md:flex md:items-stretch mb-4 md:mb-0 md:mr-4 
+                            max-md:flex max-md:justify-center">
+                    <div class="w-36 md:w-full h-36 md:h-full bg-[#4a412c]"></div>
+                </div>
+                <!-- Booking details -->
+                <div class="w-full md:w-3/4 flex flex-col justify-between">
+                    <!-- Top section -->
+                    <div class="flex flex-col md:flex-row justify-between md:items-start">
+                        <div class="w-full md:w-[75%] mb-2 md:mb-0">
+                            <h3 class="text-lg font-bold text-coklat-2">${booking.workshop_title}</h3>
+                            <p class="text-sm text-gray-600">untuk ${booking.participants} orang</p>
+                        </div>
+                    </div>
+                    <!-- Bottom section -->
+                    <div class="mt-4 flex flex-col md:flex-row justify-end items-start md:items-center 
+                                space-y-2 md:space-y-0 md:space-x-4">
+                        <a href="javascript:void(0)" 
+                        class="text-sm font-medium text-coklat-2"
+                        onclick="showBookingDetails(${index})">
+                            Lihat Detail Booking
+                        </a>
+                        <button class="w-full md:w-auto px-4 py-1 text-sm font-medium bg-white 
+                                    text-coklat-2 border rounded-lg">
+                            Ulas
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function showBookingDetails(index) {
+        const booking = allBookings[index]; 
+
+        const modalContent = document.getElementById('modalContent');
+        const [dayOfWeek, day, month, year] = formatDate(booking.booking_date);
+        modalContent.innerHTML = `
+            <div class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0">
+                <div class="w-full md:w-1/5">
+                    <div class="bg-[#E3D9C3] w-full h-32"></div> 
+                </div>
+                <div class="w-full md:w-[250px] md:pl-4">
+                    <h3 class="text-lg font-bold text-coklat-2">${booking.workshop_title}</h3>
+                    <p class="text-sm text-coklat-3">Alamat: ${booking.location}</p>
+                    <!-- Assuming 'contact' field is available in booking data -->
+                    ${booking.contact ? `<p class="text-sm text-coklat-3">Kontak: ${booking.contact}</p>` : ''}
+                </div>
+                <div class="flex flex-row md:flex-row justify-between items-center w-full md:flex-1 mt-4 md:mt-0 md:pl-4">
+                    <div class="hidden md:block h-24 w-[2px] bg-coklat-2 mx-2 md:mx-6 self-center"></div>
+                    <div class="flex flex-col items-center w-[45%] md:w-[45%]">
+                        <h4 class="text-md font-light text-coklat-2">TANGGAL</h4>
+                        <h4 class="text-2xl md:text-3xl font-bold text-coklat-2">${day}</h4>
+                        <h4 class="text-md md:text-md font-bold text-coklat-2">${month} ${year}</h4>
+                        <h4 class="text-xl md:text-xl font-bold text-coklat-2">${dayOfWeek}</h4>
+                        <p class="text-sm text-coklat-2">Jam: ${booking.booking_time}</p>
+                    </div>
+                    <div class="hidden md:block h-24 w-[2px] bg-coklat-2 mx-2 md:mx-6 self-center"></div>
+                    <div class="flex flex-col items-center w-[45%] md:w-[45%]">
+                        <h4 class="text-md font-light text-coklat-2">Kapasitas</h4>
+                        <h4 class="text-2xl md:text-3xl font-bold text-coklat-2">${booking.participants}</h4>
+                        <p class="text-sm font-bold text-center text-coklat-2">Orang</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        toggleModal();
+    }
+
+    function formatDate(dateStr) {
+    const months = [
+        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+    
+    const daysOfWeek = [
+        'Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'
+    ];
+    
+    const dateParts = dateStr.split('-');
+    const year = dateParts[0];
+    const monthIndex = parseInt(dateParts[1], 10) - 1;
+    const day = dateParts[2];
+
+    const dateObj = new Date(year, monthIndex, day);
+
+    const dayOfWeek = daysOfWeek[dateObj.getDay()];
+
+    const month = months[monthIndex];
+
+    return [dayOfWeek, day, month, year];
 }
 
+    document.addEventListener('DOMContentLoaded', fetchBookings);
 </script>
 {% endblock %}

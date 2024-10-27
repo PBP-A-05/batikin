@@ -116,8 +116,6 @@
 
     async function fetchOrders() {
         const ordersContainer = document.getElementById('ordersContainer');
-
-        // Display the loading spinner
         ordersContainer.innerHTML = `
             <div class="flex items-center justify-center h-64">
                 <div class="spinner"></div>
@@ -134,7 +132,11 @@
             
             const data = await response.json();
             console.log('Orders data:', data);
-            
+            if (!data.orders || data.orders.length === 0) {
+                ordersContainer.innerHTML = 
+                    '<p class="text-center text-coklat-3 py-4">Anda tidak memiliki pemesanan</p>';
+                return;
+            }
             if (data.orders && Array.isArray(data.orders)) {
                 allOrders = data.orders; 
                 const sortOrderSelect = document.getElementById('sortOrder');

@@ -17,6 +17,15 @@
         .account-menu-active {
             animation: fadeIn 0.2s ease-out;
         }
+        @keyframes popupBounce {
+        0% { transform: scale(0.5); opacity: 0; }
+        60% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+        }
+        #customPopup {
+            animation: popupBounce 0.7s ease-out;
+            z-index: 9999;
+        }
     </style>
     <script>
     </script>
@@ -25,7 +34,6 @@
     <!-- Navbar -->
     <header class="w-screen bg-white" style="box-shadow: 0px 4px 4px rgba(117, 75, 11, 0.1);">
         <div class="container-custom flex gap-12 justify-between items-center mx-auto py-4 w-max-[1536px] max-md:px-8">
-
             <a class="flex items-center space-x-2 md:hidden" href="/">
                 <img src="{% static 'assets/logo.png' %}" alt="Batikin Logo" class="h-16 w-16">
                 <span class="text-2xl font-javanese leading-6 mt-2 text-coklat-1">Batikin</span>
@@ -50,8 +58,6 @@
                 <img src="{% static 'assets/logo.png' %}" alt="Batikin Logo" class="h-16 w-16">
                 <span class="text-2xl font-javanese leading-6 mt-2 text-coklat-1">Batikin</span>
             </a>
-       
-                
             
             <!-- Seach icon, wishlist icon, and cart icon hidden on mobile -->
             <div class="hidden md:flex items-center space-x-4">
@@ -106,7 +112,8 @@
                             <form method="post" action="{% url 'logout' %}">
                                 {% csrf_token %}
                                 <button type="submit" 
-                                        class="w-full text-left text-red-600 hover:bg-red-50 py-2 px-2 rounded-md transition-colors duration-200">
+                                        class="w-full text-left text-red-600 hover:bg-red-50 py-2 px-2 rounded-md transition-colors duration-200"
+                                        onclick="localStorage.clear()"> 
                                     Logout
                                 </button>
                             </form>
@@ -274,4 +281,22 @@
         return cookieValue;
     }
     const csrftoken = getCookie('csrftoken');
+
+    function showPopup(message) {
+        const popup = document.getElementById('customPopup');
+        const popupMessage = document.getElementById('popupMessage');
+        popupMessage.textContent = message;
+        popup.style.animation = 'none';
+        popup.offsetHeight; 
+        popup.style.animation = null;
+        popup.classList.remove('hidden');
+        setTimeout(() => {
+            closePopup();
+        }, 3000); 
+    }
+
+    function closePopup() {
+        const popup = document.getElementById('customPopup');
+        popup.classList.add('hidden');
+    }
 </script>

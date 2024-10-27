@@ -18,7 +18,7 @@ class Workshop(models.Model):
 class Booking(models.Model):
     workshop = models.ForeignKey(Workshop, on_delete=models.CASCADE)  # Referensi ke model Workshop
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Referensi ke model User (yang sudah ada di Django)
-    booking_date = models.DateField(auto_now_add=True)  # Tanggal booking otomatis diisi saat booking
+    booking_date = models.DateField()  # Tanggal booking otomatis diisi saat booking
     booking_time = models.TimeField()  # Waktu booking
     participants = models.IntegerField(default=1)  # Jumlah peserta
 
@@ -28,7 +28,6 @@ class Booking(models.Model):
 class WorkshopProduct(models.Model):  # Mengganti nama kelas menjadi WorkshopProduct
     title = models.CharField(max_length=100)  # Nama produk workshop
     description = models.TextField()  # Deskripsi produk workshop
-    price = models.DecimalField(max_digits=10, decimal_places=2)  # Harga produk workshop
-
     def __str__(self):
         return self.title
+    
