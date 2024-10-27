@@ -15,7 +15,6 @@ def create_review(request, product_id):
         if 'cancel' in request.POST:
             return redirect('shopping:product_detail', product_id=product_id)
 
-        # Validate the ReviewForm instead
         elif 'submit' in request.POST and form.is_valid():
             review = form.save(commit=False)
             review.user = request.user

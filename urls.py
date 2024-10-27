@@ -20,4 +20,5 @@ from batikin.views import home_view
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('profile/', include('user_profile.urls')),  # Include user_profile URLs
+    path('review', include('comment_review.urls')),
 ]
