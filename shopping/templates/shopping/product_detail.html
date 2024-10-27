@@ -20,6 +20,25 @@
         width: 50px;
         text-align: center;
     }
+
+    .border-gradient-coklat {
+    position: relative;
+}
+
+    .border-gradient-coklat::before {
+        content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50px; 
+    padding: 2px; 
+    background: linear-gradient(90deg, #754B0B 0%, #DB8C15 100%);
+    -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude; 
+
+    }
     .like-button:hover svg {
         transform: scale(1.1);
         filter: drop-shadow(0 0 2px rgba(117, 75, 11, 0.5));
@@ -53,14 +72,7 @@
         max-height: 1000px; 
         transition: max-height 0.5s ease-in;
     }
-    @keyframes popupBounce {
-        0% { transform: scale(0.5); opacity: 0; }
-        60% { transform: scale(1.1); }
-        100% { transform: scale(1); opacity: 1; }
-    }
-    #customPopup {
-        animation: popupBounce 0.5s ease-out;
-    }
+
     .border-gradient-coklat {
         position: relative;
     }
@@ -285,22 +297,6 @@ function updateLocalStorage(productId, status) {
     localStorage.setItem(`wishlist_${productId}`, status);
 }
 
-function showPopup(message) {
-    const popup = document.getElementById('customPopup');
-    const popupMessage = document.getElementById('popupMessage');
-    popupMessage.textContent = message;
-    popup.style.animation = 'none';
-    popup.offsetHeight; 
-    popup.style.animation = null;
-    popup.classList.remove('hidden');
-    setTimeout(() => {
-        closePopup();
-    }, 3000); 
-}
 
-function closePopup() {
-    const popup = document.getElementById('customPopup');
-    popup.classList.add('hidden');
-}
 </script>
 {% endblock %}

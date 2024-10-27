@@ -18,6 +18,9 @@ from django.contrib import admin
 from django.urls import include, path
 from batikin.views import home_view, login_view, register_view
 from . import views
+from django.contrib.auth.views import LogoutView
+
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('', home_view, name='home'),  # Home page, extending base.html
@@ -26,5 +29,9 @@ urlpatterns = [
     path('register/', register_view, name='register'),
     path('shopping/', include('shopping.urls')),
     path('workshop/', include('booking.urls')),
+    path('wishlist/', include('wishlist.urls')),
+    path('cart/', include('cart.urls')),
+    path('logout/', LogoutView.as_view(next_page='home'), name='logout'),
+    path('booking/', include('booking.urls')),  # Ensure this line is present
     path('review/', include('comment_review.urls')),
 ]
