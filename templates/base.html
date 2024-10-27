@@ -17,6 +17,15 @@
         .account-menu-active {
             animation: fadeIn 0.2s ease-out;
         }
+        @keyframes popupBounce {
+        0% { transform: scale(0.5); opacity: 0; }
+        60% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+        }
+        #customPopup {
+            animation: popupBounce 0.7s ease-out;
+            z-index: 9999;
+        }
     </style>
     <script>
     </script>
@@ -25,7 +34,6 @@
     <!-- Navbar -->
     <header class="w-screen bg-white" style="box-shadow: 0px 4px 4px rgba(117, 75, 11, 0.1);">
         <div class="container-custom flex gap-12 justify-between items-center mx-auto py-4 w-max-[1536px] max-md:px-8">
-
             <a class="flex items-center space-x-2 md:hidden" href="/">
                 <img src="{% static 'assets/logo.png' %}" alt="Batikin Logo" class="h-16 w-16">
                 <span class="text-2xl font-javanese leading-6 mt-2 text-coklat-1">Batikin</span>
@@ -50,10 +58,7 @@
                 <img src="{% static 'assets/logo.png' %}" alt="Batikin Logo" class="h-16 w-16">
                 <span class="text-2xl font-javanese leading-6 mt-2 text-coklat-1">Batikin</span>
             </a>
-       
-                
             
-            <!-- Seach icon, wishlist icon, and cart icon hidden on mobile -->
             <div class="hidden md:flex items-center space-x-4">
                 <div class="relative max-lg:hidden">
                     <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500">
@@ -65,7 +70,6 @@
                     <input type="text" placeholder="Cari produk" class="border rounded-lg py-2 px-4 w-64 focus:outline-none focus:ring-2 border-coklat-rgba placeholder-[#754b0b66]">
                 </div>
                 
-                <!-- Seach icon on < 1024 -->
                 <button class="flex items-center lg:hidden">
                     <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M11.2252 18.9799C13.28 18.9799 15.2507 18.1636 16.7037 16.7106C18.1566 15.2577 18.9729 13.287 18.9729 11.2322C18.9729 9.17737 18.1566 7.20672 16.7037 5.75374C15.2507 4.30077 13.28 3.4845 11.2252 3.4845C9.17041 3.4845 7.19976 4.30077 5.74679 5.75374C4.29381 7.20672 3.47754 9.17737 3.47754 11.2322C3.47754 13.287 4.29381 15.2577 5.74679 16.7106C7.19976 18.1636 9.17041 18.9799 11.2252 18.9799Z" stroke="#754B0B" stroke-width="1.44" stroke-linecap="round" stroke-linejoin="round"/>
@@ -74,7 +78,6 @@
                 </button>
                 
                 
-                <!-- Seach icon on < 1024 -->
                 <button class="flex items-center lg:hidden">
                     <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M11.2252 18.9799C13.28 18.9799 15.2507 18.1636 16.7037 16.7106C18.1566 15.2577 18.9729 13.287 18.9729 11.2322C18.9729 9.17737 18.1566 7.20672 16.7037 5.75374C15.2507 4.30077 13.28 3.4845 11.2252 3.4845C9.17041 3.4845 7.19976 4.30077 5.74679 5.75374C4.29381 7.20672 3.47754 9.17737 3.47754 11.2322C3.47754 13.287 4.29381 15.2577 5.74679 16.7106C7.19976 18.1636 9.17041 18.9799 11.2252 18.9799Z" stroke="#754B0B" stroke-width="1.44" stroke-linecap="round" stroke-linejoin="round"/>
@@ -106,7 +109,8 @@
                             <form method="post" action="{% url 'logout' %}">
                                 {% csrf_token %}
                                 <button type="submit" 
-                                        class="w-full text-left text-red-600 hover:bg-red-50 py-2 px-2 rounded-md transition-colors duration-200">
+                                        class="w-full text-left text-red-600 hover:bg-red-50 py-2 px-2 rounded-md transition-colors duration-200"
+                                        onclick="localStorage.clear()"> 
                                     Logout
                                 </button>
                             </form>
@@ -124,7 +128,7 @@
                 </div>
 
                 <!-- Wishlist -->
-                <a href="{% url 'wishlist_view' %}" class="text-coklat-1 focus:outline-none">
+                <a href = "{% url 'wishlist_view' %}" class="text-coklat-1 focus:outline-none">
                     <svg width="26" height="27" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12.0048 19.5L4.791 13.0513C0.870448 9.18258 6.63333 1.75337 12.0048 7.76384C17.3763 1.75337 23.1141 9.20729 19.22 13.0513L12.0048 19.5Z" stroke="#754B0B" stroke-width="1.42857" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
@@ -138,6 +142,7 @@
                 </button>
             </div>
         </div>
+
         <nav id="mobile-menu" class="hidden md:hidden bg-white shadow-lg">
             <div class="px-6 py-4 space-y-4">
                 <a href="{% url 'product_list' %}?category=pakaian_pria" class="text-coklat-1">Pria</a>
@@ -159,7 +164,6 @@
             </div>
         </nav>
     </header>
-
     <!-- Main content area -->
     {% block content %}
 
@@ -274,4 +278,22 @@
         return cookieValue;
     }
     const csrftoken = getCookie('csrftoken');
+
+    function showPopup(message) {
+        const popup = document.getElementById('customPopup');
+        const popupMessage = document.getElementById('popupMessage');
+        popupMessage.textContent = message;
+        popup.style.animation = 'none';
+        popup.offsetHeight; 
+        popup.style.animation = null;
+        popup.classList.remove('hidden');
+        setTimeout(() => {
+            closePopup();
+        }, 3000); 
+    }
+
+    function closePopup() {
+        const popup = document.getElementById('customPopup');
+        popup.classList.add('hidden');
+    }
 </script>

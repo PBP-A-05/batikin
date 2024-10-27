@@ -17,8 +17,7 @@ def login_view(request):
                 login(request, user)
                 messages.success(request, 'Successfully logged in!')
                 return redirect('home')
-            else:
-                messages.error(request, 'Invalid username or password.')
+        messages.error(request, 'Invalid username or password.')
     else:
         form = CustomAuthenticationForm()
     return render(request, 'login.html', {'form': form})

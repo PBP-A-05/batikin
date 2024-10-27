@@ -19,18 +19,18 @@ def product_list(request):
     if request.user.is_authenticated:
         wishlist_products = Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True)
     
-    return render(request, 'product_list.html', {
+    return render(request, 'shopping/product_list.html', {
         'products': products,
         'product_categories': product_categories,
         'current_category': category,
         'wishlist_products': list(map(str, wishlist_products))  
     })
-
+    
 @login_required
 def product_detail(request, pk):
     product = get_object_or_404(Product, id=pk)
     is_in_wishlist = Wishlist.objects.filter(user=request.user, product=product).exists()
-    return render(request, 'product_detail.html', {'product': product, 'is_in_wishlist': is_in_wishlist})
+    return render(request, 'shopping/product_detail.html', {'product': product, 'is_in_wishlist': is_in_wishlist})
 
 def product_detail_check(request, pk):
     if not request.user.is_authenticated:
@@ -97,4 +97,13 @@ def add_to_cart(request, product_id):
     message = f'{quantity} produk berhasil dimasukkan ke keranjang!'
     return JsonResponse({'message': message})
 
-
+def get_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    return JsonResponse({
+        'id': str(product.id),
+        'product_name': product.product_name,
+        'price': str(product.price),
+        'image_urls': product.image_urls,
+        'category': product.category,
+        'category_display': product.category,
+    })

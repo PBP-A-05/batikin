@@ -171,8 +171,8 @@
                 const addressList = document.getElementById('addressList');
                 if (data.addresses.length === 0) {
                     addressList.innerHTML = `
-                        <p class="text-[#4C3108] mb-4">Anda belum memiliki alamat.</p>
-                        <a href="{% url 'user_profile:update_profile' %}" class="bg-coklat-3 text-white px-3 py-2 rounded-md hover:opacity-90 transition duration-300 text-sm sm:text-base">Tambahkan Alamat</a>
+                        <p class="text-[#4C3108] mb-2">Anda belum memiliki alamat.</p>
+                        <a href="/account/?open_modal=true" class="bg-gradient-coklat text-white px-3 py-2 rounded-md hover:opacity-90 transition duration-300 text-sm sm:text-base">Tambahkan Alamat</a>
                     `;
                 } else {
                     let addressContent = '';
@@ -235,7 +235,7 @@
         .then(data => {
             if (data.status === 'success') {
                 document.getElementById('checkoutModal').classList.add('hidden');
-                showPopup('Pesanan berhasil diproses!', function() {
+                showPopup('Pesanan berhasil diproses! Lihat detail pemesanan pada halaman pemesanan.', function() {
                     location.reload();
                 });
             } else {

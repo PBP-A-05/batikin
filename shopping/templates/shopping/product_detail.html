@@ -72,14 +72,7 @@
         max-height: 1000px; 
         transition: max-height 0.5s ease-in;
     }
-    @keyframes popupBounce {
-        0% { transform: scale(0.5); opacity: 0; }
-        60% { transform: scale(1.1); }
-        100% { transform: scale(1); opacity: 1; }
-    }
-    #customPopup {
-        animation: popupBounce 0.5s ease-out;
-    }
+
     .border-gradient-coklat {
         position: relative;
     }
@@ -304,22 +297,6 @@ function updateLocalStorage(productId, status) {
     localStorage.setItem(`wishlist_${productId}`, status);
 }
 
-function showPopup(message) {
-    const popup = document.getElementById('customPopup');
-    const popupMessage = document.getElementById('popupMessage');
-    popupMessage.textContent = message;
-    popup.style.animation = 'none';
-    popup.offsetHeight; 
-    popup.style.animation = null;
-    popup.classList.remove('hidden');
-    setTimeout(() => {
-        closePopup();
-    }, 3000); 
-}
 
-function closePopup() {
-    const popup = document.getElementById('customPopup');
-    popup.classList.add('hidden');
-}
 </script>
 {% endblock %}

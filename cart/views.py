@@ -9,7 +9,7 @@ from user_profile.models import Address
 from decimal import Decimal, InvalidOperation
 import json
 
-@login_required
+@login_required(login_url='/login')
 def view_cart(request):
     cart_items = CartItem.objects.filter(cart__user=request.user).order_by('-id')
     
@@ -76,20 +76,42 @@ def sort_cart_items(request):
 
 @login_required
 def add_to_cart(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    product = get_object_or_404(Product, id=product_id)  # This will now accept a UUID
     data = json.loads(request.body)
     quantity = int(data.get('quantity', 1))
-    cart_item, created = Cart.objects.get_or_create(user=request.user, product=product)
+
+    try:
+        price = Decimal(str(product.price).replace('Rp', '').replace('.', '').replace(',', '.'))
+    except:
+        return JsonResponse({'error': 'Invalid price format'}, status=400)
+
+    cart, created = Cart.objects.get_or_create(user=request.user)
+
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        product=product,
+        defaults={'quantity': quantity, 'price': price}
+    )
     
     if not created:
         cart_item.quantity += quantity
         cart_item.save()
-    else:
-        cart_item.quantity = quantity
-        cart_item.save()
-    
+
     message = f'{quantity} produk berhasil dimasukkan ke keranjang!'
     return JsonResponse({'message': message})
+
+
+@login_required
+def remove_from_cart(request, product_id):
+    try:
+        # Ensure product_id is treated as a UUID
+        cart = Cart.objects.get(user=request.user)
+        cart_item = CartItem.objects.get(cart=cart, product__id=product_id)
+        cart_item.delete()
+        message = 'Produk dihapus dari keranjang!'
+        return JsonResponse({'status': 'removed', 'message': message})
+    except CartItem.DoesNotExist:
+        return JsonResponse({'error': 'Item not found in cart.'}, status=404)
 
 @login_required
 def update_cart_item(request, item_id):
@@ -124,7 +146,7 @@ def create_order(request):
     data = json.loads(request.body)
     address_id = data.get('address_id')
     items = data.get('items')
-
+    address = None
     try:
         address = Address.objects.get(id=address_id, user=request.user)
     except Address.DoesNotExist:
@@ -135,7 +157,7 @@ def create_order(request):
     order = Order.objects.create(
         user=request.user,
         address=address,
-        total_price=total_price
+        total_price=total_price,
     )
 
     for item in items:
@@ -145,7 +167,7 @@ def create_order(request):
                 order=order,
                 product=product,
                 quantity=int(item['quantity']),
-                price=float(item['price'])
+                price=float(item['price']),
             )
             # Hapus item dari keranjang setelah berhasil membuat OrderItem
             CartItem.objects.filter(cart__user=request.user, product=product).delete()
@@ -157,3 +179,57 @@ def create_order(request):
             return JsonResponse({'status': 'error', 'message': f'Error saat membuat OrderItem: {str(e)}'})
 
     return JsonResponse({'status': 'success', 'message': 'Pesanan berhasil dibuat'})
+
+
+@login_required
+def get_orders_by_user(request):
+    try:
+        orders = Order.objects.filter(user=request.user)
+        
+        orders_data = []
+        for order in orders:
+            try:
+                order_items = OrderItem.objects.filter(order=order)
+                
+                items_data = []
+                for item in order_items:
+                    items_data.append({
+                        'product_id': item.product.id,
+                        'product_name': item.product.product_name,
+                        'quantity': item.quantity,
+                        'price': str(item.price),
+                        'image_urls': item.product.image_urls,
+                        'category': item.product.category,
+                    })
+                
+                order_data = {
+                    'order_id': order.id,
+                    'total_price': str(order.total_price),
+                    'items': items_data,
+                    'created_at': order.created_at.isoformat(),
+                }
+                
+                if order.address:
+                    order_data['address'] = {
+                        'id': order.address.id,
+                        'title': order.address.title,
+                        'address': order.address.address,
+                    }
+                
+                orders_data.append(order_data)
+                
+            except Exception as e:
+                print(f"Error processing order {order.id}: {str(e)}") 
+                continue
+        
+        return JsonResponse({'orders': orders_data})
+    
+    except Exception as e:
+        import traceback
+        print(f"Error in get_orders_by_user: {str(e)}")
+        print(traceback.format_exc())
+        return JsonResponse({
+            'error': str(e),
+            'status': 'error',
+            'message': 'Failed to fetch orders'
+        }, status=500)
