@@ -32,5 +32,5 @@ urlpatterns = [
     path('wishlist/', include('wishlist.urls')),
     path('cart/', include('cart.urls')),
     path('logout/', LogoutView.as_view(next_page='home'), name='logout'),
-    path('booking/', include('booking.urls')),  # Ensure this line is present
+    path('booking/', include('booking.urls')),  
 ]

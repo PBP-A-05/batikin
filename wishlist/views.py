@@ -8,17 +8,23 @@ from cart.models import Cart, CartItem
 from .models import Wishlist  
 from shopping.models import Product  
 from django.db.models import F
+from django.db.models import DecimalField, ExpressionWrapper, FloatField
+from django.db.models.functions import Cast
 
 @login_required(login_url='/login')
 def wishlist_view(request):
     sort_by = request.GET.get('sort', 'price_asc')  
 
     wishlist_items = Wishlist.objects.filter(user=request.user).select_related('product')
-    
+
+    wishlist_items = wishlist_items.annotate(
+        price_decimal=Cast('product__price', output_field=DecimalField())
+    )
+
     if sort_by == 'price_desc':
-        wishlist_items = wishlist_items.order_by(F('product__price').desc())
+        wishlist_items = wishlist_items.order_by('-price_decimal')
     else:  
-        wishlist_items = wishlist_items.order_by(F('product__price').asc())
+        wishlist_items = wishlist_items.order_by('price_decimal')
 
     wishlist_count = wishlist_items.count()
 
