@@ -37,7 +37,7 @@ if DEBUG:
         BASE_DIR / 'static' # merujuk ke /static root project pada mode development
     ]
 else:
-    STATIC_ROOT = BASE_DIR / 'static' # merujuk ke /static root project pada mode production
+    STATIC_ROOT = BASE_DIR / 'app/static' # merujuk ke /static root project pada mode production
 # Application definition
 ###
 INSTALLED_APPS = [
@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'booking',
     'cart',
 
-]
+]   
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
