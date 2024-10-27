@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'booking',
     'cart',
+    'comment_review',
 
 ]   
 

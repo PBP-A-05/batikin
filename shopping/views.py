@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Product
 from wishlist.models import Wishlist
 from cart.models import Cart, CartItem
+from comment_review.models import Review
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden
 import json
 
@@ -30,7 +31,8 @@ def product_list(request):
 def product_detail(request, pk):
     product = get_object_or_404(Product, id=pk)
     is_in_wishlist = Wishlist.objects.filter(user=request.user, product=product).exists()
-    return render(request, 'shopping/product_detail.html', {'product': product, 'is_in_wishlist': is_in_wishlist})
+    reviews = Review.objects.filter(product=product)
+    return render(request, 'shopping/product_detail.html', {'product': product, 'is_in_wishlist': is_in_wishlist, 'reviews': reviews})
 
 def product_detail_check(request, pk):
     if not request.user.is_authenticated:
