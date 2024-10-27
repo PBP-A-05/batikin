@@ -1,11 +1,11 @@
 <div class="relative break-inside-avoid">
-    <div class="bg-[#754B0B] bg-opacity-10 rounded-lg shadow-md p-6 flex flex-col justify-between w-full mb-4 p-4 flex-shrink-0 transition-all duration-300"
-         style="box-shadow: 0 4px 6px -1px rgba(76, 49, 8, 0.1), 0 2px 4px -1px rgba(76, 49, 8, 0.06); width: 400px; height: 240px;">
-        <div class="flex items-center space-x-4 mb-4">
+    <div class="bg-[#754B0B] bg-opacity-10 rounded-lg shadow-md p-6 flex flex-col justify-between w-full md:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-1rem)] flex-shrink-0 transition-all duration-300"
+         style="box-shadow: 0 4px 6px -1px rgba(76, 49, 8, 0.1), 0 2px 4px -1px rgba(76, 49, 8, 0.06);">
+        <div class="flex items-start space-x-4 mb-4">
             <!-- Profile Picture -->
-            <img src="{{ review.user.profile.profile_picture }}" alt="Profile Picture" class="w-14 h-14 rounded-full">
+            <img src="{{ product.image_urls }}" alt="Profile Picture" class="w-14 h-14 rounded-full">
             <div>
-                <h3 class="font-bold text-coklat-1 text-xl">{{ review.user.username }}</h3>
+                <h3 class="font-bold text-coklat-1 text-xl">{{ review.user }}</h3>
                 <p class="text-sm text-coklat-1">{{ review.created_at|date:"j F Y" }}</p>
             </div>
         </div>
@@ -23,7 +23,7 @@
                 {% endif %}
             {% endfor %}
         </div>
-        <div class="p-4 overflow-y-auto break-words" style="max-height: 150px;">
+        <div class="p-4 max-h-40 overflow-y-auto break-words">
             <p class="text-coklat-1 text-lg font-semibold leading-relaxed">{{ review.review }}</p>
         </div>
     </div>
