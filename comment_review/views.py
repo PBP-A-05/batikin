@@ -6,7 +6,6 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 @login_required
-@login_required
 def create_review(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     form = ReviewForm(request.POST or None)
