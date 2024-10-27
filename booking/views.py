@@ -113,7 +113,8 @@ def get_booking_data(request):
                     'booking_date': booking.booking_date.strftime('%Y-%m-%d'),
                     'booking_time': booking.booking_time.strftime('%H:%M'),
                     'participants': booking.participants,
-                    'image_urls': booking.workshop.image_urls
+                    'image_urls': booking.workshop.image_urls,
+                    'workshop_id': booking.workshop.id
                 })
             except AttributeError as e:
                 print(f"Error processing booking {booking.id}: {str(e)}")
