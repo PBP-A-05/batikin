@@ -1,12 +1,12 @@
 from decimal import Decimal
 import json
+import uuid
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from cart.models import Cart, CartItem
 from .models import Wishlist  
 from shopping.models import Product  
-from uuid import UUID
 from django.db.models import F
 
 @login_required(login_url='/login')
@@ -103,3 +103,21 @@ def remove_from_cart(request, product_id):
         return JsonResponse({'status': 'removed', 'message': message})
     except CartItem.DoesNotExist:
         return JsonResponse({'error': 'Item not found in cart.'}, status=404)
+    
+@login_required
+def save_note(request, product_id):
+    if request.method == 'POST':
+        product = get_object_or_404(Product, id=product_id)
+
+        wishlist_item, created = Wishlist.objects.get_or_create(
+            user=request.user,
+            product=product
+        )
+
+        note_text = request.POST.get('note', '')
+        wishlist_item.note = note_text
+        wishlist_item.save()
+
+        return JsonResponse({'message': 'Catatan berhasil disimpan!', 'note': wishlist_item.note})
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
