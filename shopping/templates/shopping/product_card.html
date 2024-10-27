@@ -7,15 +7,18 @@
         <h3 class="text-base font-semibold text-coklat-1">{{ product.product_name }}</h3>
         <div class="flex justify-between items-center">
             <span class="text-lg font-bold text-coklat-2">{{ product.price }}</span>
-            <button class="like-button focus:outline-none" onclick="event.stopPropagation(); addToWishlist('{{ product.id }}', this);">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1" viewBox="0 0 24 24" stroke="currentColor" fill="none">
+
+            <!-- Heart button -->
+            <button class="like-button focus:outline-none" data-product-id="{{ product.id }}" onclick="event.stopPropagation(); addToWishlist('{{ product.id }}', this);">
+                <!-- Outline Heart -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="heart-outline h-6 w-6 text-coklat-1" viewBox="0 0 24 24" stroke="currentColor" fill="{% if is_in_wishlist %}#754B0B{% else %}none{% endif %}">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
-                <!-- Filled heart -->
-                <svg width="24" height="25" class="h-6 w-6 text-coklat-1 heart-filled hidden" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+                <!-- Filled Heart -->
+                <svg width="24" height="25" class="heart-filled h-6 w-6 text-coklat-1 {% if not is_in_wishlist %}hidden{% endif %}" viewBox="0 0 24 25" fill="#754B0B" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12.0048 19.5L4.791 13.0513C0.870448 9.18258 6.63333 1.75337 12.0048 7.76384C17.3763 1.75337 23.1141 9.20729 19.22 13.0513L12.0048 19.5Z" fill="#754B0B" stroke="#754B0B" stroke-width="1.42857" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                    
             </button>
         </div>
     </div>
