@@ -151,6 +151,29 @@ function addToCart(productId, productName, productPrice) {
     }
 }
 
+    function removeFromWishlist(productId) {
+            fetch(`/wishlist/remove_from_wishlist/${productId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showPopup("Produk berhasil dihapus dari wishlist!");
+                    location.reload();
+                } else {
+                    showPopup("Gagal menghapus produk dari wishlist.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                showPopup("Terjadi kesalahan saat menghapus dari wishlist.");
+            });
+        }
+
 
     // Function to toggle note input visibility
     function toggleNoteInput(productId) {
