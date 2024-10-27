@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .border-gradient-coklat {
+        position: relative;
+    }
+    .border-gradient-coklat::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50px; 
+        padding: 2px; 
+        background: linear-gradient(90deg, #754B0B 0%, #DB8C15 100%);
+        -webkit-mask: 
+            linear-gradient(#fff 0 0) content-box, 
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+                mask-composite: exclude; 
+    }
+</style>
+
+<div class="min-h-screen flex flex-col bg-[#f6f6f6]">
+    <div class="container-custom mx-auto py-4 sm:py-8 md:py-16 flex-grow px-4 sm:px-6 lg:px-8 max-w-5xl">
+        <div class="mb-4 sm:mb-6 md:mb-8">
+            <h1 class="text-2xl sm:text-3xl font-bold text-[#4C3108]">Keranjang</h1>
+        </div>
+
+        {% if cart_items %}
+            <div class="space-y-4 sm:space-y-6">
+                <div id="cart-items-container" class="space-y-4 sm:space-y-6">
+                    {% for item_with_total in cart_items %}
+                        {% include 'cart/cart_card.html' %}
+                    {% endfor %}
+                </div>
+                <div class="w-full sm:w-2/3 md:w-1/2 ml-auto">
+                    <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                        <h2 class="text-base sm:text-lg font-semibold text-[#4C3108] mb-1">Ringkasan belanja</h2>
+                        <hr class="border-t border-[#D8CDB3] mb-3">
+                        <div class="flex justify-between items-center mb-4 sm:mb-6">
+                            <span class="text-sm sm:text-base text-[#4C3108]">Total</span>
+                            <span id="grand-total" class="text-lg sm:text-xl md:text-2xl font-semibold text-[#754B0B]">Rp{{ total_price|default:"0" }}</span>
+                        </div>
+                        <button id="checkoutButton" class="w-full bg-gradient-coklat text-white py-2 sm:py-3 rounded-lg font-medium hover:opacity-90 transition duration-300 text-sm sm:text-base">
+                            Beli sekarang!
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="flex items-center justify-center h-48 sm:h-64 bg-white rounded-lg shadow-md">
+                <p class="text-lg sm:text-xl text-[#714503] opacity-70 text-center px-4">Produk yang dimasukkan ke keranjang akan muncul di sini.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div id="checkoutModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-[#f6f6f6] border border-[#D8CDB3] rounded-lg p-4 sm:p-6 w-full max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl max-h-[90vh] flex flex-col">
+        <h2 class="text-xl sm:text-2xl font-bold text-[#4C3108] mb-4">Ringkasan Pemesanan</h2>
+        <hr class="border-t border-[#D8CDB3] mb-4">
+        <div id="modalContent" class="space-y-4 overflow-y-auto flex-grow text-sm sm:text-base">
+        </div>
+        <hr class="border-t border-[#D8CDB3] my-4">
+        <div id="addressSection" class="mb-4">
+            <h2 class="text-lg sm:text-xl font-bold text-[#4C3108] mb-2">Pilih alamat pengiriman</h2>
+            <div id="addressList" class="text-sm sm:text-base">
+            </div>
+        </div>
+        <div class="flex justify-end space-x-4">
+            <button id="closeModal" class="px-3 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition duration-300 text-sm sm:text-base">
+                Tutup
+            </button>
+            <button id="confirmPurchase" class="px-3 py-2 bg-gradient-coklat text-white rounded-lg hover:opacity-90 transition duration-300 text-sm sm:text-base" disabled>
+                Proses Pemesanan
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="customPopup" class="fixed bottom-4 left-4 sm:bottom-8 sm:left-8 bg-white border border-coklat-1 rounded-md p-3 sm:p-4 shadow-md hidden z-50 w-64 sm:w-80">
+    <p id="popupMessage" class="text-coklat-2 font-poppins mb-2 sm:mb-3 text-sm sm:text-base"></p>
+    <div class="flex justify-end">
+      <button onclick="closePopup()" class="bg-gradient-coklat text-white px-4 py-1 rounded-md hover:opacity-90 transition duration-300 text-xs sm:text-sm">Tutup</button>
+    </div>
+</div>
+
+<script>
+    function updateGrandTotal() {
+        let total = 0;
+        document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+            const itemId = checkbox.id.split('-')[1];
+            const priceElement = document.getElementById(`price-${itemId}`);
+            total += parseFloat(priceElement.textContent.replace('Rp', '').replace(',', ''));
+        });
+        document.getElementById('grand-total').textContent = `Rp${Math.round(total).toLocaleString('id-ID')}`;
+    }
+
+    updateGrandTotal();
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', updateGrandTotal);
+    });
+
+    document.getElementById('checkoutButton').addEventListener('click', function() {
+        const checkedItems = document.querySelectorAll('input[type="checkbox"]:checked');
+        if (checkedItems.length === 0) {
+            showPopup('Pilih setidaknya satu produk untuk dibeli.');
+            return;
+        }
+
+        let modalContent = '';
+        let totalPrice = 0;
+
+        checkedItems.forEach((checkbox, index) => {
+            const itemId = checkbox.id.split('-')[1];
+            const card = document.getElementById(`cart-item-${itemId}`);
+            const productName = card.querySelector('h3').textContent;
+            const category = card.querySelector('.border-gradient-coklat').textContent;
+            const quantity = card.querySelector('input[type="number"]').value;
+            const price = parseFloat(card.querySelector('p').textContent.replace('Rp', '').replace(',', ''));
+            const itemTotal = quantity * price;
+            totalPrice += itemTotal;
+
+            const isLastItem = index === checkedItems.length - 1;
+
+            modalContent += `
+                <div class="flex flex-col sm:flex-row items-start space-y-2 sm:space-y-0 sm:space-x-4 pb-4 ${!isLastItem ? 'mb-4 border-b border-[#D8CDB3]-200' : ''}">
+                    <img src="${card.querySelector('img').src}" alt="${productName}" class="w-16 h-16 object-cover rounded-lg">
+                    <div class="flex-grow">
+                        <h3 class="text-base sm:text-lg font-semibold text-[#4C3108]">${productName}</h3>
+                        <span class="inline-block px-2 py-1 text-xs border-gradient-coklat rounded-full text-[#4C3108] mt-1">${category}</span>
+                        <p class="text-sm text-gray-700 mt-1">Total ${quantity} item</p>
+                    </div>
+                    <p class="text-base sm:text-lg font-semibold text-[#4C3108] mt-2 sm:mt-0">Rp${itemTotal.toLocaleString('id-ID')}</p>
+                </div>
+            `;
+        });
+
+        modalContent += `
+            <div class="mt-3 pt-4 border-t border-[#D8CDB3]">
+                <p class="text-lg sm:text-xl font-bold text-right text-[#4C3108]">Total: Rp${totalPrice.toLocaleString('id-ID')}</p>
+            </div>
+        `;
+
+        document.getElementById('modalContent').innerHTML = modalContent;
+
+        fetch('/account/get_addresses/')
+            .then(response => response.json())
+            .then(data => {
+                const addressList = document.getElementById('addressList');
+                if (data.addresses.length === 0) {
+                    addressList.innerHTML = `
+                        <p class="text-[#4C3108] mb-2">Anda belum memiliki alamat.</p>
+                        <a href="/account/account/?open_modal=true" class="bg-gradient-coklat text-white px-3 py-2 rounded-md hover:opacity-90 transition duration-300 text-sm sm:text-base">Tambahkan Alamat</a>
+                    `;
+                } else {
+                    let addressContent = '';
+                    data.addresses.forEach((address, index) => {
+                        addressContent += `
+                            <div class="mb-2">
+                                <div class="flex items-center">
+                                    <input type="radio" id="address_${index}" name="address" value="${address.id}" class="mr-2">
+                                    <label for="address_${index}" class="text-[#4C3108] font-bold text-sm sm:text-base">${address.title}</label>
+                                </div>
+                                <p class="text-[#4C3108] ml-5 text-xs sm:text-sm">${address.address}</p>
+                            </div>
+                        `;
+                    });
+                    addressList.innerHTML = addressContent;
+                }
+            })
+            .catch(error => {
+                showPopup('Terjadi kesalahan saat mengambil alamat.');
+            });
+
+        document.getElementById('checkoutModal').classList.remove('hidden');
+    });
+
+    document.getElementById('addressList').addEventListener('change', function() {
+        document.getElementById('confirmPurchase').disabled = false;
+    });
+
+    document.getElementById('confirmPurchase').addEventListener('click', function() {
+        const selectedAddress = document.querySelector('input[name="address"]:checked');
+        if (!selectedAddress) {
+            showPopup('Pilih alamat pengiriman terlebih dahulu.');
+            return;
+        }
+
+        const checkedItems = document.querySelectorAll('input[type="checkbox"]:checked');
+        const orderItems = Array.from(checkedItems).map(checkbox => {
+            const itemId = checkbox.id.split('-')[1];
+            const card = document.getElementById(`cart-item-${itemId}`);
+            return {
+                product_id: card.dataset.productId,
+                quantity: parseInt(card.querySelector('input[type="number"]').value),
+                price: parseFloat(card.querySelector('p').textContent.replace('Rp', '').replace(',', ''))
+            };
+        });
+        const orderData = {
+            address_id: parseInt(selectedAddress.value),
+            items: orderItems
+        };
+
+        fetch('/cart/create_order/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(orderData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                document.getElementById('checkoutModal').classList.add('hidden');
+                showPopup('Pesanan berhasil diproses! Lihat detail pemesanan pada halaman pemesanan.', function() {
+                    location.reload();
+                });
+            } else {
+                showPopup('Terjadi kesalahan saat membuat pesanan: ' + data.message);
+            }
+        })
+        .catch(error => {
+            showPopup('Terjadi kesalahan saat membuat pesanan.');
+        });
+    });
+
+    document.getElementById('closeModal').addEventListener('click', function() {
+        document.getElementById('checkoutModal').classList.add('hidden');
+    });
+
+    function showPopup(message, callback) {
+        const popup = document.getElementById('customPopup');
+        const popupMessage = document.getElementById('popupMessage');
+        popupMessage.textContent = message;
+        popup.style.animation = 'none';
+        popup.offsetHeight; 
+        popup.style.animation = null;
+        popup.classList.remove('hidden');
+        setTimeout(() => {
+            closePopup();
+            if (callback) callback();
+        }, 3000); 
+    }
+
+    function closePopup() {
+        const popup = document.getElementById('customPopup');
+        popup.classList.add('hidden');
+    }
+</script>
+{% endblock %}

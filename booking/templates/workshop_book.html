@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Book a Workshop{% endblock %}
+
+{% block content %}
+<style>
+    .quantity-input {
+        display: flex;
+        align-items: center;
+    }
+    .quantity-input button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 40px;
+    }
+    .quantity-input input {
+        width: 50px;
+        text-align: center;
+    }
+
+    .calendar {
+        width: 100%;
+        margin: 20px 0;
+        border-collapse: collapse;
+        border: 1px solid #754B0B;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .calendar th, .calendar td {
+        text-align: center;
+        padding: 10px;
+        border: 1px solid #DB8C15;
+        border-radius: 5px;
+    }
+
+    .calendar th {
+        background-color: #F6E5D3;
+        color: #754B0B;
+        font-weight: bold;
+    }
+
+    .calendar .highlight:hover {
+        background-color: #D99A5F;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .calendar .selected {
+        background-color: #754B0B;
+        color: white;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container mx-auto px-4 py-8 max-w-7xl">
+    <div class="bg-white border border-coklat-1-rgba rounded-md p-6">
+        <h2 class="text-2xl font-semibold text-coklat-1 mb-6">Book a Workshop at {{ workshop.title }}!</h2>
+
+        <form method="POST" action="{% url 'workshop_book' workshop.id %}" id="bookingForm">
+            {% csrf_token %}
+            <div class="flex flex-wrap">
+                <!-- Select Date (Large Calendar) -->
+                <div class="w-full md:w-1/2 mb-4 md:mb-0 md:pr-4">
+                    <label for="date" class="block text-sm font-medium text-gray-700 mb-2">Select a Date</label>
+                    <div id="calendarContainer">
+                        <table class="calendar">
+                            <thead>
+                                <tr>
+                                    <th colspan="7">
+                                        <button type="button" onclick="previousMonth()">&lt;</button>
+                                        <span id="month"></span>
+                                        <span id="year"></span>
+                                        <button type="button" onclick="nextMonth()">&gt;</button>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>Sun</th>
+                                    <th>Mon</th>
+                                    <th>Tue</th>
+                                    <th>Wed</th>
+                                    <th>Thu</th>
+                                    <th>Fri</th>
+                                    <th>Sat</th>
+                                </tr>
+                            </thead>
+                            <tbody id="calendar-body">
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Hidden Input to Store Selected Date -->
+                    <input type="hidden" id="selected_date" name="selected_date">
+                    {% if error %}
+                        <p class="text-red-500 mt-2">{{ error }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Select Time and Number of Participants -->
+                <div class="w-full md:w-1/2">
+                    <!-- Select Time -->
+                    <div class="mb-4">
+                        <label for="time" class="block text-sm font-medium text-gray-700 mb-2">Select a Time</label>
+                        <select 
+                            id="time" 
+                            name="booking_time" 
+                            class="w-full p-2 border rounded-md focus:outline-none focus:ring-coklat-1 focus:border-coklat-1"
+                        >
+                            {% for t in available_times %}
+                                <option value="{{ t }}">{{ t }}</option>
+                            {% empty %}
+                                <option disabled>No times available</option>
+                            {% endfor %}
+                        </select>
+                    </div>                
+
+                    <!-- Pilih Jumlah Peserta -->
+                    <div class="mb-4">
+                        <label for="participants" class="block text-sm font-medium text-gray-700 mb-2">Add a Participant</label>
+                        <div class="flex items-center space-x-4">
+                            <div class="quantity-input flex items-center border border-coklat-1-rgba rounded-md">
+                                <button 
+                                    type="button" 
+                                    class="text-coklat-1 disabled:opacity-50" 
+                                    onclick="decrementQuantity()" 
+                                    id="decrementBtn" 
+                                    disabled
+                                >
+                                    -
+                                </button>
+                                <input 
+                                    type="number" 
+                                    id="participants" 
+                                    name="participants"
+                                    class="text-center text-coklat-2 focus:outline-none" 
+                                    value="1" 
+                                    min="1" 
+                                    readonly
+                                >
+                                <button 
+                                    type="button" 
+                                    class="text-coklat-1" 
+                                    onclick="incrementQuantity()"
+                                >
+                                    +
+                                </button>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <button 
+                    type="submit" 
+                    class="w-full bg-gradient-coklat text-white py-3 rounded-md hover:bg-coklat-1-dark transition duration-300"
+                >
+                    Confirm Booking
+                </button>
+            </div>
+        </form>
+
+        <div id="customPopup" class="fixed bottom-8 left-8 bg-white border border-coklat-1 rounded-md p-4 shadow-md hidden z-50 w-80">
+            <p id="popupMessage" class="text-coklat-2 font-poppins mb-3"></p>
+            <div class="flex justify-end">
+              <button onclick="closePopup()" class="bg-gradient-coklat text-white px-6 py-1 rounded-md hover:opacity-90 transition duration-300 text-sm">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let selectedDateElement = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        generateCalendar(new Date());
+
+        // Add event listener to calendar cells
+        document.getElementById('calendar-body').addEventListener('click', function(event) {
+            if (event.target.tagName === 'TD' && event.target.classList.contains('highlight')) {
+                if (selectedDateElement) {
+                    // Remove the 'selected' class from previously selected date
+                    selectedDateElement.classList.remove('selected');
+                }
+                // Add 'selected' class to the clicked date
+                event.target.classList.add('selected');
+                selectedDateElement = event.target;
+
+                // Set the selected date in the hidden input
+                const day = event.target.textContent;
+                const month = document.getElementById('month').textContent;
+                const year = document.getElementById('year').textContent;
+                const dateStr = `${year}-${getMonthNumber(month)}-${padZero(day)}`;
+                document.getElementById('selected_date').value = dateStr;
+            }
+        });
+
+        // Handle form submission
+        const bookingForm = document.getElementById('bookingForm');
+        bookingForm.addEventListener('submit', function(event) {
+            showPopup('Booking berhasil dibuat!'); // Simulate network delay
+        });
+    });
+
+    function generateCalendar(date) {
+        const calendarBody = document.getElementById('calendar-body');
+        calendarBody.innerHTML = ''; // Clear existing cells
+        const year = date.getFullYear();
+        const month = date.getMonth(); // 0-indexed
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        document.getElementById('month').textContent = date.toLocaleString('default', { month: 'long' });
+        document.getElementById('year').textContent = year;
+
+        // Create empty cells for days before the first day of the month
+        let row = document.createElement('tr');
+        for (let i = 0; i < firstDay; i++) {
+            let cell = document.createElement('td');
+            row.appendChild(cell);
+        }
+
+        // Create cells for each day of the month
+        for (let day = 1; day <= daysInMonth; day++) {
+            if (row.children.length === 7) {
+                calendarBody.appendChild(row);
+                row = document.createElement('tr');
+            }
+
+            let cell = document.createElement('td');
+            cell.textContent = day;
+            cell.classList.add('highlight'); // Add the highlight class
+            row.appendChild(cell);
+        }
+
+        // Append the last row if it's not empty
+        if (row.children.length > 0) {
+            calendarBody.appendChild(row);
+        }
+    }
+
+    function previousMonth() {
+        const currentMonth = document.getElementById('month').textContent;
+        const currentYear = parseInt(document.getElementById('year').textContent);
+        const date = new Date(`${currentMonth} 1, ${currentYear}`);
+        date.setMonth(date.getMonth() - 1);
+        generateCalendar(date);
+    }
+
+    function nextMonth() {
+        const currentMonth = document.getElementById('month').textContent;
+        const currentYear = parseInt(document.getElementById('year').textContent);
+        const date = new Date(`${currentMonth} 1, ${currentYear}`);
+        date.setMonth(date.getMonth() + 1);
+        generateCalendar(date);
+    }
+
+    function incrementQuantity() {
+        const participantsInput = document.getElementById('participants');
+        participantsInput.value = parseInt(participantsInput.value) + 1;
+        document.getElementById('decrementBtn').disabled = false;
+    }
+
+    function decrementQuantity() {
+        const participantsInput = document.getElementById('participants');
+        if (participantsInput.value > 1) {
+            participantsInput.value = parseInt(participantsInput.value) - 1;
+        }
+        if (participantsInput.value == 1) {
+            document.getElementById('decrementBtn').disabled = true;
+        }
+    }
+
+    // Function to show the popup
+    function showPopup(message) {
+        const popup = document.getElementById('customPopup');
+        const popupMessage = document.getElementById('popupMessage');
+        popupMessage.textContent = message;
+        popup.classList.remove('hidden');
+
+        // Automatically close the popup after 3 seconds
+        setTimeout(closePopup, 3000);
+    }
+
+    // Function to close the popup
+    function closePopup() {
+        const popup = document.getElementById('customPopup');
+        popup.classList.add('hidden');
+    }
+
+    // Helper function to get month number from month name
+    function getMonthNumber(monthName) {
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        return String(months.indexOf(monthName) + 1).padStart(2, '0');
+    }
+
+    // Helper function to pad single digit numbers with leading zero
+    function padZero(number) {
+        return number.toString().padStart(2, '0');
+    }
+</script>
+{% endblock %}

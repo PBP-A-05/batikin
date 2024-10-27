@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from batikin.forms import CustomUserCreationForm, CustomAuthenticationForm
 from django.contrib.auth import login, authenticate
 
@@ -16,9 +16,8 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, 'Successfully logged in!')
-                return redirect('account')
-            else:
-                messages.error(request, 'Invalid username or password.')
+                return redirect('home')
+        messages.error(request, 'Invalid username or password.')
     else:
         form = CustomAuthenticationForm()
     return render(request, 'login.html', {'form': form})

@@ -1,0 +1,330 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Batikin | Account{% endblock %}
+
+{% block content %}
+<style>
+     .border-gradient-coklat {
+        position: relative;
+    }
+    .border-gradient-coklat::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50px; 
+        padding: 2px; 
+        background: linear-gradient(90deg, #754B0B 0%, #DB8C15 100%);
+        -webkit-mask: 
+            linear-gradient(#fff 0 0) content-box, 
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+                mask-composite: exclude; 
+    }
+    @keyframes popupBounce {
+        0% { transform: scale(0.5); opacity: 0; }
+        60% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    #customPopup {
+        animation: popupBounce 0.5s ease-out;
+        z-index: 9999;
+    }
+</style>
+<!-- Add Modal HTML -->
+<div id="editProfileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 overflow-y-auto">
+    <div class="bg-white rounded-xl max-w-md w-full mx-4 my-8">
+        <div class="p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-coklat-2">Edit Profile</h2>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <form id="profileForm" method="post" enctype="multipart/form-data" class="max-h-[70vh] overflow-y-auto pr-4">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="block text-coklat-2 font-bold mb-2">First Name</label>
+                    {{ form.first_name }}
+                </div>
+                <div class="mb-4">
+                    <label class="block text-coklat-2 font-bold mb-2">Last Name</label>
+                    {{ form.last_name }}
+                </div>
+                <div class="mb-4">
+                    <label class="block text-coklat-2 font-bold mb-2">Phone Number</label>
+                    {{ form.phone_number }}
+                </div>
+                
+                <!-- Addresses Section -->
+                <div class="mb-4">
+                    <label class="block text-coklat-2 font-bold mb-2">Addresses (Max 3)</label>
+                    <div id="addressesContainer">
+                        {% for address_form in address_forms %}
+                        <div class="address-form mb-3 p-3 border rounded relative">
+                            <button type="button" class="remove-address-btn absolute top-2 right-2 text-red-500 hover:text-red-700" onclick="removeAddress(this)">
+                                &times;
+                            </button>
+                            <div class="mb-2">
+                                <label class="block text-sm font-medium text-coklat-2">Title</label>
+                                {{ address_form.title }}
+                            </div>
+                            <div class="mb-2">
+                                <label class="block text-sm font-medium text-coklat-2">Address</label>
+                                {{ address_form.address }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" id="addAddressBtn" class="px-4 py-2 bg-[#FAF4ED] text-coklat-2 border border-coklat-1/25 
+                    rounded-lg hover:bg-coklat-2 hover:text-[#FAF4ED] 
+                    focus:outline-none focus:ring-2 focus:ring-coklat-1/20
+                    active:bg-coklat-2/90
+                    transition-all duration-200 ease-in-out
+                    font-medium shadow-sm">
+                        Tambah Alamat
+                    </button>
+                </div>
+                
+                <div class="flex justify-end gap-4 mt-6">
+                    <button type="button" onclick="closeModal()" 
+                        class="px-4 py-2 text-coklat-2 border border-coklat-2 rounded-lg hover:bg-gray-100">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                        class="px-4 py-2 bg-[#FAF4ED] text-coklat-2 border border-coklat-1/25 
+                        rounded-lg hover:bg-coklat-2 hover:text-[#FAF4ED] 
+                        focus:outline-none focus:ring-2 focus:ring-coklat-1/20
+                        active:bg-coklat-2/90
+                        transition-all duration-200 ease-in-out
+                        font-medium shadow-sm">
+                        Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<main class="min-h-screen w-full bg-[#F6F6F6]">
+    <div id="customPopup" class="fixed bottom-4 left-4 sm:bottom-8 sm:left-8 bg-white border border-coklat-1 rounded-md p-3 sm:p-4 shadow-md hidden z-50 w-64 sm:w-80">
+        <p id="popupMessage" class="text-coklat-2 font-poppins mb-2 sm:mb-3 text-sm sm:text-base"></p>
+        <div class="flex justify-end">
+          <button onclick="closePopup()" class="bg-gradient-coklat text-white px-4 py-1 rounded-md hover:opacity-90 transition duration-300 text-xs sm:text-sm">Tutup</button>
+        </div>
+    </div>
+    <section class="mx-auto max-w-[1536px] px-8 flex flex-col items-center min-h-screen mt-16">
+        <!-- Settings Title -->
+        <h1 class="text-4xl font-bold text-coklat-2 mb-6 text-left">Account Settings</h1>
+
+        <!-- Navigation Tabs -->
+        {% include 'partials/nav_tabs.html' with active='account' %}
+
+        <div class="w-full md:w-3/5 lg:w-2/3 h-auto bg-white p-8 rounded-xl shadow-lg" style="border: 0.2px solid rgba(117, 75, 11, 0.25);">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-coklat-2">Informasi Profile</h2>
+                <button onclick="openModal()" 
+                class="px-4 py-2 bg-[#FAF4ED] text-coklat-2 border border-coklat-1/25 
+                       rounded-lg hover:bg-coklat-2 hover:text-coklat-g
+                       focus:outline-none focus:ring-2 focus:ring-coklat-1/20
+                       active:bg-coklat-2/90
+                       transition-all duration-200 ease-in-out
+                       font-medium shadow-sm">
+            Ubah Profile
+        </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="profileInfo">
+                <!-- Profile Picture -->
+                <div class="flex flex-col items-start">
+                    <label class="text-lg font-bold text-coklat-2 mb-2">Profile Picture</label>
+                    <div class="flex">
+                        <img class="w-16 h-16 rounded-full object-cover mb-4" 
+                            src="{{ user.profile.profile_picture }}" 
+                            alt="Profile Picture" style="border: 0.2px solid rgba(117, 75, 11, 0.25);"">
+                    </div>
+                </div>
+                <!-- User Info -->
+                <div class="flex flex-col">
+                    <label class="text-lg font-bold text-coklat-2 mb-2">Name</label>
+                    <p class="text-coklat-3">{{ request.user.get_full_name }}</p>
+                </div>
+                <!-- Phone Number -->
+                <div class="flex flex-col">
+                    <label class="text-lg font-bold text-coklat-2 mb-2">Phone Number</label>
+                    <p class="text-coklat-3">{{ request.user.profile.phone_number|default:"Anda belum menambahkan nomor telepon" }}</p>
+                </div>
+                <!-- Addresses -->
+                <div class="flex flex-col" id="addressesDisplay">
+                    <label class="text-lg font-bold text-coklat-2 mb-2">Alamat Pengiriman</label>
+                    {% if addresses %}
+                    {% for address in addresses %}
+                        <div class="mb-2">
+                            <p class="font-semibold text-coklat-2">{{ address.title }}</p>
+                            <p class="text-coklat-3">{{ address.address }}</p>
+                        </div>
+                    {% endfor %}
+                    {% else %}
+                        <p class="text-coklat-3">Anda belum memiliki alamat pengiriman</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addAddressBtn = document.getElementById('addAddressBtn');
+    const addressesContainer = document.getElementById('addressesContainer');
+    let addressCount = {{ addresses|length }};
+
+    {% if open_modal %}
+        document.getElementById('editProfileModal').classList.remove('hidden');
+        document.getElementById('editProfileModal').classList.add('flex');
+    {% endif %}
+
+    // Handle modal
+    window.openModal = function() {
+        document.getElementById('editProfileModal').classList.remove('hidden');
+        document.getElementById('editProfileModal').classList.add('flex');
+    }
+
+    window.closeModal = function() {
+        document.getElementById('editProfileModal').classList.add('hidden');
+        document.getElementById('editProfileModal').classList.remove('flex');
+    }
+
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        fetch('{% url "user_profile:update_profile" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                closeModal();
+                updateProfileInfo(data);
+                showPopup("Berhasil mengupdate profile");
+            } else {
+                showPopup("Gagal mengupdate profile, mohon dicoba lagi");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showPopup("Gagal mengupdate profile, mohon dicoba lagi");
+        });
+    });
+
+    function updateProfileInfo(data) {
+        
+        // Update name
+        const nameElement = document.querySelector('#profileInfo div:nth-child(2) p.text-gray-700');
+        if (nameElement) {
+            nameElement.textContent = `${data.first_name} ${data.last_name}`;
+        }
+
+        // Update phone number
+        const phoneNumber = document.querySelector('#profileInfo div:nth-child(3) p.text-gray-700');
+        if (phoneNumber) {
+            phoneNumber.textContent = data.phone_number || 'Not set';
+        }
+
+        // Update addresses
+        const addressesContainer = document.querySelector('#addressesDisplay');
+        if (addressesContainer) {
+            let addressesHTML = '<label class="text-lg font-bold text-coklat-2 mb-2">Addresses</label>';
+            data.addresses.forEach(address => {
+                addressesHTML += `
+                    <div class="mb-2">
+                        <p class="font-semibold text-coklat-2">${address.title}</p>
+                        <p class="text-gray-700">${address.address}</p>
+                    </div>
+                `;
+            });
+            addressesContainer.innerHTML = addressesHTML;
+        }
+    }
+
+    // Handle adding a new address form
+    addAddressBtn.addEventListener('click', function() {
+        if(addressCount >= 3){
+            showPopup("Maksimal 3 alamat", () => {
+                addAddressBtn.focus();
+            });
+            return;
+        }
+
+        const newAddressForm = `
+            <div class="address-form mb-3 p-3 border rounded relative">
+                <button type="button" class="remove-address-btn absolute top-2 right-2 text-red-500 hover:text-red-700" onclick="removeAddress(this)">
+                    &times;
+                </button>
+                <div class="mb-2">
+                    <label class="block text-sm font-medium text-coklat-2">Title</label>
+                    <input type="text" name="address_${addressCount}-title" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
+                </div>
+                <div class="mb-2">
+                    <label class="block text-sm font-medium text-coklat-2">Address</label>
+                    <textarea name="address_${addressCount}-address" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" rows="3" required></textarea>
+                </div>
+            </div>
+        `;
+        addressesContainer.insertAdjacentHTML('beforeend', newAddressForm);
+        addressCount += 1;
+
+        if(addressCount >= 3){
+            addAddressBtn.disabled = true;
+            addAddressBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+    });
+
+    // Function to remove an address form
+    window.removeAddress = function(button) {
+        const addressForm = button.parentElement;
+        addressForm.remove();
+        addressCount -= 1;
+
+        if(addressCount < 3){
+            addAddressBtn.disabled = false;
+            addAddressBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        // Re-index the remaining address forms
+        Array.from(addressesContainer.children).forEach((form, index) => {
+            // Update the name attributes
+            const titleInput = form.querySelector('input[name^="address_"][name$="-title"]');
+            const addressTextarea = form.querySelector('textarea[name^="address_"][name$="-address"]');
+            if(titleInput && addressTextarea){
+                titleInput.name = `address_${index}-title`;
+                addressTextarea.name = `address_${index}-address`;
+            }
+        });
+    }
+});
+
+function showPopup(message, callback) {
+    const popup = document.getElementById('customPopup');
+    const popupMessage = document.getElementById('popupMessage');
+    popupMessage.textContent = message;
+    popup.classList.remove('hidden');
+    setTimeout(() => {
+        closePopup();
+        if (callback) callback();
+    }, 3000); 
+}
+
+function closePopup() {
+    const popup = document.getElementById('customPopup');
+    popup.classList.add('hidden');
+}
+</script>
+{% endblock %}

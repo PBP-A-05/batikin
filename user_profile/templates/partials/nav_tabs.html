@@ -1,0 +1,17 @@
+<div class="flex space-x-8 mb-8">
+    <a class="nav-link text-lg text-coklat-2 hover:underline relative pb-2 {% if active == 'account' %}font-bold{% endif %}" 
+       href="{% url 'user_profile:profile' %}">
+        Account
+        <div class="nav-indicator absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#754B0B] to-[#DB8C15] transform {% if active == 'account' %}scale-x-100{% else %}scale-x-0{% endif %} transition-transform duration-300 origin-left"></div>
+    </a>
+    <a class="nav-link text-lg text-coklat-2 hover:underline relative pb-2 {% if active == 'pemesanan' %}font-bold{% endif %}" 
+       href="{% url 'user_profile:pemesanan' %}">
+        Pemesanan
+        <div class="nav-indicator absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#754B0B] to-[#DB8C15] transform {% if active == 'pemesanan' %}scale-x-100{% else %}scale-x-0{% endif %} transition-transform duration-300 origin-left"></div>
+    </a>
+    <a class="nav-link text-lg text-coklat-2 hover:underline relative pb-2 {% if active == 'booking' %}font-bold{% endif %}" 
+       href="{% url 'user_profile:booking' %}">
+        Booking Workshop
+        <div class="nav-indicator absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#754B0B] to-[#DB8C15] transform {% if active == 'booking' %}scale-x-100{% else %}scale-x-0{% endif %} transition-transform duration-300 origin-left"></div>
+    </a>
+</div>
