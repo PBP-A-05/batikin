@@ -30,13 +30,13 @@
                 <div class="w-1/5 flex flex-col justify-between">
                     {% for image_url in workshop.image_urls|slice:":5" %}
                     <div class="relative aspect-[4/3] rounded-md cursor-pointer thumbnail" onclick="changeMainImage(this, {{ forloop.counter }})">
-                        <img src="{{ image_url }}" alt="{{ workshop.name }}" class="object-cover w-full h-full rounded-md">
+                        <img src="{{ workshop.image_urls }}" alt="{{ workshop.name }}" class="object-cover w-full h-full rounded-md">
                     </div>
                     {% endfor %}
                 </div>
                 <div class="w-4/5">
                     <div id="mainImage" class="relative aspect-[4/3] rounded-md w-full h-full">
-                        <img src="{{ workshop.image_urls.0 }}" alt="{{ workshop.name }}" class="object-cover w-full h-full rounded-md">
+                        <img src="{{ workshop.image_urls }}" alt="{{ workshop.name }}" class="object-cover w-full h-full rounded-md">
                     </div>
                 </div>
             </div>

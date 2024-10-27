@@ -1,24 +1,30 @@
 from decimal import Decimal
 import json
+import uuid
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from cart.models import Cart, CartItem
 from .models import Wishlist  
 from shopping.models import Product  
-from uuid import UUID
 from django.db.models import F
+from django.db.models import DecimalField, ExpressionWrapper, FloatField
+from django.db.models.functions import Cast
 
-@login_required
+@login_required(login_url='/login')
 def wishlist_view(request):
     sort_by = request.GET.get('sort', 'price_asc')  
 
     wishlist_items = Wishlist.objects.filter(user=request.user).select_related('product')
-    
+
+    wishlist_items = wishlist_items.annotate(
+        price_decimal=Cast('product__price', output_field=DecimalField())
+    )
+
     if sort_by == 'price_desc':
-        wishlist_items = wishlist_items.order_by(F('product__price').desc())
+        wishlist_items = wishlist_items.order_by('-price_decimal')
     else:  
-        wishlist_items = wishlist_items.order_by(F('product__price').asc())
+        wishlist_items = wishlist_items.order_by('price_decimal')
 
     wishlist_count = wishlist_items.count()
 
@@ -103,3 +109,21 @@ def remove_from_cart(request, product_id):
         return JsonResponse({'status': 'removed', 'message': message})
     except CartItem.DoesNotExist:
         return JsonResponse({'error': 'Item not found in cart.'}, status=404)
+    
+@login_required
+def save_note(request, product_id):
+    if request.method == 'POST':
+        product = get_object_or_404(Product, id=product_id)
+
+        wishlist_item, created = Wishlist.objects.get_or_create(
+            user=request.user,
+            product=product
+        )
+
+        note_text = request.POST.get('note', '')
+        wishlist_item.note = note_text
+        wishlist_item.save()
+
+        return JsonResponse({'message': 'Catatan berhasil disimpan!', 'note': wishlist_item.note})
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)

@@ -1,26 +1,24 @@
-<div id="cart-item-{{ item_with_total.item.id }}" class="product-card border border-[#D8CDB3] rounded-lg p-4 sm:p-6 bg-white shadow-md mb-4 flex flex-col sm:flex-row" data-product-id="{{ item_with_total.item.product.id }}">
-    <div class="flex items-center sm:items-start mb-4 sm:mb-0">
-        <!-- Checkbox -->
-        <div class="flex-shrink-0 mr-4">
-            <input type="checkbox" id="select-{{ item_with_total.item.id }}" class="form-checkbox h-5 w-5 text-[#4C3108]" onchange="updateSelection({{ item_with_total.item.id }}, this.checked)">
-        </div>
-
-        <!-- Product Image -->
-        <div class="product-image flex-shrink-0 mr-4">
-            <img src="{{ item_with_total.item.product.image_urls.0 }}" alt="{{ item_with_total.item.product.product_name }}" class="w-24 sm:w-32 h-auto object-cover rounded-lg">
-        </div>
+<div id="cart-item-{{ item_with_total.item.id }}" class="product-card border border-[#D8CDB3] rounded-lg p-4 sm:p-6 bg-white shadow-md mb-4 flex" data-product-id="{{ item_with_total.item.product.id }}" data-added-order="{{ forloop.counter }}">
+    <!-- Checkbox Container -->
+    <div class="flex-shrink-0 mr-4 self-start">
+        <input type="checkbox" id="select-{{ item_with_total.item.id }}" class="form-checkbox h-5 w-5 text-[#4C3108]" onchange="updateSelection({{ item_with_total.item.id }}, this.checked)">
     </div>
 
-    <!-- Product Details -->
-    <div class="product-details flex-grow flex flex-col justify-between">
-        <div>
-            <div class="flex flex-col sm:flex-row justify-between items-start mb-2">
-                <h3 class="text-base sm:text-lg font-semibold text-[#4C3108] mb-2 sm:mb-0">{{ item_with_total.item.product.product_name }}</h3>
-                <p class="text-xl sm:text-2xl font-bold text-[#4C3108]" id="price-{{ item_with_total.item.id }}">Rp{{ item_with_total.item_total|floatformat:0 }}</p>
-            </div>
+    <!-- Image Container -->
+    <div class="flex-shrink-0 mr-4 w-24 sm:w-32">
+        <img src="{{ item_with_total.item.product.image_urls.0 }}" alt="{{ item_with_total.item.product.product_name }}" class="w-full h-auto object-cover rounded-lg">
+    </div>
+
+    <!-- Product Details Container -->
+    <div class="flex-grow flex flex-col justify-between">
+        <!-- Title and Price Container -->
+        <div class="flex flex-col sm:flex-row justify-between items-start mb-2">
+            <h3 class="text-base sm:text-lg font-semibold text-[#4C3108] mb-1 sm:mb-0 sm:mr-2 break-words">{{ item_with_total.item.product.product_name }}</h3>
+            <p class="text-xl sm:text-2xl font-bold text-[#4C3108] whitespace-nowrap" id="price-{{ item_with_total.item.id }}">Rp{{ item_with_total.item_total|floatformat:0 }}</p>
         </div>
         
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 sm:mt-auto">
+        <!-- Category, Delete, and Quantity Container -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-2">
             <span class="inline-block px-2 py-1 text-xs border-gradient-coklat rounded-full text-[#4C3108] mb-2 sm:mb-0">{{ item_with_total.item.product.get_category_display }}</span>
             <div class="flex items-center space-x-4">
                 <button onclick="removeFromCart({{ item_with_total.item.id }})" class="text-red-500 hover:text-red-700">
@@ -39,7 +37,6 @@
 </div>
 
 <script>
-    // Script tetap sama seperti sebelumnya
     function adjustQuantity(itemId, adjustment) {
         const quantityInput = document.getElementById(`quantity-${itemId}`);
         const decrementBtn = document.getElementById(`decrementBtn-${itemId}`);

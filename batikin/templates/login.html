@@ -14,17 +14,28 @@
                         <div class="space-y-1">
                             <label for="{{ form.username.id_for_label }}" class="text-coklat-1">Username</label>
                             {{ form.username }}
+                            {% if form.username.errors %}
+                                <p class="text-red-500 text-xs italic">{{ form.username.errors.0 }}</p>
+                            {% endif %}
                         </div>
                         <div class="space-y-1">
                             <label for="{{ form.password.id_for_label }}" class="text-coklat-1">Password</label>
                             {{ form.password }}
+                            {% if form.password.errors %}
+                                <p class="text-red-500 text-xs italic">{{ form.password.errors.0 }}</p>
+                            {% endif %}
                         </div>
                     </div>
+                    {% if form.non_field_errors %}
+                        <div class="my-3">
+                            <p class="text-red-500 text-sm">{{ form.non_field_errors.0 }}</p>
+                        </div>
+                    {% endif %}
                     <button type="submit" class="w-full mt-6 bg-gradient-coklat text-white py-2 rounded-lg hover:opacity-90">
                         Login
                     </button>
                     {% if messages %}
-                    <div class="mb-6">
+                    <div class="my-6">
                         {% for message in messages %}
                             {% if message.tags == "success" %}
                             <div class="bg-[#F3EEE7] border border-coklat-1 text-coklat-1 px-4 py-3 rounded relative"
@@ -54,3 +65,4 @@
         </section>  
     </main>
 {% endblock %}
+
