@@ -32,7 +32,7 @@ STATIC_URL = '/static/'
 
 
 PRODUCTION = os.getenv("PRODUCTION", False)
-DEBUG = PRODUCTION
+DEBUG = not PRODUCTION
 STATIC_URL = '/static/'
 if DEBUG:
     STATICFILES_DIRS = [
@@ -62,6 +62,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -69,8 +70,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'django.contrib.messages.middleware.MessageMiddleware',
-
-
 ]
 
 ROOT_URLCONF = "batikin.urls"
