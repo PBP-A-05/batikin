@@ -4,11 +4,13 @@ from .models import Workshop, Booking
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta, time
 from django.core.exceptions import ObjectDoesNotExist
+from comment_review.models import Review
 
 @login_required(login_url='register')
 def workshop_detail(request, pk):
     workshop = get_object_or_404(Workshop, pk=pk)
-    return render(request, 'workshop_detail.html', {'workshop': workshop})
+    reviews = Review.objects.filter(workshop=workshop)
+    return render(request, 'workshop_detail.html', {'workshop': workshop, 'reviews': reviews})
 
 def workshop_list(request):
     sort = request.GET.get('sort')

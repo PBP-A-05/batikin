@@ -146,12 +146,12 @@
     <div class="container">
         <div class="form-container">
             <div class="image-container">
-                <img src="{{ product_image_urls.0 }}" alt="Product Image" class="form-image">
+                <img src="{{ workshop_image_urls }}" alt="workshop Image" class="form-image">
             </div>
             
             <div class="form-content">
-                <h1 class="form-title">{{ product_name }}</h1>
-                <form id="reviewForm" method="POST" action="{% url 'comment_review:edit_review' review_id=review.id product_id=id %}">
+                <h1 class="form-title">{{ workshop_name }}</h1>
+                <form id="reviewForm" method="POST" action="{% url 'comment_review:create_review_workshop' workshop_id=id %}">
                     {% csrf_token %}
                     <div class="rate">
                         <input type="radio" id="star5" name="rating" value="5" required/>
@@ -166,11 +166,11 @@
                         <label for="star1" title="1 star">★</label>
                     </div>
                     <div class="flex flex-col">
-                        <label for="review" class="form-label">Berikan review pada produk disamping</label>
+                        <label for="review" class="form-label">Berikan review pada workshop disamping</label>
                         <input type="text" id="review" name="review" class="form-input" placeholder="Masukkan ulasan anda disini!" required>
                     </div>
                     <div class="button-container">
-                        <button type="button" onclick="redirectToDelete()" class="cancel-btn">Hapus Ulasan</button>
+                        <button type="button" onclick="redirectToDetail()" class="cancel-btn">Batal</button>
     
                         <button type="submit" class="submit-btn">Kirim</button>
                     </div>
@@ -179,7 +179,6 @@
         </div>
     </div>
 </body>
-
 <script>
     document.addEventListener("DOMContentLoaded", function() {
     const reviewForm = document.getElementById("reviewForm");
@@ -217,8 +216,8 @@
 });
 
     
-    function redirectToDelete() {
-        window.location.href = `{% url 'comment_review:delete_review' review_id=review.id %}`;
+    function redirectToDetail() {
+        window.location.href = `{% url 'workshop_detail' id %}`;
     }
     </script>
 {% endblock %}

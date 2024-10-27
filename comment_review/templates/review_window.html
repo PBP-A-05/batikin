@@ -6,6 +6,7 @@
 
 {% block content %}
 <head>
+    <meta name="csrf-token" content="{{ csrf_token }}">
 <style>
     .container {
         width: auto;
@@ -142,41 +143,81 @@
 </head>
 
 <body>
-<div class="container">
-    <div class="form-container">
-        <!-- Image Container -->
-        <div class="image-container">
-            <img src="{{ product.image_urls }}" alt="Product Image" class="form-image">
-        </div>
-        
-        <!-- Form Content -->
-        <div class="form-content">
-            <h1 class="form-title">{{ product.name }}</h1>
-            <form method="POST" class="space-y-4">
-                {% csrf_token %}
-                <div class="rate">
-                    <input type="radio" id="star5" name="rate" value="5" />
-                    <label for="star5" title="5 stars">★</label>
-                    <input type="radio" id="star4" name="rate" value="4" />
-                    <label for="star4" title="4 stars">★</label>
-                    <input type="radio" id="star3" name="rate" value="3" />
-                    <label for="star3" title="3 stars">★</label>
-                    <input type="radio" id="star2" name="rate" value="2" />
-                    <label for="star2" title="2 stars">★</label>
-                    <input type="radio" id="star1" name="rate" value="1" />
-                    <label for="star1" title="1 star">★</label>
-                </div>
-                <div class="flex flex-col">
-                    <label for="review" class="form-label">Berikan review pada produk disamping</label>
-                    <input type="text" id="review" name="review" class="form-input" placeholder="Masukkan ulasan anda disini!" required>
-                </div>
-                <div class="button-container">
-                    <button type="button" name="cancel" class="cancel-btn">Batal</button>
-                    <button type="submit" name="submit" class="submit-btn">Kirim</button>
-                </div>
-            </form>
+    <div class="container">
+        <div class="form-container">
+            <div class="image-container">
+                <img src="{{ product_image_urls.0 }}" alt="Product Image" class="form-image">
+            </div>
+            
+            <div class="form-content">
+                <h1 class="form-title">{{ product_name }}</h1>
+                <form id="reviewForm" method="POST" action="{% url 'comment_review:create_review' product_id=id %}">
+                    {% csrf_token %}
+                    <div class="rate">
+                        <input type="radio" id="star5" name="rating" value="5" required/>
+                        <label for="star5" title="5 stars">★</label>
+                        <input type="radio" id="star4" name="rating" value="4" required/>
+                        <label for="star4" title="4 stars">★</label>
+                        <input type="radio" id="star3" name="rating" value="3" required/>
+                        <label for="star3" title="3 stars">★</label>
+                        <input type="radio" id="star2" name="rating" value="2" required/>
+                        <label for="star2" title="2 stars">★</label>
+                        <input type="radio" id="star1" name="rating" value="1" required/>
+                        <label for="star1" title="1 star">★</label>
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="review" class="form-label">Berikan review pada produk disamping</label>
+                        <input type="text" id="review" name="review" class="form-input" placeholder="Masukkan ulasan anda disini!" required>
+                    </div>
+                    <div class="button-container">
+                        <button type="button" onclick="redirectToDetail()" class="cancel-btn">Batal</button>
+    
+                        <button type="submit" class="submit-btn">Kirim</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const reviewForm = document.getElementById("reviewForm");
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+
+    reviewForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(reviewForm);
+
+        fetch(reviewForm.action, {
+            method: "POST",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": csrfToken,
+            },
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.redirect_url) {
+                window.location.href = data.redirect_url;
+            } else if (data.error) {
+                console.error("Form error details:", data.details); 
+                alert(data.error);
+            } else {
+                alert("Failed to submit the review. Please try again.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("There was an error submitting your review. Please try again.");
+        });
+    });
+});
+
+    
+    function redirectToDetail() {
+        window.location.href = `{% url 'product_detail' id %}`;
+    }
+    </script>
 {% endblock %}
