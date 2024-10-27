@@ -33,4 +33,5 @@ urlpatterns = [
     path('cart/', include('cart.urls')),
     path('logout/', LogoutView.as_view(next_page='home'), name='logout'),
     path('booking/', include('booking.urls')),  
+    path('review/', include('comment_review.urls'))
 ]

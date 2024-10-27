@@ -135,6 +135,7 @@ function filterProducts(category) {
             updateProductsGrid(data);
             updateActiveButton(category);
             updateWishlistStatus();
+            attachProductCardListeners(); // Add this line
         })
         .catch(error => console.error('Error:', error));
 }
@@ -194,6 +195,7 @@ function attachProductCardListeners() {
         });
     });
 }
+document.addEventListener('DOMContentLoaded', attachProductCardListeners);
 
 function updateActiveButton(category) {
     document.querySelectorAll('.category-btn').forEach(btn => {
