@@ -26,3 +26,4 @@ class OrderItem(models.Model):
     product = models.ForeignKey('shopping.Product', on_delete=models.CASCADE, related_name='cart_order_items')
     quantity = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
+# Test
