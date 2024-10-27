@@ -39,7 +39,7 @@ else:
     STATIC_ROOT = BASE_DIR / 'staticfiles'  # Directory where static files will be collected in production
 
 # Application definition
-#
+##
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
