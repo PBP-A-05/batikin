@@ -1,19 +1,14 @@
-from time import sleep
 from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from .models import Workshop, Booking
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta, time
 from django.core.exceptions import ObjectDoesNotExist
-from comment_review.models import Review
 
 @login_required(login_url='register')
 def workshop_detail(request, pk):
     workshop = get_object_or_404(Workshop, pk=pk)
-    reviews = Review.objects.filter(workshop=workshop)
-    return render(request, 'workshop_detail.html', {'workshop': workshop, 'reviews': reviews})
+    return render(request, 'workshop_detail.html', {'workshop': workshop})
 
 def workshop_list(request):
     sort = request.GET.get('sort')
@@ -94,8 +89,6 @@ def workshop_book(request, pk):
             participants=participants
         )
         booking.save()
-        sleep(1)
-        return redirect('workshop_detail', pk=workshop.id)  
     return render(request, 'workshop_book.html', {
         'workshop': workshop,
         'available_times': available_times
@@ -104,7 +97,9 @@ def workshop_book(request, pk):
 @login_required(login_url='register')
 def get_booking_data(request):
     try:
+        print("Fetching bookings for user:", request.user)  # Debug print
         bookings = Booking.objects.filter(user=request.user).select_related('workshop')
+        print("Found bookings:", bookings.count())  # Debug print
         
         booking_data = []
         for booking in bookings:
@@ -115,9 +110,8 @@ def get_booking_data(request):
                     'booking_date': booking.booking_date.strftime('%Y-%m-%d'),
                     'booking_time': booking.booking_time.strftime('%H:%M'),
                     'participants': booking.participants,
-                    'image_urls': booking.workshop.image_urls,
-                    'workshop_id': booking.workshop.id
                 })
+                print("Processed booking:", booking.id)  
             except AttributeError as e:
                 print(f"Error processing booking {booking.id}: {str(e)}")
                 continue

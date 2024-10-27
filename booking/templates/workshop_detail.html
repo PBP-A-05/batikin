@@ -30,13 +30,13 @@
                 <div class="w-1/5 flex flex-col justify-between">
                     {% for image_url in workshop.image_urls|slice:":5" %}
                     <div class="relative aspect-[4/3] rounded-md cursor-pointer thumbnail" onclick="changeMainImage(this, {{ forloop.counter }})">
-                        <img src="{{ workshop.image_urls }}" alt="{{ workshop.name }}" class="object-cover w-full h-full rounded-md">
+                        <img src="{{ image_url }}" alt="{{ workshop.name }}" class="object-cover w-full h-full rounded-md">
                     </div>
                     {% endfor %}
                 </div>
                 <div class="w-4/5">
                     <div id="mainImage" class="relative aspect-[4/3] rounded-md w-full h-full">
-                        <img src="{{ workshop.image_urls }}" alt="{{ workshop.name }}" class="object-cover w-full h-full rounded-md">
+                        <img src="{{ workshop.image_urls.0 }}" alt="{{ workshop.name }}" class="object-cover w-full h-full rounded-md">
                     </div>
                 </div>
             </div>
@@ -70,7 +70,7 @@
                         </div>
                         <a href="{{ workshop.website }}" target="_blank" class="flex items-center hover:text-coklat-2 transition duration-300">
                             <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9-3-9m-9 9a9 9 0 019-9"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
                             </svg>
                             <span>Kunjungi Website</span>
                         </a>
@@ -87,26 +87,7 @@
                 </div>
             </div>
         </div>
-
-        <!-- Tambahkan Ulasan and Ubah Ulasan buttons placed below the image -->
-        <div class="mt-8 space-y-4">
-            <div class="flex space-x-4">
-                <button onclick="redirectToCreateReview()"
-                        class="py-2 px-4 bg-gradient-coklat text-white rounded-md hover:opacity-90 transition duration-300">
-                    Tambahkan Ulasan
-                </button>
-                {% for review in reviews %}
-                    {% if review.user == request.user %}
-                        <a href="{% url 'comment_review:edit_review' review.id review.workshop.id %}" 
-                           class="py-2 px-4 bg-gradient-coklat text-white rounded-md hover:opacity-90 transition duration-300">
-                            Ubah Ulasan
-                        </a>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        </div>
         
-        <!-- Additional content and reviews -->
         <div class="mt-8 border-t border-coklat-1-rgba pt-6">
             <div class="flex justify-between items-center">
                 <h3 class="text-lg font-bold">Deskripsi Workshop</h3>
@@ -114,35 +95,6 @@
             </div>
             <p class="mt-4">{{ workshop.description }}</p>
         </div>
-        <div class="mt-8">
-            <h3 class="text-xl font-bold text-coklat-2">Ulasan</h3>
-            <div class="flex flex-wrap mt-4 gap-4">
-                {% for review in reviews %}
-                    {% if forloop.counter <= 3 %}
-                        {% include 'review_card.html' with review=review %}
-                    {% endif %}
-                {% empty %}
-                    <p class="text-coklat-1">Belum ada ulasan untuk produk ini.</p>
-                {% endfor %}
-            </div>
-            {% if reviews|length > 3 %}
-                <div class="flex justify-center mt-4">
-                    <button id="readMoreBtn" class="bg-gradient-coklat text-white px-4 py-2 rounded-md hover:opacity-90 transition duration-300" onclick="showAllReviews()">Read More...</button>
-                </div>
-            {% endif %}
-            <div id="extraReviews" class="hidden mt-4">
-                <div class="flex flex-wrap mt-4 gap-4">
-                    {% for review in reviews %}
-                        {% if forloop.counter > 3 %}
-                            {% include 'review_card.html' with review=review %}
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                <div class="flex justify-center mt-4">
-                    <button id="showLessBtn" class="bg-gradient-coklat text-white px-4 py-2 rounded-md hover:opacity-90 transition duration-300" onclick="showLessReviews()">Show Less</button>
-                </div>
-            </div>
-        </div>    
     </div>
 </div>
 
@@ -150,30 +102,6 @@
     function changeMainImage(thumbnail, index) {
         const mainImage = document.getElementById('mainImage').children[0];
         mainImage.src = thumbnail.children[0].src;
-    }
-
-    function redirectToCreateReview() {
-    window.location.href = "{% url 'comment_review:create_review_workshop' workshop.id %}";
-    }
-
-    function showAllReviews() {
-        const extraReviews = document.getElementById('extraReviews');
-        const readMoreBtn = document.getElementById('readMoreBtn');
-        const showLessBtn = document.getElementById('showLessBtn');
-
-        extraReviews.classList.remove('hidden');
-        readMoreBtn.style.display = 'none';
-        showLessBtn.style.display = 'inline-block';
-    }
-
-    function showLessReviews() {
-        const extraReviews = document.getElementById('extraReviews');
-        const readMoreBtn = document.getElementById('readMoreBtn');
-        const showLessBtn = document.getElementById('showLessBtn');
-
-        extraReviews.classList.add('hidden');
-        readMoreBtn.style.display = 'inline-block';
-        showLessBtn.style.display = 'none';
     }
 
 </script>

@@ -6,7 +6,6 @@ from comment_review.forms import ReviewForm
 from comment_review.models import Review
 from shopping.models import Product
 from user_profile.models import Profile
-from booking.models import Workshop
 
 @login_required
 def create_review(request, product_id):
@@ -70,29 +69,3 @@ def delete_review(request, review_id):
         review.delete()
 
     return redirect('product_detail', pk=product_id) 
-
-@login_required
-def create_review_workshop(request, workshop_id):
-    workshop = get_object_or_404(Workshop, id=workshop_id)
-    form = ReviewForm(request.POST or None)
-
-    if request.method == "POST":
-        if form.is_valid():
-            review = form.save(commit=False)
-            review.user = request.user
-            review.product = workshop
-            review.rating = int(request.POST.get("rating", 0))
-            review.review = request.POST.get("review", "")
-            review.save()
-            return JsonResponse({'redirect_url': reverse('workshop_detail', kwargs={'pk': workshop_id})})
-        else:
-            errors = form.errors.as_json()
-            return JsonResponse({'error': 'Form is invalid. Please correct the errors.', 'details': errors}, status=400)
-
-    context = {
-        'form': form,
-        'workshop_name': workshop.title,
-        'workshop_image_urls': workshop.image_urls,
-        'id': workshop_id,
-    }
-    return render(request, "review_window_workshop.html", context)
