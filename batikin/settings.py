@@ -32,7 +32,7 @@ STATIC_URL = '/static/'
 
 
 PRODUCTION = os.getenv("PRODUCTION", False)
-DEBUG = not PRODUCTION
+DEBUG = PRODUCTION
 STATIC_URL = '/static/'
 if DEBUG:
     STATICFILES_DIRS = [
