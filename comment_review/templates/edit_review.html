@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% load static %}
+{% block meta %}
+<title>Edit Ulasan Produk</title>
+{% endblock meta %}
+{% block content %}
+<head>
+    <style>
+        .container {
+            width: auto;
+            height: auto;
+            background: #F6F6F6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+        .form-container {
+            width: auto;
+            height: auto;
+            background-color: #FFFFFF;
+            padding: 32px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            color: #754B0B;
+            display: flex;
+            align-items: flex-start;
+            position: relative; /* Add this for absolute positioning of the close button */
+        }
+        .close-btn {
+            position: absolute; /* Change to absolute for positioning within form-container */
+            top: 16px; /* Position from the top */
+            right: 16px; /* Position from the right */
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .image-container {
+            flex: 1;
+            max-width: 200px;
+            margin-right: 30px;
+        }
+        .form-content {
+            flex: 3;
+        }
+        .form-title {
+            font-size: 36px;
+            font-weight: 600;
+            color: #754B0B;
+            margin-bottom: 24px;
+            word-wrap: break-word;
+            word-break: break-all;
+        }
+        .form-label {
+            color: #754B0B;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #F6F6F6;
+        }
+        .form-help, .form-error {
+            font-size: 14px;
+        }
+        .form-help {
+            color: #B0C4DE;
+        }
+        .form-error {
+            color: #FF6347;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 24px;
+        }
+        .submit-btn, .cancel-btn {
+            width: 180px;
+            height: 50px;
+            font-size: 20px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .submit-btn {
+            background-color: #754B0B;
+            color: #F6F6F6;
+        }
+        .submit-btn:hover {
+            background-color: #4D3108;
+        }
+        .cancel-btn {
+            background-color: #D9534F;
+            color: #FFFFFF;
+        }
+        .cancel-btn:hover {
+            background-color: #C9302C;
+        }
+        .rate {
+            float: center;
+            height: 46px;
+            padding: 0 10px;
+        }
+        .rate:not(:checked) > input {
+            position: absolute;
+            top: -9999px;
+        }
+        .rate:not(:checked) > label {
+            float: right;
+            width: 1em;
+            overflow: hidden;
+            white-space: nowrap;
+            cursor: pointer;
+            font-size: 30px;
+            color: #ccc;
+        }
+        .rate:not(:checked) > label:before {
+            content: '★ ';
+        }
+        .rate > input:checked ~ label {
+            color: #ffc700;    
+        }
+        .rate:not(:checked) > label:hover,
+        .rate:not(:checked) > label:hover ~ label {
+            color: #deb217;  
+        }
+        .rate > input:checked + label:hover,
+        .rate > input:checked + label:hover ~ label,
+        .rate > input:checked ~ label:hover,
+        .rate > input:checked ~ label:hover ~ label,
+        .rate > label:hover ~ input:checked ~ label {
+            color: #c59b08;
+        }
+        .form-image {
+            width: 100%;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="form-container">
+        <button class="close-btn" onclick="redirectToProductList()">&times;</button>
+        <!-- Image Container -->
+        <div class="image-container">
+            <img src="{{ product.image_url }}" alt="Product Image" class="form-image">
+        </div>
+        <!-- Form Content -->
+        <div class="form-content">
+            <h1 class="form-title">{{ product.name }}</h1>
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+                <div class="rate">
+                    <input type="radio" id="star5" name="rate" value="5" />
+                    <label for="star5" title="5 stars">★</label>
+                    <input type="radio" id="star4" name="rate" value="4" />
+                    <label for="star4" title="4 stars">★</label>
+                    <input type="radio" id="star3" name="rate" value="3" />
+                    <label for="star3" title="3 stars">★</label>
+                    <input type="radio" id="star2" name="rate" value="2" />
+                    <label for="star2" title="2 stars">★</label>
+                    <input type="radio" id="star1" name="rate" value="1" />
+                    <label for="star1" title="1 star">★</label>
+                </div>
+                <div class="flex flex-col">
+                    <label for="review" class="form-label">Berikan review pada produk disamping</label>
+                    <input type="text" id="review" name="review" class="form-input" placeholder="Masukkan ulasan anda disini!" required>
+                </div>
+                <div class="button-container">
+                    <button type="button" name="delete" class="cancel-btn">Hapus Ulasan</button>
+                    <button type="submit" name="submit" class="submit-btn">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    function redirectToProductList() {
+        window.location.href = "{% url 'shopping:product_list' %}";
+    }
+</script>
+{% endblock %}
