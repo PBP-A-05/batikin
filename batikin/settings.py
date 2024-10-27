@@ -29,15 +29,15 @@ DEBUG = True
 ALLOWED_HOSTS = ['daanish-inayat-batikin.pbp.cs.ui.ac.id', '12', "localhost", "127.0.0.1"]
 STATIC_URL = '/static/'
 
-# For development, use STATICFILES_DIRS to locate where your static files are stored
+PRODUCTION = os.getenv("PRODUCTION", False)
+DEBUG = not PRODUCTION
+STATIC_URL = '/static/'
 if DEBUG:
     STATICFILES_DIRS = [
-        BASE_DIR / 'static',  # Point to the 'static' folder in your project for development
+        BASE_DIR / 'static' # merujuk ke /static root project pada mode development
     ]
 else:
-    # For production, use STATIC_ROOT to collect all static files in one directory
-    STATIC_ROOT = BASE_DIR / 'staticfiles'  # Directory where static files will be collected in production
-
+    STATIC_ROOT = BASE_DIR / 'static' # merujuk ke /static root project pada mode production
 # Application definition
 ###
 INSTALLED_APPS = [
