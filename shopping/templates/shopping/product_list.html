@@ -90,9 +90,21 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    attachProductCardListeners();
-    updateWishlistStatus();
+    document.querySelectorAll('.like-button').forEach(button => {
+        const productId = button.getAttribute('data-product-id');
+        const isInWishlist = localStorage.getItem(`wishlist_${productId}`) === 'true';
+        const svg = button.querySelector('svg');
+
+        if (isInWishlist) {
+            svg.style.fill = '#754B0B';
+            button.classList.add('liked');
+        } else {
+            svg.style.fill = 'none';
+            button.classList.remove('liked');
+        }
+    });
 });
+
 
 window.addEventListener('pageshow', function(event) {
     if (event.persisted) {
