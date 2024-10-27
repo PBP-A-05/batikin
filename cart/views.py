@@ -42,20 +42,42 @@ def view_cart(request):
 
 @login_required
 def add_to_cart(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    product = get_object_or_404(Product, id=product_id)  # This will now accept a UUID
     data = json.loads(request.body)
     quantity = int(data.get('quantity', 1))
-    cart_item, created = Cart.objects.get_or_create(user=request.user, product=product)
+
+    try:
+        price = Decimal(str(product.price).replace('Rp', '').replace('.', '').replace(',', '.'))
+    except:
+        return JsonResponse({'error': 'Invalid price format'}, status=400)
+
+    cart, created = Cart.objects.get_or_create(user=request.user)
+
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        product=product,
+        defaults={'quantity': quantity, 'price': price}
+    )
     
     if not created:
         cart_item.quantity += quantity
         cart_item.save()
-    else:
-        cart_item.quantity = quantity
-        cart_item.save()
-    
+
     message = f'{quantity} produk berhasil dimasukkan ke keranjang!'
     return JsonResponse({'message': message})
+
+
+@login_required
+def remove_from_cart(request, product_id):
+    try:
+        # Ensure product_id is treated as a UUID
+        cart = Cart.objects.get(user=request.user)
+        cart_item = CartItem.objects.get(cart=cart, product__id=product_id)
+        cart_item.delete()
+        message = 'Produk dihapus dari keranjang!'
+        return JsonResponse({'status': 'removed', 'message': message})
+    except CartItem.DoesNotExist:
+        return JsonResponse({'error': 'Item not found in cart.'}, status=404)
 
 @login_required
 def update_cart_item(request, item_id):

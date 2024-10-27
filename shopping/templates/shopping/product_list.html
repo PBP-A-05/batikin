@@ -50,7 +50,7 @@
         position: absolute;
         inset: 0;
         border-radius: 50px; 
-        padding:2px; 
+        padding: 2px; 
         background: linear-gradient(90deg, #754B0B 0%, #DB8C15 100%);
         -webkit-mask: 
             linear-gradient(#fff 0 0) content-box, 
@@ -83,7 +83,7 @@
         
         <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for product in products %}
-                {% include "product_card.html" with product=product %}
+                {% include "shopping/product_card.html" with product=product %}
             {% endfor %}
         </div>
     </div>
