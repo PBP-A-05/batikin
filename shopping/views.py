@@ -25,7 +25,7 @@ def product_list(request):
         'current_category': category,
         'wishlist_products': list(map(str, wishlist_products))  
     })
-
+    
 @login_required
 def product_detail(request, pk):
     product = get_object_or_404(Product, id=pk)
