@@ -1,4 +1,4 @@
-<div id="cart-item-{{ item_with_total.item.id }}" class="product-card border border-[#D8CDB3] rounded-lg p-4 sm:p-6 bg-white shadow-md mb-4 flex" data-product-id="{{ item_with_total.item.product.id }}" data-added-order="{{ item_with_total.added_order }}">
+<div id="cart-item-{{ item_with_total.item.id }}" class="product-card border border-[#D8CDB3] rounded-lg p-4 sm:p-6 bg-white shadow-md mb-4 flex" data-product-id="{{ item_with_total.item.product.id }}" data-added-order="{{ forloop.counter }}">
     <!-- Checkbox Container -->
     <div class="flex-shrink-0 mr-4 self-start">
         <input type="checkbox" id="select-{{ item_with_total.item.id }}" class="form-checkbox h-5 w-5 text-[#4C3108]" onchange="updateSelection({{ item_with_total.item.id }}, this.checked)">
