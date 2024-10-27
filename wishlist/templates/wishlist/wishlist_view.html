@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col"> <!-- Flex layout for footer placement -->
+    <!-- Main Content Section -->
+    <div class="container-custom mx-auto py-16 flex-grow">
+        <!-- Wishlist Title and Item Count with left margin -->
+        <div class="mb-8 ml-20">
+            <h1 class="text-5xl font-bold text-[#4C3108]" style="font-family: 'Poppins'; font-size: 30px; font-weight: bold; margin-bottom: 8px;">
+                Wishlist
+            </h1>
+            <p class="text-2xl text-[#714503]" style="font-family: 'Poppins'; font-size: 15px; font-weight: 600; margin-top: -8px;">
+                {{ wishlist_count }} {% if wishlist_count == 1 %} item {% else %} items {% endif %}
+            </p>
+        </div>
+
+        <!-- Wishlist Items Grid or Empty Message -->
+        {% if wishlist_items %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
+                {% for item in wishlist_items %}
+                    {% include 'wishlist/wishlist_product_card.html' with product=item.product %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Centering the "no items" message both horizontally and vertically -->
+            <div class="flex items-center justify-center h-full">
+                <p class="text-xl text-[#714503]">Tidak ada item di wishlist</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Footer fixed to bottom -->
+    <footer class="bg-[#4D3108] py-2">
+        <div class="container mx-auto text-center">
+        </div>
+    </footer>
+</div>
+
+<!-- JavaScript Functions -->
+<script>
+    function addToCart(productId) {
+        alert('Produk ' + productId + ' berhasil ditambahkan ke keranjang!');
+    }
+
+    function removeFromWishlist(productId) {
+        alert('Produk ' + productId + ' berhasil dihapus dari wishlist!');
+    }
+</script>
+{% endblock %}

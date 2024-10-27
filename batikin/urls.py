@@ -28,6 +28,8 @@ urlpatterns = [
     path('register/', register_view, name='register'),
     path('shopping/', include('shopping.urls')),
     path('workshop/', include('booking.urls')),
+    path('wishlist/', include('wishlist.urls')),
+    path('cart/', include('cart.urls')),
     path('logout/', LogoutView.as_view(next_page='home'), name='logout'),
 
 ]

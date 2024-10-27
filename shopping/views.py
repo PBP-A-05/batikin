@@ -1,6 +1,9 @@
+from decimal import Decimal
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Product, Wishlist, Cart
+from .models import Product
+from wishlist.models import Wishlist
+from cart.models import Cart, CartItem
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden
 import json
 
@@ -16,7 +19,7 @@ def product_list(request):
     if request.user.is_authenticated:
         wishlist_products = Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True)
     
-    return render(request, 'shopping/templates/product_list.html', {
+    return render(request, 'product_list.html', {
         'products': products,
         'product_categories': product_categories,
         'current_category': category,
@@ -27,7 +30,7 @@ def product_list(request):
 def product_detail(request, pk):
     product = get_object_or_404(Product, id=pk)
     is_in_wishlist = Wishlist.objects.filter(user=request.user, product=product).exists()
-    return render(request, 'shopping/templates/product_detail.html', {'product': product, 'is_in_wishlist': is_in_wishlist})
+    return render(request, 'product_detail.html', {'product': product, 'is_in_wishlist': is_in_wishlist})
 
 def product_detail_check(request, pk):
     if not request.user.is_authenticated:
@@ -52,6 +55,7 @@ def filter_products(request):
     ]
     return JsonResponse(data, safe=False)
 
+
 @login_required
 def add_to_wishlist(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -72,15 +76,25 @@ def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     data = json.loads(request.body)
     quantity = int(data.get('quantity', 1))
-    cart_item, created = Cart.objects.get_or_create(user=request.user, product=product)
+
+    try:
+        price = Decimal(str(product.price).replace('Rp', '').replace('.', '').replace(',', '.'))
+    except:
+        return JsonResponse({'error': 'Invalid price format'}, status=400)
+
+    cart, created = Cart.objects.get_or_create(user=request.user)
+
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        product=product,
+        defaults={'quantity': quantity, 'price': price}
+    )
     
     if not created:
         cart_item.quantity += quantity
         cart_item.save()
-    else:
-        cart_item.quantity = quantity
-        cart_item.save()
-    
+
     message = f'{quantity} produk berhasil dimasukkan ke keranjang!'
     return JsonResponse({'message': message})
+
 
