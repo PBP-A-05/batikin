@@ -18,9 +18,51 @@
         {% if wishlist_items %}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
                 {% for item in wishlist_items %}
-                    {% include 'wishlist/wishlist_product_card.html' with product=item.product %}
-                {% endfor %}
+                    <div class="product-card border border-coklat-1-rgba rounded-md p-4" data-product-id="{{ item.product.id }}">
+                        <!-- Product Image -->
+                        <div class="relative aspect-square overflow-hidden mb-4">
+                            <img src="{{ item.product.image_urls.0 }}" alt="{{ item.product.product_name }}" class="object-cover w-full h-full">
+                        </div>
 
+                        <!-- Product Details -->
+                        <div class="space-y-2 relative">
+                            <!-- Category Bubble -->
+                            <span class="inline-block px-3 py-1 text-xs font-semibold bg-[#F0E8D9] text-[#754B0B] rounded-full">
+                                {{ item.product.get_category_display }}
+                            </span>
+
+                            <!-- Product Name and Price -->
+                            <h3 class="text-lg font-semibold text-[#4C3108]">{{ item.product.product_name }}</h3>
+                            <p class="text-lg font-bold text-[#754B0B]">{{ item.product.price }}</p>
+
+                            <!-- Remove from Wishlist Button (X Icon) -->
+                            <button onclick="removeFromWishlist('{{ item.product.id }}')" class="absolute top-0 right-0 text-[#754B0B] hover:text-red-600" aria-label="Remove from Wishlist">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+
+                            <!-- Add to Cart Button -->
+                            <button id="addToCartButton_{{ item.product.id }}" class="add-to-cart-button bg-gradient-coklat text-white rounded-lg w-full py-2 mt-2 hover:bg-[#5C3708]" onclick="addToCart('{{ item.product.id }}', '{{ item.product.product_name }}', '{{ item.product.price }}')">
+                                Tambahkan ke keranjang
+                            </button>
+
+                            <!-- Add Note Button -->
+                            <button onclick="toggleNoteInput('{{ item.product.id }}')" class="bg-gray-200 text-black rounded-lg w-full py-2 mt-2" aria-label="Add Note">
+                                Add Note
+                            </button>
+
+                            <!-- Note Input Container -->
+                            <div id="noteInputContainer_{{ item.product.id }}" class="note-input-container hidden mt-2">
+                                <textarea id="noteInput_{{ item.product.id }}" placeholder="Type your note here..." class="w-full p-2 border border-gray-300 rounded-md"></textarea>
+                                <button onclick="saveNote('{{ item.product.id }}')" class="bg-gradient-coklat text-white rounded-lg w-full py-2 mt-2">Save Note</button>
+                            </div>
+
+                            <!-- Display Note -->
+                            <div id="noteDisplay_{{ item.product.id }}" class="note-display mt-2"></div>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
         {% else %}
             <!-- Message for empty wishlist -->
@@ -32,20 +74,140 @@
 
     <!-- Footer fixed to bottom -->
     <footer class="bg-[#4D3108] py-2">
-        <div class="container mx-auto text-center">
-        </div>
+        <div class="container mx-auto text-center"></div>
     </footer>
 </div>
 
+<!-- Popup Notification -->
+<div id="customPopup" class="fixed bottom-8 left-8 bg-white border border-coklat-1 rounded-md p-4 shadow-md hidden z-50 w-80">
+    <p id="popupMessage" class="text-coklat-2 font-poppins mb-3"></p>
+    <div class="flex justify-end">
+        <button onclick="closePopup()" class="bg-gradient-coklat text-white px-4 py-1 rounded-md hover:opacity-90 transition duration-300 text-sm">Tutup</button>
+    </div>
+</div>
+
 <script>
+    // Function to add/remove product to/from the cart
+    // Function to add/remove product to/from the cart
+function addToCart(productId, productName, productPrice) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    const addToCartButton = document.getElementById(`addToCartButton_${productId}`);
+
+    if (cart[productId]) {
+        // Remove from cart
+        delete cart[productId];
+        localStorage.setItem('cart', JSON.stringify(cart));
+        addToCartButton.textContent = "Tambahkan ke keranjangmu";
+        showPopup("Produk dihapus dari keranjang!");
+
+        // Remove from server-side cart
+        fetch(`cart/remove/${productId}/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'removed') {
+                showPopup(data.message || "Produk berhasil dihapus dari keranjang!");
+            } else {
+                console.error("Server error: ", data);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            showPopup("Terjadi kesalahan saat menghapus dari keranjang.");
+        });
+    } else {
+        // Add to cart
+        cart[productId] = { id: productId, name: productName, price: productPrice, quantity: 1 };
+        localStorage.setItem('cart', JSON.stringify(cart));
+        addToCartButton.textContent = "Sudah ada di keranjangmu";
+        showPopup("Produk berhasil ditambahkan ke keranjang!");
+
+        // Add to server-side cart
+        fetch(`cart/add/${productId}/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ quantity: 1 })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                showPopup(data.message || "Produk berhasil ditambahkan ke keranjang!");
+            } else {
+                console.error("Server error: ", data);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            showPopup("Terjadi kesalahan saat menambahkan ke keranjang.");
+        });
+    }
+}
+
+
+    // Function to toggle note input visibility
+    function toggleNoteInput(productId) {
+        const noteInputContainer = document.getElementById(`noteInputContainer_${productId}`);
+        if (noteInputContainer) noteInputContainer.classList.toggle('hidden');
+    }
+
+    // Function to save a note
+    function saveNote(productId) {
+        const noteInput = document.getElementById(`noteInput_${productId}`);
+        if (noteInput) {
+            const noteText = noteInput.value;
+            localStorage.setItem(`note_${productId}`, noteText);
+            displayNote(productId);
+            toggleNoteInput(productId);
+            showPopup("Catatan berhasil disimpan!");
+        }
+    }
+
+    // Function to display a saved note
+    function displayNote(productId) {
+        const noteDisplay = document.getElementById(`noteDisplay_${productId}`);
+        const noteText = localStorage.getItem(`note_${productId}`);
+        noteDisplay.innerHTML = noteText ? `<p class="text-gray-700 italic">Catatan: ${noteText}</p>` : "";
+    }
+
+    // Function to show popup messages
     function showPopup(message) {
         const popup = document.getElementById('customPopup');
         const popupMessage = document.getElementById('popupMessage');
         popupMessage.textContent = message;
         popup.classList.remove('hidden');
-        setTimeout(() => {
-            popup.classList.add('hidden');
-        }, 3000);
+        setTimeout(() => popup.classList.add('hidden'), 3000);
     }
+
+    function closePopup() {
+    const popup = document.getElementById('customPopup');
+    popup.classList.add('hidden');
+    }
+
+
+    // Initialize cart status and load notes on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const wishlistItems = document.querySelectorAll('.product-card');
+        wishlistItems.forEach(item => {
+            const productId = item.getAttribute('data-product-id');
+            const addToCartButton = document.getElementById(`addToCartButton_${productId}`);
+            const cart = JSON.parse(localStorage.getItem('cart')) || {};
+
+            if (cart[productId]) {
+                addToCartButton.textContent = "Sudah ada di keranjangmu";
+            } else {
+                addToCartButton.textContent = "Tambahkan ke keranjang";
+            }
+            displayNote(productId);
+        });
+    });
 </script>
+
 {% endblock %}

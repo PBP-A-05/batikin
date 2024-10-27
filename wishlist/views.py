@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from cart.models import Cart, CartItem
 from .models import Wishlist  
 from shopping.models import Product  
+from uuid import UUID
 
 @login_required
 def wishlist_view(request):
@@ -33,17 +34,33 @@ def add_to_wishlist(request, product_id):
             status = 'removed'
         
         return JsonResponse({'message': message, 'status': status})
+    
+    # Return error if request method is not POST
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 @login_required
 def remove_from_wishlist(request, product_id):
-    wishlist_item = get_object_or_404(Wishlist, user=request.user, product_id=product_id)
-    wishlist_item.delete()
-    return redirect('wishlist:wishlist_view') 
+    if request.method == 'POST':
+        product = get_object_or_404(Product, id=product_id)
+        wishlist = Wishlist.objects.filter(user=request.user, product=product)
+
+        if wishlist.exists():
+            wishlist.delete()
+            message = 'Produk berhasil dihapus dari wishlist!'
+            success = True
+        else:
+            message = 'Produk tidak ditemukan di wishlist.'
+            success = False
+        
+        return JsonResponse({'success': success, 'message': message})
+    
+    # Return error if request method is not POST
+    return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=400)
+
 
 @login_required
 def add_to_cart(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    product = get_object_or_404(Product, id=product_id)  # This will now accept a UUID
     data = json.loads(request.body)
     quantity = int(data.get('quantity', 1))
 
@@ -66,3 +83,16 @@ def add_to_cart(request, product_id):
 
     message = f'{quantity} produk berhasil dimasukkan ke keranjang!'
     return JsonResponse({'message': message})
+
+
+@login_required
+def remove_from_cart(request, product_id):
+    try:
+        # Ensure product_id is treated as a UUID
+        cart = Cart.objects.get(user=request.user)
+        cart_item = CartItem.objects.get(cart=cart, product__id=product_id)
+        cart_item.delete()
+        message = 'Produk dihapus dari keranjang!'
+        return JsonResponse({'status': 'removed', 'message': message})
+    except CartItem.DoesNotExist:
+        return JsonResponse({'error': 'Item not found in cart.'}, status=404)

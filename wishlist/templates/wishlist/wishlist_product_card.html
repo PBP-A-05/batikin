@@ -6,14 +6,13 @@
 
     <!-- Product Details -->
     <div class="p-4 space-y-2">
-
         <span class="inline-block px-3 py-1 text-xs font-semibold bg-[#F0E8D9] text-[#754B0B] rounded-full text-center">
             {{ product.get_category_display }}
         </span>
         <h3 class="text-base font-semibold text-[#4C3108]">{{ product.product_name }}</h3>
         <div class="flex justify-between items-center">
             <span class="text-lg font-bold text-[#754B0B]">{{ product.price }}</span>
-            <button class="remove-btn" onclick="removeFromWishlist({{ product.id }})">
+            <button class="remove-btn" onclick="removeFromWishlist('{{ product.id }}')" aria-label="Remove from Wishlist" title="Remove from Wishlist">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#754B0B]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
@@ -21,24 +20,26 @@
         </div>
     </div>
 
-    <button id="addToCartButton_{{ product.id }}" onclick="addToCart({{ product.id }}, '{{ product.product_name }}', '{{ product.price }}')" class="bg-gradient-coklat text-white rounded-lg w-full py-2 mt-2 hover:bg-[#5C3708]">
+    <!-- Add to Cart Button -->
+    <button id="addToCartButton_{{ product.id }}" onclick="addToCart('{{ product.id }}', '{{ product.product_name }}', '{{ product.price }}')" class="bg-gradient-coklat text-white rounded-lg w-full py-2 mt-2 hover:bg-[#5C3708]" aria-label="Add to Cart" title="Add to Cart">
         Tambahkan ke keranjang
     </button>
 
-    <button onclick="toggleNoteInput({{ product.id }})" class="bg-gray-200 text-black rounded-lg w-full py-2 mt-2">
+    <!-- Add Note Button and Note Input -->
+    <button onclick="toggleNoteInput('{{ product.id }}')" class="bg-gray-200 text-black rounded-lg w-full py-2 mt-2" aria-label="Add Note" title="Add Note">
         Add Note
     </button>
     <div id="noteInputContainer_{{ product.id }}" class="note-input-container hidden mt-2">
         <textarea id="noteInput_{{ product.id }}" placeholder="Type your note here..." class="w-full p-2 border border-gray-300 rounded-md"></textarea>
-        <button onclick="saveNote({{ product.id }})" class="bg-gradient-coklat text-white rounded-lg w-full py-2 mt-2">Save Note</button>
+        <button onclick="saveNote('{{ product.id }}')" class="bg-gradient-coklat text-white rounded-lg w-full py-2 mt-2" aria-label="Save Note" title="Save Note">Save Note</button>
     </div>
     <div id="noteDisplay_{{ product.id }}" class="note-display mt-2"></div>
 </div>
 
-
 <script>
+    // Check if the DOM content is loaded before executing functions
     document.addEventListener('DOMContentLoaded', function() {
-        const productId = {{ product.id }};
+        const productId = "{{ product.id }}";
         const addToCartButton = document.getElementById(`addToCartButton_${productId}`);
 
         function checkCartStatus() {
@@ -52,6 +53,7 @@
             }
         }
 
+        // Function to add to cart
         function addToCart(productId, productName, productPrice) {
             let cart = JSON.parse(localStorage.getItem('cart')) || {};
             const quantity = 1;
@@ -85,6 +87,7 @@
             });
         }
 
+        // Function to remove from wishlist
         function removeFromWishlist(productId) {
             fetch(`/wishlist/remove_from_wishlist/${productId}/`, {
                 method: "POST",
@@ -105,21 +108,17 @@
             .catch(error => console.error("Error:", error));
         }
 
-        function showPopup(message) {
-            const popup = document.getElementById('customPopup');
-            const popupMessage = document.getElementById('popupMessage');
-            popupMessage.textContent = message;
-            popup.classList.remove('hidden');
-            setTimeout(() => {
-                popup.classList.add('hidden');
-            }, 3000);
-        }
-
+        // Function to toggle the note input display
         function toggleNoteInput(productId) {
             const noteInputContainer = document.getElementById(`noteInputContainer_${productId}`);
-            noteInputContainer.classList.toggle('hidden');
+            if (noteInputContainer) {
+                noteInputContainer.classList.toggle('hidden');
+            } else {
+                console.warn("Note input container not found for product ID:", productId);
+            }
         }
 
+        // Function to save a note
         function saveNote(productId) {
             const noteInput = document.getElementById(`noteInput_${productId}`);
             const noteText = noteInput.value;
@@ -130,13 +129,25 @@
             showPopup("Catatan berhasil disimpan!");
         }
 
+        // Function to display a note
         function displayNote(productId) {
             const noteDisplay = document.getElementById(`noteDisplay_${productId}`);
             const noteText = localStorage.getItem(`note_${productId}`);
             noteDisplay.innerHTML = noteText ? `<p class="text-gray-700 italic">Catatan: ${noteText}</p>` : "";
         }
 
-        
+        // Function to show popup messages
+        function showPopup(message) {
+            const popup = document.getElementById('customPopup');
+            const popupMessage = document.getElementById('popupMessage');
+            popupMessage.textContent = message;
+            popup.classList.remove('hidden');
+            setTimeout(() => {
+                popup.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Initial checks for cart and notes
         checkCartStatus();
         displayNote(productId);
     });
