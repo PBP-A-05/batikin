@@ -29,6 +29,8 @@ DEBUG = True
 ALLOWED_HOSTS = ['daanish-inayat-batikin.pbp.cs.ui.ac.id', '12', "localhost", "127.0.0.1"]
 STATIC_URL = '/static/'
 
+
+
 PRODUCTION = os.getenv("PRODUCTION", False)
 DEBUG = not PRODUCTION
 STATIC_URL = '/static/'
@@ -37,7 +39,8 @@ if DEBUG:
         BASE_DIR / 'static' # merujuk ke /static root project pada mode development
     ]
 else:
-    STATIC_ROOT = BASE_DIR / 'app/static' # merujuk ke /static root project pada mode production
+    STATIC_ROOT = BASE_DIR / 'static' # merujuk ke /static root project pada mode production
+
 # Application definition
 ###
 INSTALLED_APPS = [
