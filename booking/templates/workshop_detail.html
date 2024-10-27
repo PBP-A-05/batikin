@@ -82,14 +82,6 @@
                                     onclick="window.location.href='{% url 'workshop_book' workshop.id %}'">
                                 Make a booking
                             </button>
-                            <button class="p-2 border border-coklat-1-rgba rounded-md hover:bg-coklat-1-rgba transition duration-300 like-button" data-workshop-id="{{ workshop.id }}" onclick="likeProduct(this)">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-filled hidden" viewBox="0 0 24 24" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L12 8.343l3.172-3.171a4 4 0 115.656 5.656L12 19.657l-8.828-8.829a4 4 0 010-5.656z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
                         </div>
                     </div>                               
                 </div>
@@ -111,63 +103,6 @@
         const mainImage = document.getElementById('mainImage').children[0];
         mainImage.src = thumbnail.children[0].src;
     }
-
-    function likeProduct(button) {
-    const workshopId = button.getAttribute('data-workshop-id');
-    const heartOutline = button.querySelector('.heart-outline');
-    const heartFilled = button.querySelector('.heart-filled');
-
-    const isLiked = heartOutline.classList.contains('hidden');
-
-    // Toggle like status
-    if (isLiked) {
-        heartOutline.classList.remove('hidden');
-        heartFilled.classList.add('hidden');
-        localStorage.setItem(`wishlist_${workshopId}`, 'false');
-        updateLikeStatusOnList(workshopId, false);
-    } else {
-        heartOutline.classList.add('hidden');
-        heartFilled.classList.remove('hidden');
-        localStorage.setItem(`wishlist_${workshopId}`, 'true');
-        updateLikeStatusOnList(workshopId, true);
-    }
-}
-
-function updateLikeStatusOnList(workshopId, isLiked) {
-    const likeButton = document.querySelector(`.like-button[data-workshop-id="${workshopId}"]`);
-    if (likeButton) {
-        if (isLiked) {
-            likeButton.classList.add('liked');
-            likeButton.querySelector('.heart-outline').style.display = 'none';
-            likeButton.querySelector('.heart-filled').style.display = 'block';
-        } else {
-            likeButton.classList.remove('liked');
-            likeButton.querySelector('.heart-outline').style.display = 'block';
-            likeButton.querySelector('.heart-filled').style.display = 'none';
-        }
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    const likeButton = document.querySelector('.like-button');
-
-    if (likeButton) {
-        likeButton.addEventListener('click', function() {
-            likeProduct(likeButton);
-        });
-    }
-
-    const workshopId = likeButton ? likeButton.dataset.workshopId : null;
-    if (workshopId) {
-        const isLiked = localStorage.getItem(`wishlist_${workshopId}`) === 'true';
-
-        if (isLiked) {
-            likeButton.classList.add('liked');
-            likeButton.querySelector('.heart-outline').style.display = 'none';
-            likeButton.querySelector('.heart-filled').style.display = 'block';
-        }
-    }
-});
 
 </script>
 {% endblock %}

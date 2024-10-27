@@ -25,36 +25,42 @@
         width: 100%;
         margin: 20px 0;
         border-collapse: collapse;
-        border: 1px solid #ccc;
+        border: 1px solid #754B0B;
+        border-radius: 8px;
+        overflow: hidden;
     }
 
     .calendar th, .calendar td {
         text-align: center;
         padding: 10px;
-        border: 1px solid #ccc;
+        border: 1px solid #DB8C15;
+        border-radius: 5px;
     }
 
     .calendar th {
-        background-color: #f2f2f2;
-    }
-
-    .calendar .highlight {
-        background-color: #e0e0e0;
-        cursor: pointer;
+        background-color: #F6E5D3;
+        color: #754B0B;
+        font-weight: bold;
     }
 
     .calendar .highlight:hover {
-        background-color: #d0d0d0;
+        background-color: #D99A5F;
+        border-radius: 5px;
+    }
+
+    .calendar .selected {
+        background-color: #754B0B;
+        color: white;
+        font-weight: bold;
     }
 </style>
 
 <div class="container mx-auto px-4 py-8 max-w-7xl">
     <div class="bg-white border border-coklat-1-rgba rounded-md p-6">
-        <h2 class="text-2xl font-semibold text-coklat-1 mb-6">Book a Workshop</h2>
+        <h2 class="text-2xl font-semibold text-coklat-1 mb-6">Book a Workshop: {{ workshop.name }}</h2>
 
         <form method="POST" action="{% url 'workshop_book' workshop.id %}" id="bookingForm">
             {% csrf_token %}
-
             <div class="flex flex-wrap">
                 <!-- Pilih Tanggal (Kalender Besar) -->
                 <div class="w-full md:w-1/2 mb-4 md:mb-0 md:pr-4">
@@ -93,44 +99,50 @@
                         <label for="time" class="block text-sm font-medium text-gray-700 mb-2">Select a Time</label>
                         <select 
                             id="time" 
-                            name="time" 
+                            name="booking_time" 
                             class="w-full p-2 border rounded-md focus:outline-none focus:ring-coklat-1 focus:border-coklat-1"
                         >
                             {% for t in available_times %}
                                 <option value="{{ t }}">{{ t }}</option>
+                            {% empty %}
+                                <option disabled>No times available</option>
                             {% endfor %}
                         </select>
                     </div>
 
                     <!-- Pilih Jumlah Peserta -->
-                    <div class="flex items-center space-x-4">
-                        <div class="quantity-input flex items-center border border-coklat-1-rgba rounded-md">
-                            <button 
-                                type="button" 
-                                class="text-coklat-1 disabled:opacity-50" 
-                                onclick="decrementQuantity()" 
-                                id="decrementBtn" 
-                                disabled
-                            >
-                                -
-                            </button>
-                            <input 
-                                type="number" 
-                                id="quantity" 
-                                class="text-center text-coklat-2 focus:outline-none" 
-                                value="1" 
-                                min="1" 
-                                readonly
-                            >
-                            <button 
-                                type="button" 
-                                class="text-coklat-1" 
-                                onclick="incrementQuantity()"
-                            >
-                                +
-                            </button>
+                    <div class="mb-4">
+                        <label for="participants" class="block text-sm font-medium text-gray-700 mb-2">Add a Participant</label>
+                        <div class="flex items-center space-x-4">
+                            <div class="quantity-input flex items-center border border-coklat-1-rgba rounded-md">
+                                <button 
+                                    type="button" 
+                                    class="text-coklat-1 disabled:opacity-50" 
+                                    onclick="decrementQuantity()" 
+                                    id="decrementBtn" 
+                                    disabled
+                                >
+                                    -
+                                </button>
+                                <input 
+                                    type="number" 
+                                    id="participants" 
+                                    name="participants"
+                                    class="text-center text-coklat-2 focus:outline-none" 
+                                    value="1" 
+                                    min="1" 
+                                    readonly
+                                >
+                                <button 
+                                    type="button" 
+                                    class="text-coklat-1" 
+                                    onclick="incrementQuantity()"
+                                >
+                                    +
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    </div>                    
                 </div>
             </div>
 
@@ -155,103 +167,89 @@
 </div>
 
 <script>
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ];
+    let selectedDateElement = null;
 
-    const today = new Date();
-    let currentMonth = today.getMonth();
-    let currentYear = today.getFullYear();
+    document.addEventListener('DOMContentLoaded', function() {
+        generateCalendar(new Date()); // Generate the calendar for the current month
 
-    const monthElement = document.getElementById("month");
-    const yearElement = document.getElementById("year");
-    const calendarBody = document.getElementById("calendar-body");
-
-    function updateCalendar() {
-        calendarBody.innerHTML = "";
-        monthElement.textContent = monthNames[currentMonth];
-        yearElement.textContent = currentYear;
-
-        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-
-        let row = document.createElement("tr");
-        for (let i = 0; i < firstDay; i++) {
-            row.appendChild(document.createElement("td"));
-        }
-
-        for (let day = 1; day <= daysInMonth; day++) {
-            const cell = document.createElement("td");
-            cell.textContent = day;
-
-            // Add click event to each day
-            cell.className = "highlight"; // Add highlight class for hover effect
-            cell.onclick = function() {
-                const selectedDate = `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-                document.getElementById("date").value = selectedDate; // Set value untuk tanggal booking
-            };
-
-            row.appendChild(cell);
-
-            if ((day + firstDay) % 7 === 0) {
-                calendarBody.appendChild(row);
-                row = document.createElement("tr");
+        // Add event listener to calendar cells
+        document.getElementById('calendar-body').addEventListener('click', function(event) {
+            if (event.target.tagName === 'TD' && event.target.classList.contains('highlight')) {
+                if (selectedDateElement) {
+                    // Remove the 'selected' class from previously selected date
+                    selectedDateElement.classList.remove('selected');
+                }
+                // Add 'selected' class to the clicked date
+                event.target.classList.add('selected');
+                selectedDateElement = event.target;
             }
+        });
+    });
+
+    function generateCalendar(date) {
+        const calendarBody = document.getElementById('calendar-body');
+        calendarBody.innerHTML = ''; // Clear existing cells
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        document.getElementById('month').textContent = date.toLocaleString('default', { month: 'long' });
+        document.getElementById('year').textContent = year;
+
+        // Create empty cells for days before the first day of the month
+        let row = document.createElement('tr');
+        for (let i = 0; i < firstDay; i++) {
+            let cell = document.createElement('td');
+            row.appendChild(cell);
         }
 
+        // Create cells for each day of the month
+        for (let day = 1; day <= daysInMonth; day++) {
+            if (row.children.length === 7) {
+                calendarBody.appendChild(row);
+                row = document.createElement('tr');
+            }
+
+            let cell = document.createElement('td');
+            cell.textContent = day;
+            cell.classList.add('highlight'); // Add the highlight class
+            row.appendChild(cell);
+        }
+
+        // Append the last row if it's not empty
         if (row.children.length > 0) {
             calendarBody.appendChild(row);
         }
     }
 
     function previousMonth() {
-        currentMonth--;
-        if (currentMonth < 0) {
-            currentMonth = 11;
-            currentYear--;
-        }
-        updateCalendar();
+        const date = new Date(document.getElementById('year').textContent, document.getElementById('month').textContent, 1);
+        date.setMonth(date.getMonth() - 1);
+        generateCalendar(date);
     }
 
     function nextMonth() {
-        currentMonth++;
-        if (currentMonth > 11) {
-            currentMonth = 0;
-            currentYear++;
-        }
-        updateCalendar();
+        const date = new Date(document.getElementById('year').textContent, document.getElementById('month').textContent, 1);
+        date.setMonth(date.getMonth() + 1);
+        generateCalendar(date);
     }
 
     function incrementQuantity() {
-        const quantityInput = document.getElementById("quantity");
-        let currentValue = parseInt(quantityInput.value);
-        quantityInput.value = currentValue + 1;
-        document.getElementById("decrementBtn").disabled = false;
+        const participantsInput = document.getElementById('participants');
+        participantsInput.value = parseInt(participantsInput.value) + 1;
+        document.getElementById('decrementBtn').disabled = false;
     }
 
     function decrementQuantity() {
-        const quantityInput = document.getElementById("quantity");
-        let currentValue = parseInt(quantityInput.value);
-
-        if (currentValue > 1) {
-            quantityInput.value = currentValue - 1;
+        const participantsInput = document.getElementById('participants');
+        if (participantsInput.value > 1) {
+            participantsInput.value = parseInt(participantsInput.value) - 1;
         }
-        
-        if (currentValue <= 2) {
-            document.getElementById("decrementBtn").disabled = true;
+        if (participantsInput.value == 1) {
+            document.getElementById('decrementBtn').disabled = true;
         }
     }
-
-    document.getElementById('bookingForm').addEventListener('submit', function(event) {
-        const successPopup = document.getElementById('successPopup');
-        successPopup.classList.remove('hidden');
-        event.preventDefault();
-        setTimeout(function() {
-            successPopup.classList.add('hidden');
-        }, 2000);
-    });
-
-    updateCalendar();
 </script>
 
 {% endblock %}

@@ -28,17 +28,6 @@ class Booking(models.Model):
 class WorkshopProduct(models.Model):  # Mengganti nama kelas menjadi WorkshopProduct
     title = models.CharField(max_length=100)  # Nama produk workshop
     description = models.TextField()  # Deskripsi produk workshop
-    price = models.DecimalField(max_digits=10, decimal_places=2)  # Harga produk workshop
-
     def __str__(self):
         return self.title
     
-class Wishlist(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="wishlists")
-    workshop = models.ForeignKey(Workshop, on_delete=models.CASCADE, related_name="wishlisted_by")
-
-    class Meta:
-        unique_together = ('user', 'workshop')  # Ensure that a user can only wish-list a workshop once
-
-    def __str__(self):
-        return f"{self.user.username} - {self.workshop.name}"

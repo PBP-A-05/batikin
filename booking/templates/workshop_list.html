@@ -5,33 +5,6 @@
 
 {% block content %}
 <style>
-  /* hover, active states */
-  .like-button:hover svg {
-      transform: scale(1.1);
-      filter: drop-shadow(0 0 2px rgba(117, 75, 11, 0.5));
-  }
-
-  .like-button:active svg {
-      transform: scale(0.9);
-  }
-
-  .like-button svg {
-      transition: all 0.3s ease;
-  }
-
-  .like-button .heart-filled {
-      display: none;
-  }
-
-  .like-button.liked .heart-outline {
-      display: none;
-  }
-
-  .like-button.liked .heart-filled {
-      display: block;
-      fill: #754B0B; 
-  }
-
   .workshop-card {
       transition: all 0.3s ease;
   }
@@ -70,6 +43,7 @@
     <div class="flex items-center justify-between mb-2 sm:mb-1">
       <h1 class="text-2xl sm:text-3xl font-bold text-coklat-2">Workshop Batik</h1>
       <div class="flex-grow border-b border-coklat-1-rgba ml-4"></div>
+      <button id="filterButton" class="bg-coklat-2 text-white px-3 py-1 rounded-md hover:bg-coklat-3 ml-2">Sort A-Z</button>
     </div>
     
     <p class="text-coklat-1 font-semibold mb-4 sm:mb-1">Pelajari cara membuat batik di berbagai workshop kami di Yogyakarta.</p>
@@ -85,16 +59,6 @@
           <p class="text-sm text-coklat-1">{{ workshop.location }}</p>
           <div class="flex justify-between items-center">
             <span class="text-sm font-bold text-coklat-2">{{ workshop.open_time }}</span>
-            <button class="like-button focus:outline-none" onclick="event.preventDefault(); likeProduct(this, '{{ workshop.id }}');" data-workshop-id="{{ workshop.id }}">
-              <!-- Outline heart -->
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-coklat-1 heart-outline" viewBox="0 0 24 24" stroke="currentColor" fill="none">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-              <!-- Filled heart -->
-              <svg width="24" height="25" class="h-6 w-6 text-coklat-1 heart-filled hidden" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12.0048 19.5L4.791 13.0513C0.870448 9.18258 6.63333 1.75337 12.0048 7.76384C17.3763 1.75337 23.1141 9.20729 19.22 13.0513L12.0048 19.5Z" fill="#754B0B" stroke="#754B0B" stroke-width="1.42857" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>          
           </div>
         </div>
       </a>
@@ -103,133 +67,34 @@
   </div>
 </div>
 
-<div id="customPopup" class="fixed bottom-8 left-8 bg-white border border-coklat-1 rounded-md p-4 shadow-md hidden z-50 w-80">
-  <p id="popupMessage" class="text-coklat-2 font-poppins mb-3"></p>
-  <div class="flex justify-end">
-    <button onclick="closePopup()" class="bg-gradient-coklat text-white px-6 py-1 rounded-md hover:opacity-90 transition duration-300 text-sm">Tutup</button>
-  </div>
-</div>
-
-<div id="customPopup" class="fixed bottom-8 left-8 bg-white border border-coklat-1 rounded-md p-4 shadow-md hidden z-50 w-80">
-  <p id="popupMessage" class="text-coklat-2 font-poppins mb-3"></p>
-  <div class="flex justify-end">
-    <button onclick="closePopup()" class="bg-gradient-coklat text-white px-6 py-1 rounded-md hover:opacity-90 transition duration-300 text-sm">Tutup</button>
-  </div>
-</div>
-
 <script>
-function attachWorkshopCardListeners() {
-    document.querySelectorAll('.workshop-card').forEach(card => {
-        card.addEventListener('click', function(event) {
-            const workshopId = this.dataset.workshopId;
-            fetch(`/workshops/${workshopId}/check/`)
-                .then(response => {
-                    if (response.ok) {
-                        window.location.href = `/workshops/${workshopId}/`;
-                    } else if (response.status === 403) {
-                        window.location.href = '{% url "register" %}';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        });
-    });
-}
+  function attachWorkshopCardListeners() {
+      document.querySelectorAll('.workshop-card').forEach(card => {
+          card.addEventListener('click', function(event) {
+              const workshopId = this.dataset.workshopId;
+              fetch(`/workshops/${workshopId}/check/`)
+                  .then(response => {
+                      if (response.ok) {
+                          window.location.href = `/workshops/${workshopId}/`;
+                      } else if (response.status === 403) {
+                          window.location.href = '{% url "register" %}';
+                      }
+                  })
+                  .catch(error => {
+                      console.error('Error:', error);
+                  });
+          });
+      });
+  }
 
-function updateActiveButton(category) {
-    document.querySelectorAll('.category-btn').forEach(btn => {
-        if (btn.dataset.category.toLowerCase() === category.toLowerCase()) {
-            btn.classList.add('text-gradient-coklat', 'border-gradient-coklat', 'shadow-lg');
-            btn.classList.remove('text-coklat-1', 'border-coklat-rgba');
-        } else {
-            btn.classList.remove('text-gradient-coklat', 'border-gradient-coklat', 'shadow-lg');
-            btn.classList.add('text-coklat-1', 'border-coklat-rgba');
-        }
-    });
-}
+  document.addEventListener('DOMContentLoaded', function() {
+      attachWorkshopCardListeners();
+  });
 
-function likeProduct(button, workshopId) {
-    const isAuthenticated = {{ user.is_authenticated|yesno:"true,false" }}; // Ambil status login dari Django
-    if (!isAuthenticated) {
-        // Tampilkan pesan pop-up atau arahkan ke halaman login
-        showPopup('Anda perlu login untuk menyukai workshop ini.'); // Tampilkan pesan
-        return; // Hentikan fungsi agar tidak melanjutkan
-    }
-
-    const likeButton = button;
-    const isLiked = likeButton.classList.toggle('liked');
-
-    localStorage.setItem(`wishlist_${workshopId}`, isLiked);
-
-    const svgOutline = likeButton.querySelector('.heart-outline');
-    const svgFilled = likeButton.querySelector('.heart-filled');
-
-    if (isLiked) {
-        svgOutline.style.display = 'none'; // Menyembunyikan heart-outline
-        svgFilled.style.display = 'block'; // Menampilkan heart-filled
-        showPopup(`Workshop ditambahkan ke wishlist!`);
-    } else {
-        svgOutline.style.display = 'block'; // Menampilkan heart-outline
-        svgFilled.style.display = 'none'; // Menyembunyikan heart-filled
-        showPopup(`Workshop dihapus dari wishlist!`);
-    }
-
-    updateWishlistStatus();
-}
-
-function updateLikeStatusOnList(workshopId, isLiked) {
-    const likeButton = document.querySelector(`.like-button[data-workshop-id="${workshopId}"]`);
-    if (likeButton) {
-        if (isLiked) {
-            likeButton.classList.add('liked');
-            likeButton.querySelector('.heart-outline').style.display = 'none';
-            likeButton.querySelector('.heart-filled').style.display = 'block';
-        } else {
-            likeButton.classList.remove('liked');
-            likeButton.querySelector('.heart-outline').style.display = 'block';
-            likeButton.querySelector('.heart-filled').style.display = 'none';
-        }
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    const workshopButtons = document.querySelectorAll('.like-button'); // Ganti selector sesuai dengan tombol like
-
-    workshopButtons.forEach(button => {
-        const workshopId = button.dataset.workshopId; // Ambil ID dari atribut data
-        const isLiked = localStorage.getItem(`wishlist_${workshopId}`) === 'true';
-
-        // Set tampilan tombol berdasarkan status like yang disimpan
-        if (isLiked) {
-            button.classList.add('liked');
-            button.querySelector('.heart-outline').style.display = 'none';
-            button.querySelector('.heart-filled').style.display = 'block';
-        } else {
-            button.classList.remove('liked');
-            button.querySelector('.heart-outline').style.display = 'block';
-            button.querySelector('.heart-filled').style.display = 'none';
-        }
-    });
-});
-
-
-function showPopup(message) {
-    const popup = document.getElementById('customPopup');
-    const popupMessage = document.getElementById('popupMessage');
-    popupMessage.textContent = message;
-    popup.style.animation = 'none';
-    popup.offsetHeight; 
-    popup.style.animation = null;
-    popup.classList.remove('hidden');
-    setTimeout(() => {
-        closePopup();
-    }, 3000); 
-}
-
-function closePopup() {
-    const popup = document.getElementById('customPopup');
-    popup.classList.add('hidden');
-}
+  document.getElementById('filterButton').addEventListener('click', function() {
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set('sort', 'alphabet');
+      window.location.href = currentUrl.toString();
+  });
 </script>
 {% endblock %}
