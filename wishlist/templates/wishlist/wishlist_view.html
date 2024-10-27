@@ -3,110 +3,107 @@
 {% block content %}
 <style>
     .border-gradient-coklat-3 {
-    position: relative;
-  }
-
-  .border-gradient-coklat-3::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 50px; 
-      padding: 2px; 
-      background: linear-gradient(90deg, #754B0B 0%, #DB8C15 100%);
-      -webkit-mask: 
-        linear-gradient(#fff 0 0) content-box, 
-        linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-              mask-composite: exclude; 
-  }
+        position: relative;
+    }
+    .border-gradient-coklat-3::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50px;
+        padding: 2px;
+        background: linear-gradient(90deg, #754B0B 0%, #DB8C15 100%);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+    }
 </style>
-<div class="min-h-screen flex flex-col">
-    <!-- Main Content Section -->
-    <div class="container-custom mx-auto py-16 flex-grow">
-        <!-- Wishlist Title and Item Count -->
-        <div class="mb-8 ml-20">
-            <h1 class="text-5xl font-bold text-[#4C3108]" style="font-family: 'Poppins'; font-size: 30px; font-weight: bold; margin-bottom: 8px;">
-                Wishlist
-            </h1>
-            <p class="text-2xl text-[#714503]" style="font-family: 'Poppins'; font-size: 15px; font-weight: 600; margin-top: -8px;">
-                {{ wishlist_count }} {% if wishlist_count == 1 %} item {% else %} items {% endif %}
-            </p>
-        </div>
 
-        <!-- Sorting Options -->
-        <div class="flex justify-end mb-4 mr-20">
-            <a href="?sort=price_asc" class="px-4 py-2 border border-[#D8CDB3] rounded bg-[#F0E8D9] text-[#754B0B] hover:bg-[#D8CDB3] transition duration-300">
-                Sort by Price: Low to High
-            </a>
-            <a href="?sort=price_desc" class="ml-2 px-4 py-2 border border-[#D8CDB3] rounded bg-[#F0E8D9] text-[#754B0B] hover:bg-[#D8CDB3] transition duration-300">
-                Sort by Price: High to Low
-            </a>
-        </div>
-
-
-        <!-- Wishlist Items Grid -->
-        {% if wishlist_items %}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
-                {% for item in wishlist_items %}
-                    <div class="product-card border border-coklat-1-rgba rounded-md p-4" data-product-id="{{ item.product.id }}">
-                        <!-- Product Image -->
-                        <div class="relative aspect-square overflow-hidden mb-4">
-                            <img src="{{ item.product.image_urls.0 }}" alt="{{ item.product.product_name }}" class="object-cover w-full h-full">
-                        </div>
-
-                        <!-- Product Details -->
-                        <div class="space-y-2 relative">
-                            <!-- Category Bubble -->
-                            <span class="inline-block px-2 py-1 text-xs border border-gradient-coklat-3 rounded-full text-black">
-                                {{ item.product.get_category_display }}
-                            </span>
-
-                            <!-- Product Name and Price -->
-                            <h3 class="text-lg font-semibold text-[#4C3108]">{{ item.product.product_name }}</h3>
-                            <p class="text-lg font-bold text-[#754B0B]">{{ item.product.price }}</p>
-
-                            <!-- Remove from Wishlist Button (X Icon) -->
-                            <button onclick="removeFromWishlist('{{ item.product.id }}')" class="absolute top-0 right-0 text-[#754B0B] hover:text-red-600" aria-label="Remove from Wishlist">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
-
-                            <!-- Add to Cart Button -->
-                            <button id="addToCartButton_{{ item.product.id }}" class="add-to-cart-button bg-gradient-coklat text-white rounded-lg w-full py-2 mt-2 hover:bg-[#5C3708]" onclick="addToCart('{{ item.product.id }}', '{{ item.product.product_name }}', '{{ item.product.price }}')">
-                                Tambahkan ke keranjang
-                            </button>
-
-                            <!-- Add Note Button -->
-                            <button onclick="toggleNoteInput('{{ item.product.id }}')" class="bg-gray-200 text-black rounded-lg w-full py-2 mt-2" aria-label="Add Note">
-                                Add Note
-                            </button>
-
-                            <!-- Note Input Container -->
-                            <div id="noteInputContainer_{{ item.product.id }}" class="note-input-container hidden mt-2">
-                                <textarea id="noteInput_{{ item.product.id }}" placeholder="Type your note here..." class="w-full p-2 border border-gray-300 rounded-md"></textarea>
-                                <button onclick="saveNote('{{ item.product.id }}')" class="bg-gradient-coklat text-white rounded-lg w-full py-2 mt-2">Save Note</button>
-                            </div>
-
-                            <!-- Display Note -->
-                            <div id="noteDisplay_{{ item.product.id }}" class="note-display mt-2"></div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <!-- Message for empty wishlist -->
-            <div class="flex items-center justify-center h-full">
-                <p class="text-xl text-[#714503]">Tidak ada item di wishlist</p>
-            </div>
-        {% endif %}
+<div class="container mx-auto py-16 flex-grow">
+    <!-- Wishlist Title and Item Count -->
+    <div class="mb-8 ml-20">
+        <h1 class="text-5xl font-bold text-[#4C3108]" style="font-family: 'Poppins'; font-size: 30px; font-weight: bold; margin-bottom: 8px;">
+            Wishlist
+        </h1>
+        <p class="text-2xl text-[#714503]" style="font-family: 'Poppins'; font-size: 15px; font-weight: 600; margin-top: -8px;">
+            {{ wishlist_count }} {% if wishlist_count == 1 %} item {% else %} items {% endif %}
+        </p>
     </div>
 
-    <!-- Footer fixed to bottom -->
-    <footer class="bg-[#4D3108] py-2">
-        <div class="container mx-auto text-center"></div>
-    </footer>
+    <!-- Sorting Options -->
+    <div class="flex justify-end mb-4 mr-20">
+        <a href="?sort=price_asc" class="px-4 py-2 border border-[#D8CDB3] rounded bg-[#F0E8D9] text-[#754B0B] hover:bg-[#D8CDB3] transition duration-300">
+            Sort by Price: Low to High
+        </a>
+        <a href="?sort=price_desc" class="ml-2 px-4 py-2 border border-[#D8CDB3] rounded bg-[#F0E8D9] text-[#754B0B] hover:bg-[#D8CDB3] transition duration-300">
+            Sort by Price: High to Low
+        </a>
+    </div>
+
+    <!-- Wishlist Items Grid -->
+    {% if wishlist_items %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
+            {% for item in wishlist_items %}
+                <div class="product-card border border-coklat-1-rgba rounded-md p-4" data-product-id="{{ item.product.id }}">
+                    <!-- Product Image -->
+                    <div class="relative aspect-square overflow-hidden mb-4">
+                        <img src="{{ item.product.image_urls.0 }}" alt="{{ item.product.product_name }}" class="object-cover w-full h-full">
+                    </div>
+
+                    <!-- Product Details -->
+                    <div class="space-y-2 relative">
+                        <!-- Category Bubble -->
+                        <span class="inline-block px-2 py-1 text-xs border border-gradient-coklat-3 rounded-full text-black">
+                            {{ item.product.get_category_display }}
+                        </span>
+
+                        <!-- Product Name and Price -->
+                        <h3 class="text-lg font-semibold text-[#4C3108]">{{ item.product.product_name }}</h3>
+                        <p class="text-lg font-bold text-[#754B0B]">{{ item.product.price }}</p>
+
+                        <!-- Remove from Wishlist Button (X Icon) -->
+                        <button onclick="removeFromWishlist('{{ item.product.id }}')" class="absolute top-0 right-0 text-[#754B0B] hover:text-red-600" aria-label="Remove from Wishlist">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Add to Cart Button -->
+                        <button id="addToCartButton_{{ item.product.id }}" class="add-to-cart-button bg-gradient-coklat text-white rounded-lg w-full py-2 mt-2 hover:bg-[#5C3708]" onclick="addToCart('{{ item.product.id }}', '{{ item.product.product_name }}', '{{ item.product.price }}')">
+                            Tambahkan ke keranjang
+                        </button>
+
+                        <!-- Display Note Section First -->
+                        <div id="noteDisplay_{{ item.product.id }}" class="note-display mt-2 {% if not item.note %}hidden{% endif %}">
+                            {% if item.note %}
+                                <p class="text-gray-700 italic">Catatan: {{ item.note }}</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Add/Edit Note Button, changes dynamically based on note existence -->
+                        <button onclick="toggleNoteInput('{{ item.product.id }}')" class="bg-gray-200 text-black rounded-lg w-full py-2 mt-2" aria-label="Add/Edit Note">
+                            {% if item.note %}Edit Note{% else %}Add Note{% endif %}
+                        </button>
+
+                        <!-- Note Input Container - hidden by default unless toggled -->
+                        <div id="noteInputContainer_{{ item.product.id }}" class="note-input-container hidden mt-2">
+                            <textarea id="noteInput_{{ item.product.id }}" placeholder="Type your note here..." class="w-full p-2 border border-gray-300 rounded-md">{{ item.note }}</textarea>
+                            <button onclick="saveNote('{{ item.product.id }}')" class="bg-gradient-coklat text-white rounded-lg w-full py-2 mt-2">Save Note</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Message for empty wishlist -->
+        <div class="flex items-center justify-center h-full">
+            <p class="text-xl text-[#714503]">Tidak ada item di wishlist</p>
+        </div>
+    {% endif %}
 </div>
+
+<!-- Footer fixed to bottom -->
+<footer class="bg-[#4D3108] py-2 w-full mt-8">
+</footer>
 
 <!-- Popup Notification -->
 <div id="customPopup" class="fixed bottom-8 left-8 bg-white border border-coklat-1 rounded-md p-4 shadow-md hidden z-50 w-80">
@@ -199,27 +196,70 @@ function addToCart(productId, productName, productPrice) {
         }
 
 
-    function toggleNoteInput(productId) {
-        const noteInputContainer = document.getElementById(`noteInputContainer_${productId}`);
-        if (noteInputContainer) noteInputContainer.classList.toggle('hidden');
-    }
+        function toggleNoteInput(productId, hideInput = false) {
+            const noteInputContainer = document.getElementById(`noteInputContainer_${productId}`);
+            const noteDisplay = document.getElementById(`noteDisplay_${productId}`);
+            const addEditButton = document.querySelector(`[onclick="toggleNoteInput('${productId}')"]`);
 
-    function saveNote(productId) {
-        const noteInput = document.getElementById(`noteInput_${productId}`);
-        if (noteInput) {
-            const noteText = noteInput.value;
-            localStorage.setItem(`note_${productId}`, noteText);
-            displayNote(productId);
-            toggleNoteInput(productId);
-            showPopup("Catatan berhasil disimpan!");
+            if (noteInputContainer && noteDisplay) {
+                if (hideInput) {
+                   
+                    noteInputContainer.classList.add('hidden');
+                    noteDisplay.classList.remove('hidden');  
+                    addEditButton.innerText = "Edit Note";
+                } else {
+        
+                    noteInputContainer.classList.toggle('hidden');
+                    noteDisplay.classList.toggle('hidden');
+
+                    addEditButton.innerText = noteInputContainer.classList.contains('hidden') ? "Edit Note" : "Cancel";
+                }
+            }
         }
-    }
 
-    function displayNote(productId) {
-        const noteDisplay = document.getElementById(`noteDisplay_${productId}`);
-        const noteText = localStorage.getItem(`note_${productId}`);
-        noteDisplay.innerHTML = noteText ? `<p class="text-gray-700 italic">Catatan: ${noteText}</p>` : "";
-    }
+        function saveNote(productId) {
+            const noteInput = document.getElementById(`noteInput_${productId}`);
+            if (noteInput) {
+                const noteText = noteInput.value;
+
+                fetch(`/wishlist/save_note/${productId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',  
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({ 'note': noteText })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        displayNote(productId, data.note);  
+                        toggleNoteInput(productId, true);    
+                        showPopup(data.message);             
+                    }
+                })
+                .catch(error => console.error("Error saving note:", error));
+            }
+        }
+
+
+        function displayNote(productId, noteText = '') {
+            const noteDisplay = document.getElementById(`noteDisplay_${productId}`);
+            const noteInputContainer = document.getElementById(`noteInputContainer_${productId}`);
+            const addEditButton = document.querySelector(`[onclick="toggleNoteInput('${productId}')"]`);
+
+            if (noteDisplay) {
+                noteDisplay.innerHTML = `<p class="text-gray-700 italic">Catatan: ${noteText}</p>`;
+            }
+
+            if (noteInputContainer) {
+                noteInputContainer.classList.add('hidden');
+            }
+            noteDisplay.classList.remove('hidden');
+
+            addEditButton.innerText = "Edit Note";
+        }
+
 
     function showPopup(message) {
         const popup = document.getElementById('customPopup');
@@ -246,7 +286,7 @@ function addToCart(productId, productName, productPrice) {
             } else {
                 addToCartButton.textContent = "Tambahkan ke keranjang";
             }
-            displayNote(productId);
+            displayNote(productId, noteText);
         });
     });
 </script>
