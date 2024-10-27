@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         const formData = new FormData(this);
 
-        fetch('{% url "update_profile" %}', {
+        fetch('{% url "user_profile:update_profile" %}', {
             method: 'POST',
             body: formData,
             headers: {
