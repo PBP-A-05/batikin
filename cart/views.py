@@ -90,7 +90,7 @@ def create_order(request):
     data = json.loads(request.body)
     address_id = data.get('address_id')
     items = data.get('items')
-
+    address = None
     try:
         address = Address.objects.get(id=address_id, user=request.user)
     except Address.DoesNotExist:
@@ -101,7 +101,7 @@ def create_order(request):
     order = Order.objects.create(
         user=request.user,
         address=address,
-        total_price=total_price
+        total_price=total_price,
     )
 
     for item in items:
@@ -111,7 +111,7 @@ def create_order(request):
                 order=order,
                 product=product,
                 quantity=int(item['quantity']),
-                price=float(item['price'])
+                price=float(item['price']),
             )
         except Product.DoesNotExist:
             order.delete()
@@ -123,3 +123,57 @@ def create_order(request):
     CartItem.objects.filter(cart__user=request.user).delete()
 
     return JsonResponse({'status': 'success', 'message': 'Pesanan berhasil dibuat'})
+
+
+@login_required
+def get_orders_by_user(request):
+    try:
+        orders = Order.objects.filter(user=request.user)
+        
+        orders_data = []
+        for order in orders:
+            try:
+                order_items = OrderItem.objects.filter(order=order)
+                
+                items_data = []
+                for item in order_items:
+                    items_data.append({
+                        'product_id': item.product.id,
+                        'product_name': item.product.product_name,
+                        'quantity': item.quantity,
+                        'price': str(item.price),
+                        'image_urls': item.product.image_urls,
+                        'category': item.product.category,
+                    })
+                
+                order_data = {
+                    'order_id': order.id,
+                    'total_price': str(order.total_price),
+                    'items': items_data,
+                    'created_at': order.created_at.isoformat(),
+                }
+                
+                if order.address:
+                    order_data['address'] = {
+                        'id': order.address.id,
+                        'title': order.address.title,
+                        'address': order.address.address,
+                    }
+                
+                orders_data.append(order_data)
+                
+            except Exception as e:
+                print(f"Error processing order {order.id}: {str(e)}") 
+                continue
+        
+        return JsonResponse({'orders': orders_data})
+    
+    except Exception as e:
+        import traceback
+        print(f"Error in get_orders_by_user: {str(e)}")
+        print(traceback.format_exc())
+        return JsonResponse({
+            'error': str(e),
+            'status': 'error',
+            'message': 'Failed to fetch orders'
+        }, status=500)

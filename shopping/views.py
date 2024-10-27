@@ -97,4 +97,13 @@ def add_to_cart(request, product_id):
     message = f'{quantity} produk berhasil dimasukkan ke keranjang!'
     return JsonResponse({'message': message})
 
-
+def get_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    return JsonResponse({
+        'id': str(product.id),
+        'product_name': product.product_name,
+        'price': str(product.price),
+        'image_urls': product.image_urls,
+        'category': product.category,
+        'category_display': product.category,
+    })

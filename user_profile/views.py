@@ -22,10 +22,14 @@ def profile_view(request):
     form = CombinedForm(initial=initial_data)
     address_forms = [AddressForm(prefix=f'address_{i}', instance=addr) for i, addr in enumerate(addresses)]
     
+    open_modal = request.GET.get('open_modal', 'false').lower() in ['true', '1', 'yes']
+
+
     return render(request, 'account.html', {
         'form': form,
         'address_forms': address_forms,
         'addresses': addresses,
+        'open_modal': open_modal,
     })
 
 @login_required

@@ -4,6 +4,33 @@
 {% block title %}Batikin | Account{% endblock %}
 
 {% block content %}
+<style>
+     .border-gradient-coklat {
+        position: relative;
+    }
+    .border-gradient-coklat::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50px; 
+        padding: 2px; 
+        background: linear-gradient(90deg, #754B0B 0%, #DB8C15 100%);
+        -webkit-mask: 
+            linear-gradient(#fff 0 0) content-box, 
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+                mask-composite: exclude; 
+    }
+    @keyframes popupBounce {
+        0% { transform: scale(0.5); opacity: 0; }
+        60% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    #customPopup {
+        animation: popupBounce 0.5s ease-out;
+        z-index: 9999;
+    }
+</style>
 <!-- Add Modal HTML -->
 <div id="editProfileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 overflow-y-auto">
     <div class="bg-white rounded-xl max-w-md w-full mx-4 my-8">
@@ -51,8 +78,13 @@
                         </div>
                         {% endfor %}
                     </div>
-                    <button type="button" id="addAddressBtn" class="mt-2 px-4 py-2 bg-gradient-to-r from-[#754B0B] to-[#DB8C15] text-white rounded-lg hover:opacity-90 transition duration-300">
-                        Add Address
+                    <button type="button" id="addAddressBtn" class="px-4 py-2 bg-[#FAF4ED] text-coklat-2 border border-coklat-1/25 
+                    rounded-lg hover:bg-coklat-2 hover:text-[#FAF4ED] 
+                    focus:outline-none focus:ring-2 focus:ring-coklat-1/20
+                    active:bg-coklat-2/90
+                    transition-all duration-200 ease-in-out
+                    font-medium shadow-sm">
+                        Tambah Alamat
                     </button>
                 </div>
                 
@@ -62,16 +94,26 @@
                         Cancel
                     </button>
                     <button type="submit" 
-                        class="px-4 py-2 bg-gradient-to-r from-[#754B0B] to-[#DB8C15] text-white rounded-lg hover:opacity-90">
-                        Save Changes
+                        class="px-4 py-2 bg-[#FAF4ED] text-coklat-2 border border-coklat-1/25 
+                        rounded-lg hover:bg-coklat-2 hover:text-[#FAF4ED] 
+                        focus:outline-none focus:ring-2 focus:ring-coklat-1/20
+                        active:bg-coklat-2/90
+                        transition-all duration-200 ease-in-out
+                        font-medium shadow-sm">
+                        Simpan
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
 <main class="min-h-screen w-full bg-[#F6F6F6]">
+    <div id="customPopup" class="fixed bottom-4 left-4 sm:bottom-8 sm:left-8 bg-white border border-coklat-1 rounded-md p-3 sm:p-4 shadow-md hidden z-50 w-64 sm:w-80">
+        <p id="popupMessage" class="text-coklat-2 font-poppins mb-2 sm:mb-3 text-sm sm:text-base"></p>
+        <div class="flex justify-end">
+          <button onclick="closePopup()" class="bg-gradient-coklat text-white px-4 py-1 rounded-md hover:opacity-90 transition duration-300 text-xs sm:text-sm">Tutup</button>
+        </div>
+    </div>
     <section class="mx-auto max-w-[1536px] px-8 flex flex-col items-center min-h-screen mt-16">
         <!-- Settings Title -->
         <h1 class="text-4xl font-bold text-coklat-2 mb-6 text-left">Account Settings</h1>
@@ -82,9 +124,15 @@
         <div class="w-full md:w-3/5 lg:w-2/3 h-auto bg-white p-8 rounded-xl shadow-lg" style="border: 0.2px solid rgba(117, 75, 11, 0.25);">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-coklat-2">Informasi Profile</h2>
-                <button onclick="openModal()" class="px-4 py-2 text-coklat-2 border border-coklat-2 rounded-lg hover:bg-coklat-2 hover:text-white transition-colors">
-                    Edit Profile
-                </button>
+                <button onclick="openModal()" 
+                class="px-4 py-2 bg-[#FAF4ED] text-coklat-2 border border-coklat-1/25 
+                       rounded-lg hover:bg-coklat-2 hover:text-coklat-g
+                       focus:outline-none focus:ring-2 focus:ring-coklat-1/20
+                       active:bg-coklat-2/90
+                       transition-all duration-200 ease-in-out
+                       font-medium shadow-sm">
+            Ubah Profile
+        </button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="profileInfo">
                 <!-- Profile Picture -->
@@ -108,7 +156,7 @@
                 </div>
                 <!-- Addresses -->
                 <div class="flex flex-col" id="addressesDisplay">
-                    <label class="text-lg font-bold text-coklat-2 mb-2">Addresses</label>
+                    <label class="text-lg font-bold text-coklat-2 mb-2">Alamat Pengiriman</label>
                     {% for address in addresses %}
                     <div class="mb-2">
                         <p class="font-semibold text-coklat-2">{{ address.title }}</p>
@@ -128,6 +176,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const addAddressBtn = document.getElementById('addAddressBtn');
     const addressesContainer = document.getElementById('addressesContainer');
     let addressCount = {{ addresses|length }};
+
+    {% if open_modal %}
+        document.getElementById('editProfileModal').classList.remove('hidden');
+        document.getElementById('editProfileModal').classList.add('flex');
+    {% endif %}
 
     // Handle modal
     window.openModal = function() {
@@ -156,18 +209,19 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.status === 'success') {
                 closeModal();
                 updateProfileInfo(data);
+                showPopup("Berhasil mengupdate profile");
             } else {
-                console.error('Form errors:', data.errors);
-                alert('There was an error updating your profile. Please check the console for details.');
+                showPopup("Gagal mengupdate profile, mohon dicoba lagi");
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An unexpected error occurred. Please try again later.');
+            showPopup("Gagal mengupdate profile, mohon dicoba lagi");
         });
     });
 
     function updateProfileInfo(data) {
+        
         // Update name
         const nameElement = document.querySelector('#profileInfo div:nth-child(2) p.text-gray-700');
         if (nameElement) {
@@ -199,7 +253,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle adding a new address form
     addAddressBtn.addEventListener('click', function() {
         if(addressCount >= 3){
-            alert('You can only add up to 3 addresses.');
+            showPopup("Maksimal 3 alamat", () => {
+                addAddressBtn.focus();
+            });
             return;
         }
 
@@ -250,5 +306,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+function showPopup(message, callback) {
+    const popup = document.getElementById('customPopup');
+    const popupMessage = document.getElementById('popupMessage');
+    popupMessage.textContent = message;
+    popup.classList.remove('hidden');
+    setTimeout(() => {
+        closePopup();
+        if (callback) callback();
+    }, 3000); 
+}
+
+function closePopup() {
+    const popup = document.getElementById('customPopup');
+    popup.classList.add('hidden');
+}
 </script>
 {% endblock %}

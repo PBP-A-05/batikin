@@ -5,150 +5,95 @@
 
 {% block content %}
 <style>
-    /* Ensure the modal covers the screen */
     #orderModal {
-        z-index: 50; /* Ensure it appears above other elements */
+        z-index: 50; 
     }
 
-    /* When the modal is visible */
     .modal-open {
         display: flex !important;
     }
 
-    /* Hide the modal by default */
     #orderModal.hidden {
         display: none;
     }
 
-    /* Make the modal content scrollable if it exceeds the max-height */
     .modal-content {
-        max-height: 400px;  /* You can adjust the height as needed */
-        overflow-y: auto;   /* Enable vertical scrolling */
+        max-height: 400px;  
+        overflow-y: auto;   
     }
 
+    #orderModal .modal-container {
+        width: 90%; 
+        max-width: 800px;
+    }
+
+    @media (min-width: 768px) {
+        #orderModal .modal-container {
+            width: 70%; 
+        }
+    }
+
+    @media (min-width: 1024px) {
+        #orderModal .modal-container {
+            width: 50%; 
+        }
+    }
+
+    .spinner {
+        border: 8px solid #f3f3f3; 
+        border-top: 8px solid #754B0B; 
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        animation: spin 1s linear infinite;
+        margin: auto; 
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
 </style>
 
 <main class="min-h-screen w-full bg-[#F6F6F6]">
     <section class="mx-auto max-w-[1536px] px-4 md:px-8 flex flex-col items-center min-h-screen mt-8 md:mt-16">
         <h1 class="text-2xl md:text-4xl font-bold text-coklat-2 mb-4 md:mb-6 text-left">Pemesanan</h1>
 
-        <!-- Navigation Tabs -->
         {% include 'partials/nav_tabs.html' with active='pemesanan' %}
 
-        <div class="w-full md:w-3/5 lg:w-2/3 h-auto bg-white p-4 md:p-8 rounded-xl shadow-lg" style="border: 0.2px solid rgba(117, 75, 11, 0.25);">
-            <div class="flex justify-between items-center mb-4 md:mb-6">
-                <h2 class="text-xl md:text-2xl font-bold text-coklat-2">Informasi Booking</h2>
-            </div>
-
-            <div class="flex flex-col md:flex-row p-4 rounded-lg shadow-md bg-[#FAF4ED]" style="border: 0.2px solid rgba(117, 75, 11, 0.35);">
-                <!-- Image placeholder container -->
-                <div class="w-full md:w-1/4 md:flex md:items-stretch mb-4 md:mb-0 md:mr-4 max-md:flex max-md:justify-center">
-                    <div class="w-36 md:w-full h-36 md:h-full bg-[#4a412c]"></div>
-                </div>
-                <!-- Content section -->
-                <div class="w-full md:w-3/4 flex flex-col justify-between">
-                    <div class="flex flex-col md:flex-row justify-between md:items-start">
-                        <div class="w-full md:w-[75%] mb-2 md:mb-0">
-                            <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek- Racanapati - mensbatik slimfit - L</h3>
-                            <p class="text-sm text-gray-600">+2 produk lainnya</p>
-                        </div>
-                        <div class="md:text-right">
-                            <span class="text-lg font-bold text-coklat-2">Rp341.050</span>
-                        </div>
-                    </div>
-                    <!-- Trigger Button -->
-                    <div class="mt-4 flex flex-col md:flex-row justify-end items-start md:items-center space-y-2 md:space-y-0 md:space-x-4">
-                        <a href="javascript:void(0)" class="text-sm font-medium text-coklat-2" onclick="toggleModal()">Lihat Detail Pemesanan</a>
-                        <button class="w-full md:w-auto px-4 py-1 text-sm font-medium bg-white text-coklat-2 border rounded-lg">Ulas</button>
-                    </div>
-                </div>
-            </div>
+        <div class="w-full md:w-3/5 lg:w-2/3 mb-4 flex justify-end items-center">
+            <label for="sortOrder" class="mr-3 text-coklat-2 font-medium">Sort by Harga</label>
+            <select id="sortOrder" 
+                    class="appearance-none bg-[#FAF4ED] border border-coklat-1/25 text-coklat-2 rounded-lg 
+                           px-4 py-2 pr-8 cursor-pointer hover:border-coklat-1/50 focus:outline-none 
+                           focus:ring-2 focus:ring-coklat-1/20 focus:border-coklat-1/30
+                           transition-colors duration-200"
+            >
+                <option value="desc" class="text-coklat-2 bg-[#FAF4ED]">Tinggi ke Rendah</option>
+                <option value="asc" class="text-coklat-2 bg-[#FAF4ED]">Rendah ke Tinggi</option>
+            </select>
         </div>
 
-        <!-- Modal -->
+        <div id="ordersContainer" class="w-full md:w-3/5 lg:w-2/3 h-auto bg-white p-4 md:p-8 rounded-xl shadow-lg" style="border: 0.2px solid rgba(117, 75, 11, 0.25);">
+        </div>
+
         <div id="orderModal" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center hidden">
-            <div class="bg-white w-full max-w-lg p-6 rounded-lg shadow-lg relative">
-                <!-- Close button -->
+            <div class="modal-container bg-white w-full h-[80%] p-6 rounded-lg shadow-lg relative">
                 <button class="absolute top-4 right-4 text-xl font-bold" onclick="toggleModal()">×</button>
                 <h2 class="text-2xl font-bold text-coklat-2 mb-4">Detail Pemesanan</h2>
                 
-                <!-- Scrollable content -->
-                <div class="modal-content overflow-y-auto" style="max-height: 400px;">
-                    <p class="text-lg">Here you can display all the order details...</p>
+                <div class="modal-content overflow-y-auto">
                     
-                    <!-- Add order details here -->
-                    <div class="mt-4">
-                        <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek - Sigma - mensbatik slimfit - L</h3>
-                        <p class="text-sm text-gray-600">Quantity: 2</p>
-                        <p class="text-lg font-bold text-coklat-2">Rp449.000</p>
-                    </div>
-
-                    <!-- Add more product details here -->
-                    <div class="mt-4">
-                        <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek - Racanapati - mensbatik slimfit - L</h3>
-                        <p class="text-sm text-gray-600">Quantity: 1</p>
-                        <p class="text-lg font-bold text-coklat-2">Rp341.050</p>
-                    </div>
-                    
-                    <!-- More products (Example for scroll) -->
-                    <div class="mt-4">
-                        <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek - Another Product</h3>
-                        <p class="text-sm text-gray-600">Quantity: 3</p>
-                        <p class="text-lg font-bold text-coklat-2">Rp500.000</p>
-                    </div>
-
-
-                        
-                    <!-- Add order details here -->
-                    <div class="mt-4">
-                        <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek - Sigma - mensbatik slimfit - L</h3>
-                        <p class="text-sm text-gray-600">Quantity: 2</p>
-                        <p class="text-lg font-bold text-coklat-2">Rp449.000</p>
-                    </div>
-
-                    <!-- Add more product details here -->
-                    <div class="mt-4">
-                        <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek - Racanapati - mensbatik slimfit - L</h3>
-                        <p class="text-sm text-gray-600">Quantity: 1</p>
-                        <p class="text-lg font-bold text-coklat-2">Rp341.050</p>
-                    </div>
-                    
-                    <!-- More products (Example for scroll) -->
-                    <div class="mt-4">
-                        <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek - Another Product</h3>
-                        <p class="text-sm text-gray-600">Quantity: 3</p>
-                        <p class="text-lg font-bold text-coklat-2">Rp500.000</p>
-                    </div>
-
-                        
-                    <!-- Add order details here -->
-                    <div class="mt-4">
-                        <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek - Sigma - mensbatik slimfit - L</h3>
-                        <p class="text-sm text-gray-600">Quantity: 2</p>
-                        <p class="text-lg font-bold text-coklat-2">Rp449.000</p>
-                    </div>
-
-                    <!-- Add more product details here -->
-                    <div class="mt-4">
-                        <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek - Racanapati - mensbatik slimfit - L</h3>
-                        <p class="text-sm text-gray-600">Quantity: 1</p>
-                        <p class="text-lg font-bold text-coklat-2">Rp341.050</p>
-                    </div>
-                    
-                    <!-- More products (Example for scroll) -->
-                    <div class="mt-4">
-                        <h3 class="text-lg font-bold text-coklat-2">Kemeja batik lengan pendek - Another Product</h3>
-                        <p class="text-sm text-gray-600">Quantity: 3</p>
-                        <p class="text-lg font-bold text-coklat-2">Rp500.000</p>
-                    </div>
-
-                    <!-- You can continue adding more items... -->
                 </div>
-
-                <!-- Close button -->
-                <div class="flex justify-end mt-6">
-                    <button class="px-4 py-2 bg-coklat-2 text-white rounded-md" onclick="toggleModal()">Close</button>
+                <div class="flex w-full justify-between">
+                    <div id="orderDetails">
+                    </div>
+                    <div class="flex mt-6 h-8 align-bottom items-end self-end">
+                        <button class="px-4 py-2 bg-coklat-2 text-white rounded-md self-end" onclick="toggleModal()">Close</button>
+                    </div>
                 </div>
+            
+               
             </div>
         </div>
 
@@ -156,9 +101,182 @@
 </main>
 
 <script>
+
+    function formatPrice(price) {
+        const number = parseFloat(price.toString().replace(/[^\d.-]/g, ''));
+        return number.toLocaleString('id-ID');
+    }
+
     function toggleModal() {
         const modal = document.getElementById('orderModal');
         modal.classList.toggle('hidden');
     }
+
+    let allOrders = []; 
+
+    async function fetchOrders() {
+        const ordersContainer = document.getElementById('ordersContainer');
+
+        // Display the loading spinner
+        ordersContainer.innerHTML = `
+            <div class="flex items-center justify-center h-64">
+                <div class="spinner"></div>
+            </div>
+        `;
+
+        try {
+            const response = await fetch('/cart/api/get-order/');
+            console.log('Response:', response);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('Orders data:', data);
+            
+            if (data.orders && Array.isArray(data.orders)) {
+                allOrders = data.orders; 
+                const sortOrderSelect = document.getElementById('sortOrder');
+                const sortOrder = sortOrderSelect.value;
+                displayOrders(allOrders, sortOrder);
+            } else {
+                console.error('Invalid data format:', data);
+                ordersContainer.innerHTML = 
+                    '<p class="text-center text-gray-500 py-4">No orders found</p>';
+            }
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+            ordersContainer.innerHTML = 
+                `<p class="text-center text-red-500 py-4">Error loading orders: ${error.message}</p>`;
+        }
+    }
+
+    function getCsrfToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+
+    async function fetchWithCSRF(url, options = {}) {
+        const csrfToken = getCsrfToken();
+        return fetch(url, {
+            ...options,
+            headers: {
+                ...options.headers,
+                'X-CSRFToken': csrfToken,
+            },
+        });
+    }
+
+    function displayOrders(orders, sortOrder = 'desc') {
+        allOrders = orders; 
+
+        orders.sort((a, b) => {
+            if (sortOrder === 'asc') {
+                return a.total_price - b.total_price; 
+            } else {
+                return b.total_price - a.total_price; 
+            }
+        });
+
+        const ordersContainer = document.getElementById('ordersContainer');
+        ordersContainer.innerHTML = orders.map((order, index) => `
+            <div class="flex flex-col md:flex-row p-4 rounded-lg shadow-md bg-[#FAF4ED] mb-4" style="border: 0.2px solid rgba(117, 75, 11, 0.35);">
+                <div class="w-full md:w-1/4 md:flex md:items-stretch mb-4 md:mb-0 md:mr-4 max-md:flex max-md:justify-center">
+                    ${order.items[0].image_urls ? 
+                        `<img src="${order.items[0].image_urls[0]}" alt="${order.items[0].product_name}" class="w-36 md:w-full h-36 md:h-full object-cover">` :
+                        `<div class="w-36 md:w-full h-36 md:h-full bg-[#4a412c]"></div>`
+                    }
+                </div>
+
+                <div class="w-full md:w-3/4 flex flex-col justify-between">
+                    <div class="flex flex-col md:flex-row justify-between md:items-start">
+                        <div class="w-full md:w-[75%] mb-2 md:mb-0">
+                            <a class="text-lg font-bold text-coklat-2" href="/shopping/${order.items[0].product_id}"> ${order.items[0].product_name}</a>
+                            ${order.items.length > 1 ? 
+                                `<p class="text-sm text-coklat-3">+${order.items.length - 1} produk lainnya</p>` : 
+                                ''
+                            }
+                        </div>
+                        <div class="md:text-right">
+                            <span class="text-lg font-bold text-coklat-2">Rp${formatPrice(order.total_price)}</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 flex flex-col md:flex-row justify-end items-start md:items-center space-y-2 md:space-y-0 md:space-x-4">
+                        <a href="javascript:void(0)" 
+                        onclick="showOrderDetails(${index})" 
+                        class="text-sm font-medium text-coklat-2">
+                            Lihat Detail Pemesanan
+                        </a>
+                        <button class="w-full md:w-auto px-4 py-1 text-sm font-medium bg-white text-coklat-2 border rounded-lg" onclick="window.location.href='/shopping/${order.items[0].product_id}'">
+                            Ulas
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function showOrderDetails(orderIndex) {
+        const order = allOrders[orderIndex]; 
+
+        const itemsHtml = order.items.map(item => `
+        <div class="flex flex-col md:flex-row items-center md:items-start mt-4 bg-[#FAF4ED] p-4 rounded-lg">
+            <!-- Image container -->
+            <div class="w-full md:w-1/3 mb-4 md:mb-0">
+                ${item.image_urls ? 
+                    `<img src="${item.image_urls[0]}" 
+                        alt="${item.product_name}" 
+                            class="w-full max-w-[200px] md:max-w-full h-auto object-cover rounded-md mx-auto md:mx-0">` :
+                        `<div class="w-full h-32 bg-gray-200 rounded-md"></div>`
+                    }
+                </div>
+
+                <!-- Content container -->
+                <div class="w-full md:w-2/3 md:pl-4 text-center md:text-left">
+                    <a class="text-lg font-bold text-coklat-2 hover:underline" 
+                    href="/shopping/${item.product_id}">
+                        ${item.product_name}
+                    </a>
+                    <div class="mt-2 space-y-1">
+                        <p class="text-sm text-gray-600">Quantity: ${item.quantity}</p>
+                        <p class="text-lg font-bold text-coklat-2">Rp${formatPrice(item.price)}</p>
+                    </div>
+                </div>
+            </div>
+         `).join('');
+
+        const orderDetailsHtml = `
+            <div class="mt-4">
+                <h3 class="text-lg font-bold text-coklat-2">Alamat Pengiriman</h3>
+                <p class="text-sm text-gray-600 font-bold">${order.address.title}</p>
+                <p class="text-sm text-gray-600">${order.address.address}</p>
+            </div>
+            <div class="mt-4">
+                <h3 class="text-lg font-bold text-coklat-2">Total Harga</h3>
+                <p class="text-lg font-bold text-coklat-2">Rp${formatPrice(order.total_price)}</p>
+            </div>
+        `;
+
+        const modalContentDiv = document.querySelector('#orderModal .modal-content');
+        modalContentDiv.innerHTML = itemsHtml;
+        document.getElementById('orderDetails').innerHTML = orderDetailsHtml;
+        
+        toggleModal();
+    }
+
+    document.getElementById('sortOrder').addEventListener('change', handleSortOrderChange);
+
+    function handleSortOrderChange() {
+        const sortOrderSelect = document.getElementById('sortOrder');
+        const sortOrder = sortOrderSelect.value;
+        displayOrders(allOrders, sortOrder);
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchOrders);
+    
 </script>
+
+{% csrf_token %}
+
 {% endblock %}

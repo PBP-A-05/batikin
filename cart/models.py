@@ -19,6 +19,7 @@ class Order(models.Model):
     address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
+    address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='cart_items')
