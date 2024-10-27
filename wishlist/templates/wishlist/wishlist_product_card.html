@@ -37,7 +37,6 @@
 </div>
 
 <script>
-    // Check if the DOM content is loaded before executing functions
     document.addEventListener('DOMContentLoaded', function() {
         const productId = "{{ product.id }}";
         const addToCartButton = document.getElementById(`addToCartButton_${productId}`);
@@ -53,7 +52,6 @@
             }
         }
 
-        // Function to add to cart
         function addToCart(productId, productName, productPrice) {
             let cart = JSON.parse(localStorage.getItem('cart')) || {};
             const quantity = 1;
@@ -87,7 +85,6 @@
             });
         }
 
-        // Function to remove from wishlist
         function removeFromWishlist(productId) {
             fetch(`/wishlist/remove_from_wishlist/${productId}/`, {
                 method: "POST",
@@ -108,7 +105,6 @@
             .catch(error => console.error("Error:", error));
         }
 
-        // Function to toggle the note input display
         function toggleNoteInput(productId) {
             const noteInputContainer = document.getElementById(`noteInputContainer_${productId}`);
             if (noteInputContainer) {
@@ -118,7 +114,6 @@
             }
         }
 
-        // Function to save a note
         function saveNote(productId) {
             const noteInput = document.getElementById(`noteInput_${productId}`);
             const noteText = noteInput.value;
@@ -129,14 +124,12 @@
             showPopup("Catatan berhasil disimpan!");
         }
 
-        // Function to display a note
         function displayNote(productId) {
             const noteDisplay = document.getElementById(`noteDisplay_${productId}`);
             const noteText = localStorage.getItem(`note_${productId}`);
             noteDisplay.innerHTML = noteText ? `<p class="text-gray-700 italic">Catatan: ${noteText}</p>` : "";
         }
 
-        // Function to show popup messages
         function showPopup(message) {
             const popup = document.getElementById('customPopup');
             const popupMessage = document.getElementById('popupMessage');
@@ -147,7 +140,7 @@
             }, 3000);
         }
 
-        // Initial checks for cart and notes
+        
         checkCartStatus();
         displayNote(productId);
     });

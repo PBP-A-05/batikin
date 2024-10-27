@@ -7,10 +7,19 @@ from cart.models import Cart, CartItem
 from .models import Wishlist  
 from shopping.models import Product  
 from uuid import UUID
+from django.db.models import F
 
 @login_required
 def wishlist_view(request):
+    sort_by = request.GET.get('sort', 'price_asc')  
+
     wishlist_items = Wishlist.objects.filter(user=request.user).select_related('product')
+    
+    if sort_by == 'price_desc':
+        wishlist_items = wishlist_items.order_by(F('product__price').desc())
+    else:  
+        wishlist_items = wishlist_items.order_by(F('product__price').asc())
+
     wishlist_count = wishlist_items.count()
 
     return render(request, 'wishlist/wishlist_view.html', {
@@ -35,7 +44,6 @@ def add_to_wishlist(request, product_id):
         
         return JsonResponse({'message': message, 'status': status})
     
-    # Return error if request method is not POST
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 @login_required
@@ -54,13 +62,12 @@ def remove_from_wishlist(request, product_id):
         
         return JsonResponse({'success': success, 'message': message})
     
-    # Return error if request method is not POST
     return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=400)
 
 
 @login_required
 def add_to_cart(request, product_id):
-    product = get_object_or_404(Product, id=product_id)  # This will now accept a UUID
+    product = get_object_or_404(Product, id=product_id)  
     data = json.loads(request.body)
     quantity = int(data.get('quantity', 1))
 
@@ -88,7 +95,7 @@ def add_to_cart(request, product_id):
 @login_required
 def remove_from_cart(request, product_id):
     try:
-        # Ensure product_id is treated as a UUID
+
         cart = Cart.objects.get(user=request.user)
         cart_item = CartItem.objects.get(cart=cart, product__id=product_id)
         cart_item.delete()

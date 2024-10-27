@@ -14,6 +14,17 @@
             </p>
         </div>
 
+        <!-- Sorting Options -->
+        <div class="flex justify-end mb-4 mr-20">
+            <a href="?sort=price_asc" class="px-4 py-2 border border-[#D8CDB3] rounded bg-[#F0E8D9] text-[#754B0B] hover:bg-[#D8CDB3] transition duration-300">
+                Sort by Price: Low to High
+            </a>
+            <a href="?sort=price_desc" class="ml-2 px-4 py-2 border border-[#D8CDB3] rounded bg-[#F0E8D9] text-[#754B0B] hover:bg-[#D8CDB3] transition duration-300">
+                Sort by Price: High to Low
+            </a>
+        </div>
+
+
         <!-- Wishlist Items Grid -->
         {% if wishlist_items %}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
@@ -87,20 +98,16 @@
 </div>
 
 <script>
-    // Function to add/remove product to/from the cart
-    // Function to add/remove product to/from the cart
 function addToCart(productId, productName, productPrice) {
     let cart = JSON.parse(localStorage.getItem('cart')) || {};
     const addToCartButton = document.getElementById(`addToCartButton_${productId}`);
 
     if (cart[productId]) {
-        // Remove from cart
         delete cart[productId];
         localStorage.setItem('cart', JSON.stringify(cart));
         addToCartButton.textContent = "Tambahkan ke keranjangmu";
         showPopup("Produk dihapus dari keranjang!");
 
-        // Remove from server-side cart
         fetch(`cart/remove/${productId}/`, {
             method: "POST",
             headers: {
@@ -121,13 +128,11 @@ function addToCart(productId, productName, productPrice) {
             showPopup("Terjadi kesalahan saat menghapus dari keranjang.");
         });
     } else {
-        // Add to cart
         cart[productId] = { id: productId, name: productName, price: productPrice, quantity: 1 };
         localStorage.setItem('cart', JSON.stringify(cart));
         addToCartButton.textContent = "Sudah ada di keranjangmu";
         showPopup("Produk berhasil ditambahkan ke keranjang!");
 
-        // Add to server-side cart
         fetch(`cart/add/${productId}/`, {
             method: "POST",
             headers: {
@@ -175,13 +180,11 @@ function addToCart(productId, productName, productPrice) {
         }
 
 
-    // Function to toggle note input visibility
     function toggleNoteInput(productId) {
         const noteInputContainer = document.getElementById(`noteInputContainer_${productId}`);
         if (noteInputContainer) noteInputContainer.classList.toggle('hidden');
     }
 
-    // Function to save a note
     function saveNote(productId) {
         const noteInput = document.getElementById(`noteInput_${productId}`);
         if (noteInput) {
@@ -193,14 +196,12 @@ function addToCart(productId, productName, productPrice) {
         }
     }
 
-    // Function to display a saved note
     function displayNote(productId) {
         const noteDisplay = document.getElementById(`noteDisplay_${productId}`);
         const noteText = localStorage.getItem(`note_${productId}`);
         noteDisplay.innerHTML = noteText ? `<p class="text-gray-700 italic">Catatan: ${noteText}</p>` : "";
     }
 
-    // Function to show popup messages
     function showPopup(message) {
         const popup = document.getElementById('customPopup');
         const popupMessage = document.getElementById('popupMessage');
@@ -214,8 +215,6 @@ function addToCart(productId, productName, productPrice) {
     popup.classList.add('hidden');
     }
 
-
-    // Initialize cart status and load notes on page load
     document.addEventListener('DOMContentLoaded', function() {
         const wishlistItems = document.querySelectorAll('.product-card');
         wishlistItems.forEach(item => {
