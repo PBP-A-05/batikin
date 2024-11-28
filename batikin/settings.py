@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-bmxnn0ux!saqzi00pey0^=af!d&q*n$_3k3zs6eo-=$+kh+9y2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['daanish-inayat-batikin.pbp.cs.ui.ac.id', '12', "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ['daanish-inayat-batikin.pbp.cs.ui.ac.id', '12', "localhost", "127.0.0.1", '10.0.2.2']
 STATIC_URL = '/static/'
 
 
@@ -41,6 +41,13 @@ if DEBUG:
 else:
     STATIC_ROOT = BASE_DIR / 'static' # merujuk ke /static root project pada mode production
 
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
 # Application definition
 ###
 INSTALLED_APPS = [
@@ -58,10 +65,12 @@ INSTALLED_APPS = [
     'booking',
     'cart',
     'comment_review',
-
+    'authentication',
+    'corsheaders',
 ]   
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.contrib.sessions.middleware.SessionMiddleware",
