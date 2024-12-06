@@ -9,4 +9,6 @@ urlpatterns = [
     path('wishlist/add/<uuid:product_id>/', views.add_to_wishlist, name='add_to_wishlist'),
     path('cart/add/<uuid:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('api/get-product/<uuid:product_id>/', views.get_product, name='get_product'),
+    path('json/', views.show_json, name='show_json'),
+    path('json/<uuid:id>/', views.show_json_by_id, name='show_json_by_id'),  # Perbarui tipe parameter menjadi uuid
 ]
