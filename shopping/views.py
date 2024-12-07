@@ -11,6 +11,7 @@ from django.http import HttpResponse
 from django.core import serializers
 from .models import Product
 import uuid
+from django.views.decorators.csrf import csrf_exempt
 
 def product_list(request):
     category = request.GET.get('category', 'all')
@@ -122,6 +123,7 @@ def show_json_by_id(request, id):
     data = Product.objects.filter(pk=id)  
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
+@csrf_exempt
 @login_required
 def add_to_cart_json(request, product_id):
     try:
