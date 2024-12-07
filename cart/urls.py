@@ -13,4 +13,7 @@ urlpatterns = [
     path('cart/remove/<uuid:product_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('create_order/', views.create_order, name='create_order'),
     path('api/get-order/', views.get_orders_by_user, name='get-order'),
+    
+    # flutter
+    path('api/view/', views.view_cart_json, name='view_cart_json'),
 ]

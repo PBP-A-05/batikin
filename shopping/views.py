@@ -115,9 +115,50 @@ def get_product(request, product_id):
     })
 
 def show_json(request):
-    data = Product.objects.all()  # Mengambil semua produk
+    data = Product.objects.all()  
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 def show_json_by_id(request, id):
-    data = Product.objects.filter(pk=id)  # Mengambil produk berdasarkan ID
+    data = Product.objects.filter(pk=id)  
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+
+@login_required
+def add_to_cart_json(request, product_id):
+    try:
+        product = get_object_or_404(Product, id=product_id)
+        
+        if request.method == 'POST':
+            data = json.loads(request.body)
+            quantity = int(data.get('quantity', 1))
+        else:  # GET request
+            quantity = int(request.GET.get('quantity', 1))
+
+        price = Decimal(str(product.price).replace('Rp', '').replace('.', '').replace(',', '.'))
+        cart, created = Cart.objects.get_or_create(user=request.user)
+
+        cart_item, created = CartItem.objects.get_or_create(
+            cart=cart,
+            product=product,
+            defaults={'quantity': quantity, 'price': price}
+        )
+        
+        if not created:
+            cart_item.quantity += quantity
+            cart_item.save()
+
+        return JsonResponse({
+            'status': 'success',
+            'message': f'{quantity} produk berhasil dimasukkan ke keranjang!',
+            'data': {
+                'cart_item_id': cart_item.id,
+                'product_id': str(product.id),
+                'product_name': product.product_name,
+                'quantity': cart_item.quantity,
+                'price': str(price)
+            }
+        })
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)

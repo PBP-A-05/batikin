@@ -233,3 +233,43 @@ def get_orders_by_user(request):
             'status': 'error',
             'message': 'Failed to fetch orders'
         }, status=500)
+
+@login_required
+def view_cart_json(request):
+    try:
+        cart_items = CartItem.objects.filter(cart__user=request.user).order_by('-id')
+        
+        total_price = Decimal('0.0')
+        total_quantity = 0
+        items_data = []
+
+        for item in cart_items:
+            price = Decimal(str(item.product.price).replace('Rp', '').replace('.', '').replace(',', '.'))
+            item_total = price * item.quantity
+            total_price += item_total
+            total_quantity += item.quantity
+            
+            items_data.append({
+                'id': item.id,
+                'product_id': str(item.product.id),
+                'product_name': item.product.product_name,
+                'price': str(price),
+                'quantity': item.quantity,
+                'item_total': str(item_total),
+                'image_urls': item.product.image_urls,
+                'category': item.product.category
+            })
+
+        return JsonResponse({
+            'status': 'success',
+            'data': {
+                'cart_items': items_data,
+                'total_price': str(total_price),
+                'total_quantity': total_quantity
+            }
+        })
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
