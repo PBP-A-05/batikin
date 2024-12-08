@@ -29,8 +29,12 @@ DEBUG = True
 ALLOWED_HOSTS = ['daanish-inayat-batikin.pbp.cs.ui.ac.id', '12', "localhost", "127.0.0.1", '10.0.2.2']
 STATIC_URL = '/static/'
 
-
-
+CSRF_TRUSTED_ORIGINS = [
+    'https://daanish-inayat-batikin.pbp.cs.ui.ac.id',
+    'http://localhost',
+    'http://127.0.0.1',
+    'http://10.0.2.2',
+]
 PRODUCTION = os.getenv("PRODUCTION", False)
 DEBUG = not PRODUCTION
 STATIC_URL = '/static/'
