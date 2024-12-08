@@ -29,20 +29,6 @@ DEBUG = True
 ALLOWED_HOSTS = ['daanish-inayat-batikin.pbp.cs.ui.ac.id', '12', "localhost", "127.0.0.1", '10.0.2.2']
 STATIC_URL = '/static/'
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:51199",
-    "http://127.0.0.1:51199",
-    "http://localhost:3000",
-    "http://127.0.0.1:8000",
-]
-
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:51199",
-    "http://127.0.0.1:51199",
-    "http://localhost:3000",
-    "http://127.0.0.1:8000",
-]
-
 PRODUCTION = os.getenv("PRODUCTION", False)
 DEBUG = not PRODUCTION
 STATIC_URL = '/static/'
@@ -63,6 +49,7 @@ SESSION_COOKIE_SAMESITE = 'None'
 # Application definition
 ###
 INSTALLED_APPS = [
+    'corsheaders',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -78,7 +65,7 @@ INSTALLED_APPS = [
     'cart',
     'comment_review',
     'authentication',
-    'corsheaders',
+    
 ]   
 
 MIDDLEWARE = [
@@ -188,4 +175,12 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:8000",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:8000",
 ]

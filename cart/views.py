@@ -8,6 +8,8 @@ from shopping.models import Product
 from user_profile.models import Address
 from decimal import Decimal, InvalidOperation
 import json
+from django.views.decorators.csrf import csrf_exempt
+from django.core.serializers import serialize
 
 @login_required(login_url='/login')
 def view_cart(request):
@@ -274,25 +276,17 @@ def view_cart_json(request):
             'message': str(e)
         }, status=500)
     
+@csrf_exempt  # Tambahkan ini untuk development
 @login_required
 def update_cart_item_json(request, item_id):
-    if request.method in ["POST", "GET"]:
+    if request.method == "POST":
         try:
             cart_item = CartItem.objects.get(id=item_id, cart__user=request.user)
-            if request.method == "POST":
-                data = json.loads(request.body)
-                quantity = int(data.get('quantity', 1))
-            else:
-                quantity = int(request.GET.get('quantity', 1))
+            quantity = int(request.POST.get('quantity', 1))
             
             if quantity > 0:
                 cart_item.quantity = quantity
                 cart_item.save()
-                
-                # Format price for response
-                price_str = str(cart_item.product.price)
-                price = Decimal(price_str.replace('Rp', '').replace('.', '').replace(',', '.'))
-                item_total = price * cart_item.quantity
                 
                 return JsonResponse({
                     'status': 'success',
@@ -300,21 +294,11 @@ def update_cart_item_json(request, item_id):
                     'data': {
                         'item_id': cart_item.id,
                         'quantity': cart_item.quantity,
-                        'price': str(price),
-                        'item_total': str(item_total)
+                        'price': str(cart_item.product.price),
+                        'item_total': str(cart_item.product.price * cart_item.quantity)
                     }
                 })
-            else:
-                cart_item.delete()
-                return JsonResponse({
-                    'status': 'success',
-                    'message': 'Item removed from cart',
-                    'data': {
-                        'item_id': item_id,
-                        'deleted': True
-                    }
-                })
-                
+            
         except CartItem.DoesNotExist:
             return JsonResponse({
                 'status': 'error',
@@ -331,12 +315,14 @@ def update_cart_item_json(request, item_id):
         'message': 'Invalid request method'
     }, status=405)
 
+@csrf_exempt  # Tambahkan ini untuk development
 @login_required
 def remove_from_cart_json(request, item_id):
-    if request.method in ["DELETE", "GET"]:
+    if request.method == "POST":
         try:
             cart_item = CartItem.objects.get(id=item_id, cart__user=request.user)
             cart_item.delete()
+            
             return JsonResponse({
                 'status': 'success',
                 'message': 'Item removed from cart',
@@ -344,6 +330,7 @@ def remove_from_cart_json(request, item_id):
                     'item_id': item_id
                 }
             })
+            
         except CartItem.DoesNotExist:
             return JsonResponse({
                 'status': 'error',
