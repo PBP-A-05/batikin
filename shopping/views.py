@@ -7,6 +7,10 @@ from cart.models import Cart, CartItem
 from comment_review.models import Review
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden
 import json
+from django.http import HttpResponse
+from django.core import serializers
+from .models import Product
+import uuid
 
 def product_list(request):
     category = request.GET.get('category', 'all')
@@ -109,3 +113,11 @@ def get_product(request, product_id):
         'category': product.category,
         'category_display': product.category,
     })
+
+def show_json(request):
+    data = Product.objects.all()  # Mengambil semua produk
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+
+def show_json_by_id(request, id):
+    data = Product.objects.filter(pk=id)  # Mengambil produk berdasarkan ID
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
