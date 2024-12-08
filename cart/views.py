@@ -56,7 +56,7 @@ def sort_cart_items(request):
         cart_items = cart_items.filter(product__category='pakaian_wanita')
     elif sort_by == 'accessories':
         cart_items = cart_items.filter(product__category='aksesoris')
-    else:  # 'added' or default
+    else:  
         cart_items = cart_items.order_by('-id')
 
     items_with_totals = []
@@ -236,6 +236,8 @@ def get_orders_by_user(request):
             'message': 'Failed to fetch orders'
         }, status=500)
 
+# json api starts here
+
 @login_required
 def view_cart_json(request):
     try:
@@ -276,7 +278,7 @@ def view_cart_json(request):
             'message': str(e)
         }, status=500)
     
-@csrf_exempt  # Tambahkan ini untuk development
+@csrf_exempt
 @login_required
 def update_cart_item_json(request, item_id):
     if request.method == "POST":
@@ -315,7 +317,7 @@ def update_cart_item_json(request, item_id):
         'message': 'Invalid request method'
     }, status=405)
 
-@csrf_exempt  # Tambahkan ini untuk development
+@csrf_exempt  
 @login_required
 def remove_from_cart_json(request, item_id):
     if request.method == "POST":
@@ -346,3 +348,58 @@ def remove_from_cart_json(request, item_id):
         'status': 'error',
         'message': 'Invalid request method'
     }, status=405)
+
+@csrf_exempt
+@login_required
+def sort_cart_items_json(request):
+    try:
+        sort_by = request.GET.get('sort_by') if request.method == "GET" else request.POST.get('sort_by')
+        sort_by = sort_by if sort_by else 'added'  
+        
+        cart_items = CartItem.objects.filter(cart__user=request.user)
+
+        if sort_by == 'men':
+            cart_items = cart_items.filter(product__category='pakaian_pria')
+        elif sort_by == 'women':
+            cart_items = cart_items.filter(product__category='pakaian_wanita')
+        elif sort_by == 'accessories':
+            cart_items = cart_items.filter(product__category='aksesoris')
+        else:  
+            cart_items = cart_items.order_by('-id')
+
+        items_data = []
+        total_price = Decimal('0.0')
+        total_quantity = 0
+
+        for item in cart_items:
+            price = Decimal(str(item.product.price).replace('Rp', '').replace('.', '').replace(',', '.'))
+            item_total = price * item.quantity
+            total_price += item_total
+            total_quantity += item.quantity
+
+            items_data.append({
+                'id': item.id,
+                'product_id': str(item.product.id),
+                'product_name': item.product.product_name,
+                'price': str(price),
+                'quantity': item.quantity,
+                'item_total': str(item_total),
+                'image_urls': item.product.image_urls,
+                'category': item.product.category
+            })
+
+        return JsonResponse({
+            'status': 'success',
+            'data': {
+                'cart_items': items_data,
+                'total_price': str(total_price),
+                'total_quantity': total_quantity
+            }
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
+
