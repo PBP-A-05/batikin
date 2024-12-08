@@ -223,8 +223,7 @@ def get_orders_by_user(request):
             except Exception as e:
                 print(f"Error processing order {order.id}: {str(e)}") 
                 continue
-        
-        return JsonResponse({'orders': orders_data})
+        return JsonResponse({'orders': orders_data, 'status': 'success'})
     
     except Exception as e:
         import traceback
