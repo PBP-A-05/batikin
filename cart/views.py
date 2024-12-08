@@ -273,3 +273,89 @@ def view_cart_json(request):
             'status': 'error',
             'message': str(e)
         }, status=500)
+    
+@login_required
+def update_cart_item_json(request, item_id):
+    if request.method in ["POST", "GET"]:
+        try:
+            cart_item = CartItem.objects.get(id=item_id, cart__user=request.user)
+            if request.method == "POST":
+                data = json.loads(request.body)
+                quantity = int(data.get('quantity', 1))
+            else:
+                quantity = int(request.GET.get('quantity', 1))
+            
+            if quantity > 0:
+                cart_item.quantity = quantity
+                cart_item.save()
+                
+                # Format price for response
+                price_str = str(cart_item.product.price)
+                price = Decimal(price_str.replace('Rp', '').replace('.', '').replace(',', '.'))
+                item_total = price * cart_item.quantity
+                
+                return JsonResponse({
+                    'status': 'success',
+                    'message': 'Quantity updated successfully',
+                    'data': {
+                        'item_id': cart_item.id,
+                        'quantity': cart_item.quantity,
+                        'price': str(price),
+                        'item_total': str(item_total)
+                    }
+                })
+            else:
+                cart_item.delete()
+                return JsonResponse({
+                    'status': 'success',
+                    'message': 'Item removed from cart',
+                    'data': {
+                        'item_id': item_id,
+                        'deleted': True
+                    }
+                })
+                
+        except CartItem.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Cart item not found'
+            }, status=404)
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=400)
+    
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request method'
+    }, status=405)
+
+@login_required
+def remove_from_cart_json(request, item_id):
+    if request.method in ["DELETE", "GET"]:
+        try:
+            cart_item = CartItem.objects.get(id=item_id, cart__user=request.user)
+            cart_item.delete()
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Item removed from cart',
+                'data': {
+                    'item_id': item_id
+                }
+            })
+        except CartItem.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Cart item not found'
+            }, status=404)
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=400)
+    
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request method'
+    }, status=405)

@@ -16,4 +16,6 @@ urlpatterns = [
     
     # flutter
     path('api/view/', views.view_cart_json, name='view_cart_json'),
+    path('api/update/<int:item_id>/', views.update_cart_item_json, name='update_cart_item_json'),
+    path('api/remove/<int:item_id>/', views.remove_from_cart_json, name='remove_from_cart_json'),
 ]
