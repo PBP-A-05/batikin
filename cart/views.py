@@ -78,7 +78,7 @@ def sort_cart_items(request):
 
 @login_required
 def add_to_cart(request, product_id):
-    product = get_object_or_404(Product, id=product_id)  # This will now accept a UUID
+    product = get_object_or_404(Product, id=product_id)  
     data = json.loads(request.body)
     quantity = int(data.get('quantity', 1))
 
@@ -106,7 +106,6 @@ def add_to_cart(request, product_id):
 @login_required
 def remove_from_cart(request, product_id):
     try:
-        # Ensure product_id is treated as a UUID
         cart = Cart.objects.get(user=request.user)
         cart_item = CartItem.objects.get(cart=cart, product__id=product_id)
         cart_item.delete()
@@ -171,7 +170,7 @@ def create_order(request):
                 quantity=int(item['quantity']),
                 price=float(item['price']),
             )
-            # Hapus item dari keranjang setelah berhasil membuat OrderItem
+            
             CartItem.objects.filter(cart__user=request.user, product=product).delete()
         except Product.DoesNotExist:
             order.delete()
