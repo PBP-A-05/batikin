@@ -173,3 +173,113 @@ def update_user_info(request):
         }, status=200)
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
+
+@csrf_exempt
+@login_required
+def update_addresses(request):
+    if request.method == 'POST':
+        if request.content_type == 'application/json':
+            try:
+                data = json.loads(request.body)
+            except json.JSONDecodeError:
+                return JsonResponse({"status": False, "message": "Invalid JSON."}, status=400)
+        else:
+            data = request.POST
+
+        addresses = data.get('addresses')
+
+        if not addresses or not isinstance(addresses, list):
+            return JsonResponse({"status": False, "message": "Addresses must be a list."}, status=400)
+
+        errors = []
+        for idx, addr in enumerate(addresses):
+            title = addr.get('title')
+            address = addr.get('address')
+            if not title or not address:
+                errors.append(f"Address at index {idx} is missing 'title' or 'address'.")
+
+        if errors:
+            return JsonResponse({"status": False, "errors": errors}, status=400)
+
+        user = request.user
+
+        # Delete existing addresses
+        Address.objects.filter(user=user).delete()
+
+        # Create new Address objects
+        new_addresses = []
+        for addr in addresses:
+            address_obj = Address.objects.create(
+                user=user,
+                title=addr['title'],
+                address=addr['address']
+            )
+            new_addresses.append({
+                "id": address_obj.id,
+                "title": address_obj.title,
+                "address": address_obj.address,
+            })
+
+        return JsonResponse({
+            "status": "success",
+            "addresses": new_addresses
+        }, status=200)
+
+    return JsonResponse({"status": False, "message": "Invalid request method."}, status=400)
+
+@csrf_exempt
+@login_required
+def update_address_flutter(request):
+    if request.method == 'POST':
+        if request.content_type == 'application/json':
+            try:
+                data = json.loads(request.body)
+            except json.JSONDecodeError:
+                return JsonResponse({"status": False, "message": "Invalid JSON."}, status=400)
+        else:
+            data = request.POST
+
+        address_id = data.get('id')
+        title = data.get('title')
+        address = data.get('address')
+
+        errors = {}
+        if not title:
+            errors['title'] = "Title is required."
+            print("Title is required.")
+        if not address:
+            errors['address'] = "Address is required."
+            print("Address is required.")
+
+        if errors:
+            print("Errors:", errors)
+            return JsonResponse({"status": False, "errors": errors}, status=400)
+
+        user = request.user
+
+        if address_id:
+            try:
+                address_obj = Address.objects.get(id=address_id, user=user)
+                address_obj.title = title
+                address_obj.address = address
+                address_obj.save()
+                status_update = "updated"
+                print("Address updated:", address_obj)
+
+            except Address.DoesNotExist:
+                return JsonResponse({"status": False, "message": "Address with this ID does not exist."}, status=400)
+        else:
+            address_obj = Address.objects.create(user=user, title=title, address=address)
+            status_update = "created"
+
+        return JsonResponse({
+            "status": "success",
+            "address": {
+                "id": address_obj.id,
+                "title": address_obj.title,
+                "address": address_obj.address,
+                "status": status_update
+            }
+        }, status=200)
+
+    return JsonResponse({"status": False, "message": "Invalid request method."}, status=400)
