@@ -122,7 +122,6 @@ def get_user_info(request):
         'username': user.username,
         'addresses': addresses_list,
     }
-    
     return JsonResponse(data)
 
 @csrf_exempt
