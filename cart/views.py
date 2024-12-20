@@ -401,3 +401,152 @@ def sort_cart_items_json(request):
             'message': str(e)
         }, status=500)
 
+@csrf_exempt
+@login_required
+def create_order_json(request):
+    if request.method == "GET":
+        # For testing in browser
+        address_id = request.GET.get('address_id')
+        product_id = request.GET.get('product_id')
+        quantity = request.GET.get('quantity', 1)
+        price = request.GET.get('price')
+
+        if not all([address_id, product_id, price]):
+            return JsonResponse({'status': 'error', 'message': 'Missing required parameters'})
+
+        try:
+            address = Address.objects.get(id=address_id, user=request.user)
+            items = [{
+                'product_id': product_id,
+                'quantity': quantity,
+                'price': price
+            }]
+            
+            total_price = float(price) * int(quantity)
+
+            order = Order.objects.create(
+                user=request.user,
+                address=address,
+                total_price=total_price,
+            )
+
+            product = Product.objects.get(id=product_id)
+            OrderItem.objects.create(
+                order=order,
+                product=product,
+                quantity=int(quantity),
+                price=float(price),
+            )
+
+            CartItem.objects.filter(cart__user=request.user, product=product).delete()
+
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Order created successfully',
+                'order': {
+                    'id': order.id,
+                    'total_price': str(order.total_price),
+                    'address': {
+                        'id': address.id,
+                        'title': address.title,
+                        'address': address.address
+                    }
+                }
+            })
+        except Address.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Address not found'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+    elif request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            address_id = data.get('address_id')
+            items = data.get('items')
+
+            if not address_id or not items:
+                return JsonResponse({'status': 'error', 'message': 'Missing required data'})
+
+            address = Address.objects.get(id=address_id, user=request.user)
+            total_price = sum(float(item['price']) * int(item['quantity']) for item in items)
+
+            order = Order.objects.create(
+                user=request.user,
+                address=address,
+                total_price=total_price,
+            )
+
+            for item in items:
+                product = Product.objects.get(id=item['product_id'])
+                OrderItem.objects.create(
+                    order=order,
+                    product=product,
+                    quantity=int(item['quantity']),
+                    price=float(item['price']),
+                )
+                CartItem.objects.filter(cart__user=request.user, product=product).delete()
+
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Order created successfully',
+                'order': {
+                    'id': order.id,
+                    'total_price': str(order.total_price),
+                    'address': {
+                        'id': address.id,
+                        'title': address.title,
+                        'address': address.address
+                    }
+                }
+            })
+
+        except Address.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Address not found'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+@login_required
+def get_orders_json(request):
+    try:
+        orders = Order.objects.filter(user=request.user)
+        orders_data = []
+
+        for order in orders:
+            order_items = OrderItem.objects.filter(order=order)
+            items_data = []
+
+            for item in order_items:
+                items_data.append({
+                    'product_id': str(item.product.id),
+                    'product_name': item.product.product_name,
+                    'quantity': item.quantity,
+                    'price': str(item.price),
+                    'image_urls': item.product.image_urls,
+                    'category': item.product.category,
+                })
+
+            order_data = {
+                'id': order.id,
+                'total_price': str(order.total_price),
+                'created_at': order.created_at.isoformat(),
+                'address': {
+                    'id': order.address.id,
+                    'title': order.address.title,
+                    'address': order.address.address
+                } if order.address else None,
+                'items': items_data
+            }
+            orders_data.append(order_data)
+
+        return JsonResponse({
+            'status': 'success',
+            'orders': orders_data
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)

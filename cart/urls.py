@@ -19,4 +19,6 @@ urlpatterns = [
     path('api/update/<int:item_id>/', views.update_cart_item_json, name='update_cart_item_json'),
     path('api/remove/<int:item_id>/', views.remove_from_cart_json, name='remove_from_cart_json'),
     path('api/sort/', views.sort_cart_items_json, name='sort_cart_items_json'),
+    path('api/create_order/', views.create_order_json, name='create_order_json'),
+    path('api/orders/', views.get_orders_json, name='get_orders_json'),
 ]
