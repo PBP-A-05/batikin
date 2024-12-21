@@ -19,3 +19,13 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review by {self.user.username} for {self.product.name}: {self.rating} stars"
+
+    def to_dict(self):
+        return {
+            'id': str(self.id),
+            'user': self.user.username,
+            'product': str(self.product.id),
+            'rating': self.rating,
+            'review': self.review,
+            'created_at': self.created_at.isoformat(),
+        }

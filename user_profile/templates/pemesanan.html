@@ -145,7 +145,7 @@
             } else {
                 console.error('Invalid data format:', data);
                 ordersContainer.innerHTML = 
-                    '<p class="text-center text-gray-500 py-4">No orders found</p>';
+                    '<p class="text-center text-gray-500 py-4">Tidak ada order ditemukan</p>';
             }
         } catch (error) {
             console.error('Error fetching orders:', error);
@@ -241,7 +241,7 @@
                         ${item.product_name}
                     </a>
                     <div class="mt-2 space-y-1">
-                        <p class="text-sm text-gray-600">Quantity: ${item.quantity}</p>
+                        <p class="text-sm text-coklat-2">Quantity: ${item.quantity}</p>
                         <p class="text-lg font-bold text-coklat-2">Rp${formatPrice(item.price)}</p>
                     </div>
                 </div>
@@ -251,8 +251,8 @@
         const orderDetailsHtml = `
             <div class="mt-4">
                 <h3 class="text-lg font-bold text-coklat-2">Alamat Pengiriman</h3>
-                <p class="text-sm text-gray-600 font-bold">${order.address.title}</p>
-                <p class="text-sm text-gray-600">${order.address.address}</p>
+                <p class="text-sm text-coklat-2 font-bold">${order.address.title}</p>
+                <p class="text-sm text-coklat-2">${order.address.address}</p>
             </div>
             <div class="mt-4">
                 <h3 class="text-lg font-bold text-coklat-2">Total Harga</h3>
