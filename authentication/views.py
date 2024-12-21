@@ -18,7 +18,6 @@ def login(request):
                 "username": user.username,
                 "status": True,
                 "message": "Login sukses!"
-                # Tambahkan data lainnya jika ingin mengirim data ke Flutter.
             }, status=200)
         else:
             return JsonResponse({
@@ -79,7 +78,6 @@ def register(request):
 @csrf_exempt
 def logout(request):
     username = request.user.username
-
     try:
         auth_logout(request)
         return JsonResponse({

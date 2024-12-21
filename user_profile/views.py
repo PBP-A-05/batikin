@@ -1,7 +1,9 @@
+import json
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
 from .models import Profile, Address
 from .forms import CombinedForm, ProfileForm, AddressForm
@@ -39,6 +41,8 @@ def pemesanan_view(request):
 @login_required
 def booking_view(request):
     return render(request, 'booking.html')
+
+
 
 @login_required
 def update_profile(request):
@@ -103,3 +107,177 @@ def get_addresses(request):
     addresses = Address.objects.filter(user=request.user)
     address_data = [{'id': addr.id, 'title': addr.title, 'address': addr.address} for addr in addresses]
     return JsonResponse({'addresses': address_data})
+
+@login_required
+def get_user_info(request):
+    user = request.user
+    profile, created = Profile.objects.get_or_create(user=user)
+    addresses = Address.objects.filter(user=user).values('id', 'title', 'address')
+    addresses_list = list(addresses)
+    
+    data = {
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'phone_number': profile.phone_number,
+        'username': user.username,
+        'addresses': addresses_list,
+    }
+    return JsonResponse(data)
+
+@csrf_exempt
+@login_required
+def update_user_info(request):
+    if request.method == 'POST':
+        # Determine content type
+        if request.content_type == 'application/json':
+            try:
+                data = json.loads(request.body)
+            except json.JSONDecodeError:
+                return JsonResponse({"status": False, "message": "Invalid JSON."}, status=400)
+        else:
+            data = request.POST
+
+        # Extract fields
+        first_name = data.get('first_name')
+        last_name = data.get('last_name')
+        phone_number = data.get('phone_number')
+
+        # Validate fields
+        errors = {}
+        if not first_name:
+            errors['first_name'] = "First name is required."
+        if not last_name:
+            errors['last_name'] = "Last name is required."
+        if not phone_number:
+            errors['phone_number'] = "Phone number is required."
+
+        if errors:
+            return JsonResponse({"status": False, "errors": errors}, status=400)
+
+        # Update User and Profile
+        user = request.user
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+
+        profile, created = Profile.objects.get_or_create(user=user)
+        profile.phone_number = phone_number
+        profile.save()
+
+        return JsonResponse({
+            'status': 'success',
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'phone_number': profile.phone_number,
+        }, status=200)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
+
+
+@csrf_exempt
+@login_required
+def update_address_flutter(request):
+    if request.method == 'POST':
+        if request.content_type == 'application/json':
+            try:
+                data = json.loads(request.body)
+            except json.JSONDecodeError:
+                return JsonResponse({"status": False, "message": "Invalid JSON."}, status=400)
+        else:
+            data = request.POST
+
+        address_id = data.get('id')
+        title = data.get('title')
+        address = data.get('address')
+
+        errors = {}
+        if not title:
+            errors['title'] = "Title is required."
+            print("Title is required.")
+        if not address:
+            errors['address'] = "Address is required."
+            print("Address is required.")
+
+        if errors:
+            print("Errors:", errors)
+            return JsonResponse({"status": False, "errors": errors}, status=400)
+
+        user = request.user
+
+        if address_id:
+            try:
+                address_obj = Address.objects.get(id=address_id, user=user)
+                address_obj.title = title
+                address_obj.address = address
+                address_obj.save()
+                status_update = "updated"
+                print("Address updated:", address_obj)
+
+            except Address.DoesNotExist:
+                return JsonResponse({"status": False, "message": "Address with this ID does not exist."}, status=400)
+        else:
+            address_obj = Address.objects.create(user=user, title=title, address=address)
+            status_update = "created"
+
+        return JsonResponse({
+            "status": "success",
+            "address": {
+                "id": address_obj.id,
+                "title": address_obj.title,
+                "address": address_obj.address,
+                "status": status_update
+            }
+        }, status=200)
+
+    return JsonResponse({"status": False, "message": "Invalid request method."}, status=400)
+
+
+@csrf_exempt
+@login_required
+def add_address_flutter(request):
+    if request.method == 'POST':
+        # Determine content type and parse data accordingly
+        if request.content_type == 'application/json':
+            try:
+                data = json.loads(request.body)
+            except json.JSONDecodeError:
+                return JsonResponse({"status": False, "message": "Invalid JSON."}, status=400)
+        else:
+            data = request.POST
+
+        title = data.get('title')
+        address = data.get('address')
+
+        # Validate fields
+        errors = {}
+        if not title:
+            errors['title'] = "Title is required."
+            print("Title is required.")
+        if not address:
+            errors['address'] = "Address is required."
+            print("Address is required.")
+
+        if errors:
+            print("Errors:", errors)
+            return JsonResponse({"status": False, "errors": errors}, status=400)
+
+        user = request.user
+
+        # Create a new address
+        address_obj = Address.objects.create(user=user, title=title, address=address)
+        status_update = "created"
+        print("New address created:", address_obj)
+
+        response_data = {
+            "status": "success",
+            "address": {
+                "id": address_obj.id,
+                "title": address_obj.title,
+                "address": address_obj.address,
+            }
+        }
+
+        return JsonResponse(response_data, status=200)
+
+    # If the request method is not POST, return an error
+    return JsonResponse({"status": False, "message": "Invalid request method."}, status=400)

@@ -74,7 +74,9 @@
             const data = await response.json();
             console.log(data.bookings)
             displayBookings(data.bookings);
-        } catch (error) {
+        } catch (error) {asdawsdasd
+            data.bookings
+            
             console.error('Error fetching bookings:', error);
             document.getElementById('bookingsContainer').innerHTML = 
                 `<p class="text-center text-red-500 py-4">Error loading bookings: ${error.message}</p>`;

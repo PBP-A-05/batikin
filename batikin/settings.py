@@ -29,8 +29,12 @@ DEBUG = True
 ALLOWED_HOSTS = ['daanish-inayat-batikin.pbp.cs.ui.ac.id', '12', "localhost", "127.0.0.1", '10.0.2.2']
 STATIC_URL = '/static/'
 
-
-
+CSRF_TRUSTED_ORIGINS = [
+    'https://daanish-inayat-batikin.pbp.cs.ui.ac.id',
+    'http://localhost',
+    'http://127.0.0.1',
+    'http://10.0.2.2',
+]
 PRODUCTION = os.getenv("PRODUCTION", False)
 DEBUG = not PRODUCTION
 STATIC_URL = '/static/'
@@ -51,6 +55,7 @@ SESSION_COOKIE_SAMESITE = 'None'
 # Application definition
 ###
 INSTALLED_APPS = [
+    'corsheaders',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -66,7 +71,7 @@ INSTALLED_APPS = [
     'cart',
     'comment_review',
     'authentication',
-    'corsheaders',
+    
 ]   
 
 MIDDLEWARE = [
@@ -156,3 +161,32 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:8000",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:8000",
+]

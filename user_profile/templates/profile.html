@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         const formData = new FormData(this);
 
-        fetch('{% url "update_profile" %}', {
+        fetch('{% url "update_profile_django" %}', {
             method: 'POST',
             body: formData,
             headers: {
@@ -234,6 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
+                console.log('awdadawdaw')
                 closeModal();
                 updateProfileInfo(data);
             } else {
