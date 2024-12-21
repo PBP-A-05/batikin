@@ -187,7 +187,6 @@ def create_order(request):
 def get_orders_by_user(request):
     try:
         orders = Order.objects.filter(user=request.user)
-        
         orders_data = []
         for order in orders:
             try:

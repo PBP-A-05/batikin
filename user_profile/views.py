@@ -173,58 +173,6 @@ def update_user_info(request):
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
 
-@csrf_exempt
-@login_required
-def update_addresses(request):
-    if request.method == 'POST':
-        if request.content_type == 'application/json':
-            try:
-                data = json.loads(request.body)
-            except json.JSONDecodeError:
-                return JsonResponse({"status": False, "message": "Invalid JSON."}, status=400)
-        else:
-            data = request.POST
-
-        addresses = data.get('addresses')
-
-        if not addresses or not isinstance(addresses, list):
-            return JsonResponse({"status": False, "message": "Addresses must be a list."}, status=400)
-
-        errors = []
-        for idx, addr in enumerate(addresses):
-            title = addr.get('title')
-            address = addr.get('address')
-            if not title or not address:
-                errors.append(f"Address at index {idx} is missing 'title' or 'address'.")
-
-        if errors:
-            return JsonResponse({"status": False, "errors": errors}, status=400)
-
-        user = request.user
-
-        # Delete existing addresses
-        Address.objects.filter(user=user).delete()
-
-        # Create new Address objects
-        new_addresses = []
-        for addr in addresses:
-            address_obj = Address.objects.create(
-                user=user,
-                title=addr['title'],
-                address=addr['address']
-            )
-            new_addresses.append({
-                "id": address_obj.id,
-                "title": address_obj.title,
-                "address": address_obj.address,
-            })
-
-        return JsonResponse({
-            "status": "success",
-            "addresses": new_addresses
-        }, status=200)
-
-    return JsonResponse({"status": False, "message": "Invalid request method."}, status=400)
 
 @csrf_exempt
 @login_required
@@ -281,4 +229,55 @@ def update_address_flutter(request):
             }
         }, status=200)
 
+    return JsonResponse({"status": False, "message": "Invalid request method."}, status=400)
+
+
+@csrf_exempt
+@login_required
+def add_address_flutter(request):
+    if request.method == 'POST':
+        # Determine content type and parse data accordingly
+        if request.content_type == 'application/json':
+            try:
+                data = json.loads(request.body)
+            except json.JSONDecodeError:
+                return JsonResponse({"status": False, "message": "Invalid JSON."}, status=400)
+        else:
+            data = request.POST
+
+        title = data.get('title')
+        address = data.get('address')
+
+        # Validate fields
+        errors = {}
+        if not title:
+            errors['title'] = "Title is required."
+            print("Title is required.")
+        if not address:
+            errors['address'] = "Address is required."
+            print("Address is required.")
+
+        if errors:
+            print("Errors:", errors)
+            return JsonResponse({"status": False, "errors": errors}, status=400)
+
+        user = request.user
+
+        # Create a new address
+        address_obj = Address.objects.create(user=user, title=title, address=address)
+        status_update = "created"
+        print("New address created:", address_obj)
+
+        response_data = {
+            "status": "success",
+            "address": {
+                "id": address_obj.id,
+                "title": address_obj.title,
+                "address": address_obj.address,
+            }
+        }
+
+        return JsonResponse(response_data, status=200)
+
+    # If the request method is not POST, return an error
     return JsonResponse({"status": False, "message": "Invalid request method."}, status=400)
